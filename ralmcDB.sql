@@ -64,6 +64,3 @@ CREATE TABLE Solicitud (
     FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto) ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-CREATE INDEX idx_nombreProyecto ON Proyecto(nombreProyecto);
-CREATE INDEX idx_estadoSolicitud ON Solicitud(estadoSolicitud);
