@@ -1,5 +1,7 @@
-CREATE DATABASE IF NOT EXISTS ralmc;
-USE ralmc;
+-- SoLinX
+
+CREATE DATABASE IF NOT EXISTS solinx;
+USE solinx;
 
 CREATE TABLE Estudiante (
     boleta INT NOT NULL PRIMARY KEY,
