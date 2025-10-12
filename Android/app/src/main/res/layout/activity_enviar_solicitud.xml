@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="25dp"
+    tools:context=".EnviarSolicitud">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:layout_margin="0dp"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:text="regreso"/>
+            <ImageView
+                android:layout_width="160px"
+                android:layout_height="155px"
+                android:scaleType="fitXY"
+                android:src="@drawable/solinx_logo"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="end">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:text="BOLETA "
+                android:textSize="15dp"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:backgroundTint="@android:color/transparent"
+                android:id="@+id/btnboleta"/>
+            <ImageView
+                android:layout_width="160px"
+                android:layout_height="155px"
+                android:scaleType="fitXY"
+                android:src="@drawable/imagen_prederterminada"
+                android:id="@+id/fotoperfil"/>
+        </LinearLayout>
+    </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="8px"
+        android:backgroundTint="#2b859f"
+        android:layout_marginTop="12dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="12dp">
+        <ImageView
+            android:layout_width="400px"
+            android:layout_height="400px"
+            android:src="@drawable/solinx_logo"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Prestatario:"
+            android:id="@+id/prestatario"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Fecha Inicio:"
+            android:id="@+id/fechas"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Representante: "
+            android:id="@+id/representante"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Vacantes: "
+            android:id="@+id/vacantes"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Ubicación: "
+            android:id="@+id/ubicacion"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Objetivo: "
+            android:id="@+id/objetivo"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Justificación: "
+            android:id="@+id/justificacion"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Apoyos: "
+            android:id="@+id/apoyos"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="25dp"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="@color/black"
+            android:text="Enviar Solicitud"/>
+    </LinearLayout>
+</LinearLayout>
