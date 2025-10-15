@@ -17,19 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageButton
+                android:layout_width="150px"
+                android:layout_height="120px"
+                android:src="@drawable/flechaizq"
                 android:backgroundTint="@android:color/transparent"
-                android:gravity="center_vertical"
-                android:padding="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:layout_margin="0dp"
-                android:textColor="@color/black"
-                android:textSize="20dp"
-                android:text="regreso"/>
+                android:scaleType="fitXY"
+                android:id="@+id/regresar"
+                android:contentDescription="regresar"/>
             <ImageView
                 android:layout_width="160px"
                 android:layout_height="155px"
@@ -129,6 +126,7 @@
             android:textSize="25dp"
             android:backgroundTint="@android:color/transparent"
             android:textColor="@color/black"
-            android:text="Enviar Solicitud"/>
+            android:text="Enviar Solicitud"
+            android:id="@+id/enviar"/>
     </LinearLayout>
 </LinearLayout>
