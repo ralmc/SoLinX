@@ -13,6 +13,12 @@
         android:theme="@style/Theme.SoLinX"
         tools:targetApi="31">
         <activity
+            android:name=".Vcalumno"
+            android:exported="false" />
+        <activity
+            android:name=".Inicio"
+            android:exported="false" />
+        <activity
             android:name=".EnviarSolicitud"
             android:exported="false" />
         <activity
