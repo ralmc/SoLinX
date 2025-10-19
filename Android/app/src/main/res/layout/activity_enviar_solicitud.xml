@@ -82,7 +82,13 @@
             android:layout_height="wrap_content"
             android:textSize="13dp"
             android:text="Fecha Inicio:"
-            android:id="@+id/fechas"/>
+            android:id="@+id/fechini"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:text="Fecha Termino:"
+            android:id="@+id/fechfin"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

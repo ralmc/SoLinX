@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -14,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MenuEmpresas extends AppCompatActivity implements View.OnClickListener {
     Button masinfo;
+    TextView prestam, fecha, representante, vacantes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +24,15 @@ public class MenuEmpresas extends AppCompatActivity implements View.OnClickListe
 
         masinfo = findViewById(R.id.masinfo);
         masinfo.setOnClickListener(this);
+        prestam = findViewById(R.id.prestatario);
+        fecha = findViewById(R.id.fechas);
+        representante = findViewById(R.id.representante);
+        vacantes = findViewById(R.id.vacantes);
+
+        prestam.append(" SoLinX");
+        fecha.append(" 18/10/2025");
+        representante.append(" Velázquez Reynoso Adrian");
+        vacantes.append(" 7");
     }
 
     @Override
