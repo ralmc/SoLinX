@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="16dp"
+    tools:context=".SupervisorAdminActivity">
+
+    <ImageView
+        android:id="@+id/logo_top_left"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/solinx_logo"
+        android:contentDescription="Logo de la aplicación"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_supervisor_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Supervisor"
+        android:textSize="20sp"
+        android:textColor="#0E0F0F"
+        android:textStyle="normal"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <View
+        android:id="@+id/divider_top"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/logo_top_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/divider_top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tab_administradores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Administradores"
+            android:textSize="20sp"
+            android:textColor="#0E0F0F"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/linea_cyan"
+            />
+
+        <TextView
+            android:id="@+id/tab_tareas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="| Tareas"
+            android:textSize="20sp"
+            android:textColor="#0E0F0F"
+            android:textStyle="normal"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/tab_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="2dp"
+                android:layout_marginBottom="16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_admin_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="# 001"
+                        android:textSize="18sp"
+                        android:textColor="#333333"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageButton
+                        android:id="@+id/btn_edit_admin"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/Lapiz_cuadrado"
+                        android:contentDescription="Editar administrador"
+                        app:tint="#333333"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                    <TextView
+                        android:id="@+id/btn_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Eliminar"
+                        android:textSize="16sp"
+                        android:textColor="#FF0000"
+                        android:textStyle="bold"
+                        android:layout_marginTop="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp"
+                        app:layout_constraintTop_toBottomOf="@id/tv_admin_id"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <LinearLayout
+                        android:id="@+id/admin_details_layout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@id/btn_delete"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Nombre de Usuario: ____________" android:textColor="#333333" />
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Nombre Completo: ____________" android:textColor="#333333" android:layout_marginTop="4dp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Correo Electrónico: ____________" android:textColor="#333333" android:layout_marginTop="4dp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Teléfono: ____________" android:textColor="#333333" android:layout_marginTop="4dp" />
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/btn_add_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Añadir Administrador"
+                android:textSize="18sp"
+                android:textColor="#0E0F0F"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/linea_cyan" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
