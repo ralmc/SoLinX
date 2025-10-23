@@ -3,5 +3,5 @@
     <font
         android:fontStyle="normal"
         android:fontWeight="100"
-        android:font="@font/Molgan"/>
+        android:font="@font/fonts"/>
 </font-family>

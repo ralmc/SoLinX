@@ -295,16 +295,14 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Bloque Cerrar Sesión siempre hacia abajo con espacio desde el borde -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="24dp"
         android:layout_marginBottom="24dp"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvCerrarSesion"
+        <Button
+            android:id="@+id/btnCerrarSesion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cerrar Sesión"
@@ -312,11 +310,12 @@
             android:textSize="30sp"
             android:clickable="true"
             android:focusable="true"
-            android:fontFamily="@font/Molgan"
-            android:textStyle="bold"/>
-
+            android:fontFamily="@font/molgan"
+            android:textStyle="bold"
+            android:backgroundTint="@android:color/transparent"
+            android:padding="0px"/>
         <View
-            android:layout_width="180sp"
+            android:layout_width="190sp"
             android:layout_height="3dp"
             android:background="#1497B9" />
     </LinearLayout>

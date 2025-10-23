@@ -134,7 +134,7 @@
             android:textColor="@color/black"
             android:text="Enviar Solicitud"
             android:id="@+id/enviar"
-            android:fontFamily="@font/Molgan"
+            android:fontFamily="@font/molgan"
             android:textStyle="bold"/>
     </LinearLayout>
 </LinearLayout>

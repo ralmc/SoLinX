@@ -3,13 +3,14 @@ package com.example.solinx;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class Vcalumno extends AppCompatActivity {
+public class Vcalumno extends AppCompatActivity implements View.OnClickListener {
 
-    // Header
+    Button btnCerrarSesion;
     private TextView tvBoleta;
     private ImageView imgLogoAve, imgPerfilMini;
 
@@ -65,8 +66,8 @@ public class Vcalumno extends AppCompatActivity {
         tvEmpresa2Title = findViewById(R.id.tvEmpresa2Title);
 
         // --- Cerrar sesión ---
-        tvCerrarSesion = findViewById(R.id.tvCerrarSesion);
-        tvCerrarSesion.setOnClickListener(v -> cerrarSesion());
+        btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnCerrarSesion.setOnClickListener(this);
     }
 
     // Método para seleccionar modo (claro u oscuro)
@@ -87,11 +88,12 @@ public class Vcalumno extends AppCompatActivity {
         // Toast.makeText(this, "Cambiar foto de perfil", Toast.LENGTH_SHORT).show();
     }
 
-    // Método para cerrar sesión
-    private void cerrarSesion() {
-        // ejemplo simple: volver a la pantalla de login
-        // Intent intent = new Intent(this, LoginActivity.class);
-        // startActivity(intent);
-        // finish();
+    @Override
+    public void onClick(View v) {
+        String cadena = ((Button)v).getText().toString();
+        if(cadena.equals("Cerrar Sesión")) {
+            Intent intento = new Intent(this, MainActivity.class);
+            startActivity(intento);
+        }
     }
 }
