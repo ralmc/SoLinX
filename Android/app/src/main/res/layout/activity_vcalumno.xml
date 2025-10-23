@@ -310,15 +310,14 @@
             android:text="Cerrar Sesión"
             android:textColor="#1497B9"
             android:textSize="30sp"
-            android:textStyle="normal"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:fontFamily="@font/Molgan"
+            android:textStyle="bold"/>
 
         <View
             android:layout_width="180sp"
             android:layout_height="3dp"
             android:background="#1497B9" />
     </LinearLayout>
-
-
 </LinearLayout>
