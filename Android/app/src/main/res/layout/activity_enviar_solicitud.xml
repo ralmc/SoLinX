@@ -57,10 +57,10 @@
                 android:id="@+id/fotoperfil"/>
         </LinearLayout>
     </LinearLayout>
-    <Button
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="8px"
-        android:backgroundTint="#2b859f"
+        android:background="#2b859f"
         android:layout_marginTop="12dp"/>
     <LinearLayout
         android:layout_width="match_parent"
