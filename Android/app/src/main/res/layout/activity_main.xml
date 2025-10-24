@@ -48,7 +48,7 @@
         android:textSize="50sp"
         android:textStyle="bold"
         android:paddingBottom="5dp"
-        android:background="@android:color/transparent"
+        android:backgroundTint="@android:color/transparent"
         android:fontFamily="@font/molgan" />
 
     <View
@@ -58,16 +58,15 @@
         android:layout_marginTop="1dp"
         android:layout_marginBottom="18dp" />
 
-    <TextView
-        android:id="@+id/tvCrearCuenta"
+    <Button
+        android:id="@+id/btnCrearCuenta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Crear Cuenta"
         android:textColor="#808080"
         android:textSize="45sp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:focusable="true"
+        android:textStyle="normal"
+        android:backgroundTint="@android:color/transparent"
         android:fontFamily="@font/molgan"/>
 
     <LinearLayout

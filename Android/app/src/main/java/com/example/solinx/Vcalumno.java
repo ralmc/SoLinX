@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,8 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class Vcalumno extends AppCompatActivity implements View.OnClickListener {
 
     Button btnCerrarSesion;
+    ImageButton regresar;
     private TextView tvBoleta;
-    private ImageView imgLogoAve, imgPerfilMini;
+    private ImageView imgLogoAve;
 
     // Modo
     private View viewModoClaro, viewModoOscuro;
@@ -39,7 +41,8 @@ public class Vcalumno extends AppCompatActivity implements View.OnClickListener 
         // --- Header ---
         tvBoleta = findViewById(R.id.tvBoleta);
         imgLogoAve = findViewById(R.id.imgLogoAve);
-        imgPerfilMini = findViewById(R.id.imgPerfilMini);
+        regresar = findViewById(R.id.regresar);
+        regresar.setOnClickListener(this);
 
         // --- Modo ---
         tvModo = findViewById(R.id.tvModo);
@@ -90,9 +93,12 @@ public class Vcalumno extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        String cadena = ((Button)v).getText().toString();
-        if(cadena.equals("Cerrar Sesión")) {
+        int id = v.getId();
+        if (btnCerrarSesion.getId() == id) {
             Intent intento = new Intent(this, MainActivity.class);
+            startActivity(intento);
+        } if (regresar.getId() == id) {
+            Intent intento = new Intent(this, MenuEmpresas.class);
             startActivity(intento);
         }
     }

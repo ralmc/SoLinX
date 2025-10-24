@@ -1,27 +1,35 @@
 package com.example.solinx;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-public class CrearCuenta extends AppCompatActivity {
-
-    private Spinner spEscuela, spCarrera;
-
+public class creSesion extends AppCompatActivity implements View.OnClickListener {
+    Spinner spEscuela, spCarrera;
+    Button btnEnviar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crear_cuenta);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_cre_sesion);
 
         spEscuela = findViewById(R.id.spEscuela);
         spCarrera = findViewById(R.id.spCarrera);
-
+        btnEnviar = findViewById(R.id.btnEnviar);
+        btnEnviar.setOnClickListener(this);
 
         String[] escuelas = {"Selecciona", "Cecyt 9"};
         String[] carreras = {"Selecciona", "Programación"};
-
 
         ArrayAdapter<String> adapterEscuela = new ArrayAdapter<>(
                 this,
@@ -31,7 +39,6 @@ public class CrearCuenta extends AppCompatActivity {
         adapterEscuela.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spEscuela.setAdapter(adapterEscuela);
 
-
         ArrayAdapter<String> adapterCarrera = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
@@ -40,5 +47,11 @@ public class CrearCuenta extends AppCompatActivity {
         adapterCarrera.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCarrera.setAdapter(adapterCarrera);
     }
-}
 
+    @Override
+    public void onClick(View view) {
+        Toast.makeText(this, "Enviado...", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+}

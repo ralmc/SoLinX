@@ -40,12 +40,14 @@
                 android:textColor="@color/black"
                 android:backgroundTint="@android:color/transparent"
                 android:id="@+id/btnboleta"/>
-            <ImageView
+            <ImageButton
+                android:id="@+id/fotoperfil"
                 android:layout_width="160px"
                 android:layout_height="155px"
-                android:scaleType="fitXY"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
                 android:src="@drawable/imagen_prederterminada"
-                android:id="@+id/fotoperfil"/>
+                android:background="@android:color/transparent"/>
         </LinearLayout>
     </LinearLayout>
     <Button

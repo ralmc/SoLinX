@@ -53,8 +53,7 @@
                 android:layout_width="160px"
                 android:layout_height="155px"
                 android:scaleType="fitXY"
-                android:src="@drawable/imagen_prederterminada"
-                android:id="@+id/fotoperfil"/>
+                android:src="@drawable/imagen_prederterminada"/>
         </LinearLayout>
     </LinearLayout>
     <TextView
@@ -131,7 +130,7 @@
             android:layout_marginTop="10dp"
             android:textSize="25dp"
             android:backgroundTint="@android:color/transparent"
-            android:textColor="@color/black"
+            android:textColor="#2b859f"
             android:text="Enviar Solicitud"
             android:id="@+id/enviar"
             android:fontFamily="@font/molgan"

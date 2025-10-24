@@ -16,8 +16,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     // 🔹 Elementos de la interfaz
     private TextView solinx;
     private ImageView imgLogoAve;
-    Button btnIniciarSesion;
-    private TextView tvCrearCuenta;
+    Button btnIniciarSesion, btnCrearCuenta;
     private TextView tvAlumno;
     private TextView tvEmpresa;
     private LinearLayout layoutInferior;
@@ -33,31 +32,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
         solinx = findViewById(R.id.solinx);
         imgLogoAve = findViewById(R.id.imgLogoAve);
         btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
-        tvCrearCuenta = findViewById(R.id.tvCrearCuenta);
+        btnCrearCuenta = findViewById(R.id.btnCrearCuenta);
         tvAlumno = findViewById(R.id.tvAlumno);
         tvEmpresa = findViewById(R.id.tvEmpresa);
         layoutInferior = findViewById(R.id.layoutInferior);
 
         btnIniciarSesion.setOnClickListener(this);
+        btnCrearCuenta.setOnClickListener(this);
         // ================================
         // ⚙️ Configurar listeners
         // ================================
 
         //Spinner para el modo alumno
-
-
-
-        // 🔹 Opción "Crear Cuenta"
-        tvCrearCuenta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Ir a Crear Cuenta", Toast.LENGTH_SHORT).show();
-
-                // Ejemplo:
-                // Intent intent = new Intent(Inicio.this, CrearCuenta.class);
-                // startActivity(intent);
-            }
-        });
 
         // 🔹 Opción "Alumno"
         tvAlumno.setOnClickListener(new View.OnClickListener() {
@@ -85,9 +71,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View view) {
-        //Vcalumno
-        Intent intento = new Intent(this,CrearCuenta.class);
-        startActivity(intento);
+    public void onClick(View v) {
+        String cadena = ((Button)v).getText().toString();
+        if (cadena.equals("Iniciar Sesión")) {
+            Intent intento = new Intent(this, iniSesion.class);
+            startActivity(intento);
+        } if (cadena.equals("Crear Cuenta")) {
+            Intent intento = new Intent(this, creSesion.class);
+            startActivity(intento);
+        }
     }
 }

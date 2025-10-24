@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#FFFFFF"
-    tools:context=".CrearCuenta">
+    tools:context=".creSesion">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,7 +14,6 @@
         android:layout_weight="1"
         android:fillViewport="true"
         android:background="#FFFFFF">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +21,6 @@
             android:gravity="center_horizontal"
             android:padding="16dp"
             android:background="#FFFFFF">
-
             <TextView
                 android:id="@+id/tvTitulo"
                 android:layout_width="wrap_content"
@@ -33,15 +31,12 @@
                 android:fontFamily="@font/molgan"
                 android:textColor="@android:color/black"
                 android:layout_marginBottom="20dp" />
-
-            <!-- Nombre de Usuario -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginBottom="16dp"
                 android:background="#FFFFFF">
-
                 <EditText
                     android:id="@+id/etNombreUsuario"
                     android:layout_width="match_parent"
@@ -58,8 +53,6 @@
                     android:layout_height="1.5dp"
                     android:background="@android:color/darker_gray"/>
             </LinearLayout>
-
-            <!-- Boleta -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,15 +75,12 @@
                     android:layout_height="1.5dp"
                     android:background="@android:color/darker_gray"/>
             </LinearLayout>
-
-            <!-- Escuela Spinner -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginBottom="16dp"
                 android:background="#FFFFFF">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -106,15 +96,12 @@
                     android:background="@android:color/white"
                     android:padding="8dp"/>
             </LinearLayout>
-
-            <!-- Carrera Spinner -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginBottom="16dp"
                 android:background="#FFFFFF">
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -130,8 +117,6 @@
                     android:background="@android:color/white"
                     android:padding="8dp"/>
             </LinearLayout>
-
-            <!-- Correo -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -154,8 +139,6 @@
                     android:layout_height="1.5dp"
                     android:background="@android:color/darker_gray"/>
             </LinearLayout>
-
-            <!-- Confirmar Correo -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -178,8 +161,6 @@
                     android:layout_height="1.5dp"
                     android:background="@android:color/darker_gray"/>
             </LinearLayout>
-
-            <!-- Contraseña -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -202,8 +183,6 @@
                     android:layout_height="1.5dp"
                     android:background="@android:color/darker_gray"/>
             </LinearLayout>
-
-            <!-- Confirmar Contraseña -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -229,8 +208,6 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <!-- Pie con logo y botón -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -246,12 +223,10 @@
             android:layout_height="80dp"
             android:src="@drawable/solinx_logo"
             android:contentDescription="Logo" />
-
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
-
         <Button
             android:id="@+id/btnEnviar"
             android:layout_width="wrap_content"
@@ -264,5 +239,4 @@
             android:backgroundTint="#000000"
             android:textColor="#FFFFFF"/>
     </LinearLayout>
-
 </LinearLayout>

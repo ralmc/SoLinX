@@ -6,26 +6,20 @@
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:background="@android:color/white"
-    tools:context=".IniciarSesion">
-
+    tools:context=".iniSesion">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:padding="30dp">
-
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="40dp" />
-
-
             <TextView
                 android:id="@+id/tvTitulo"
                 android:layout_width="wrap_content"
@@ -36,8 +30,6 @@
                 android:fontFamily="@font/fonts"
                 android:textColor="@android:color/black"
                 android:layout_marginBottom="40dp" />
-
-
             <EditText
                 android:id="@+id/etUsuario"
                 android:layout_width="match_parent"
@@ -50,13 +42,11 @@
                 android:padding="10dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"
                 android:layout_marginBottom="25dp" />
-
             <EditText
                 android:id="@+id/etContrasena"
                 android:layout_width="match_parent"
@@ -69,13 +59,11 @@
                 android:padding="10dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"
                 android:layout_marginBottom="60dp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,7 +71,6 @@
                 android:gravity="center_vertical"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="40dp">
-
                 <ImageView
                     android:id="@+id/imgLogo"
                     android:layout_width="80dp"
@@ -91,7 +78,6 @@
                     android:layout_marginEnd="40dp"
                     android:src="@drawable/solinx_logo"
                     android:contentDescription="Logo" />
-
                 <Button
                     android:id="@+id/btnEnviar"
                     android:layout_width="wrap_content"
@@ -105,11 +91,9 @@
                     android:textColor="@android:color/white"
                     android:layout_gravity="center" />
             </LinearLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="40dp" />
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
