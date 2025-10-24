@@ -1,11 +1,10 @@
-package com.example.solinx; // cambia por tu paquete real
+package com.example.solinx;
 
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.solinx.R;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class CrearCuenta extends AppCompatActivity {
 
@@ -14,23 +13,32 @@ public class CrearCuenta extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 👇 Aquí pones el XML que tú estás usando, no el main
-        setContentView(R.layout.pantalla_crear_cuenta);
+        setContentView(R.layout.activity_crear_cuenta);
 
-        // Spinners
         spEscuela = findViewById(R.id.spEscuela);
         spCarrera = findViewById(R.id.spCarrera);
 
-        // Datos para los spinners (puedes cambiarlos después)
-        String[] escuelas = {"ESCOM", "UPIICSA", "ESIME", "CET", "CECyT"};
-        String[] carreras = {"Ingeniería en Sistemas", "Informática", "Telecomunicaciones", "Administración", "Contabilidad"};
 
-        // Adaptadores
-        ArrayAdapter<String> adapterEscuela = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, escuelas);
-        ArrayAdapter<String> adapterCarrera = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, carreras);
+        String[] escuelas = {"Selecciona", "Cecyt 9"};
+        String[] carreras = {"Selecciona", "Programación"};
 
-        // Asignarlos a los spinners
+
+        ArrayAdapter<String> adapterEscuela = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                escuelas
+        );
+        adapterEscuela.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spEscuela.setAdapter(adapterEscuela);
+
+
+        ArrayAdapter<String> adapterCarrera = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                carreras
+        );
+        adapterCarrera.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCarrera.setAdapter(adapterCarrera);
     }
 }
+
