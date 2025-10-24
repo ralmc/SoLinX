@@ -86,7 +86,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        Intent intento = new Intent(this,Vcalumno.class);
+        //Vcalumno
+        Intent intento = new Intent(this,CrearCuenta.class);
         startActivity(intento);
     }
 }
