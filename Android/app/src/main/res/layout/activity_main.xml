@@ -46,6 +46,7 @@
         android:text="Iniciar Sesión"
         android:textColor="#000000"
         android:textSize="50sp"
+        android:stateListAnimator="@null"
         android:textStyle="bold"
         android:paddingBottom="5dp"
         android:backgroundTint="@android:color/transparent"
@@ -64,6 +65,7 @@
         android:layout_height="wrap_content"
         android:text="Crear Cuenta"
         android:textColor="#808080"
+        android:stateListAnimator="@null"
         android:textSize="45sp"
         android:textStyle="normal"
         android:backgroundTint="@android:color/transparent"
@@ -96,7 +98,6 @@
             android:fontFamily="@font/molgan"/>
 
         <TextView
-            android:id="@+id/separador"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="  |  "
@@ -108,6 +109,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Empresa"
+            android:textColor="#808080"
+            android:textSize="14sp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/molgan"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  |  "
+            android:textColor="#808080"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvSupervisor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supervisor"
             android:textColor="#808080"
             android:textSize="14sp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
