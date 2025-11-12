@@ -49,6 +49,13 @@
                 android:layout_marginStart="4dp" />
         </LinearLayout>
 
+        <!-- Barra AZUL -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/barra_azul"
+            android:layout_marginVertical="12dp" />
+
         <!-- Tarjeta del Proyecto -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

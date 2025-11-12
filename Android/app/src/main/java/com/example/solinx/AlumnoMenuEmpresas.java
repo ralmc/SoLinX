@@ -5,43 +5,41 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClickListener {
-    Button masinfo;
-    ImageButton imagen;
-    TextView prestam, fecha, representante, vacantes;
+    ImageView fotoperfil;
+    TextView masinfo, prestam, fecha, representante, vacantes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_alumno_menu_empresas);
 
+        //Declarar los textViews
         masinfo = findViewById(R.id.masinfo);
         masinfo.setOnClickListener(this);
-        imagen = findViewById(R.id.fotoperfil);
-        imagen.setOnClickListener(this);
+        fotoperfil = findViewById(R.id.fotoperfil);
+        fotoperfil.setOnClickListener(this);
         prestam = findViewById(R.id.prestatario);
         fecha = findViewById(R.id.fechas);
         representante = findViewById(R.id.representante);
         vacantes = findViewById(R.id.vacantes);
 
-        prestam.append(" SoLinX");
-        fecha.append(" 18/10/2025");
-        representante.append(" Velázquez Reynoso Adrian");
-        vacantes.append(" 7");
+        //Declarar los setOnClickListener
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (masinfo.getId() == id) {
+        if (id == masinfo.getId() ) {
             Intent intento = new Intent(this, AlumnoEnviarSolicitud.class);
             startActivity(intento);
-        } if (imagen.getId() == id) {
+        } else if (id == fotoperfil.getId()) {
             Intent intento = new Intent(this, Vcalumno.class);
             startActivity(intento);
         }

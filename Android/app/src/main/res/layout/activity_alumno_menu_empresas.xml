@@ -1,110 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--LANDA CABALLERO ANGEL-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_margin="25dp"
+    android:background="#FFFFFF"
+    android:padding="16dp"
     tools:context=".AlumnoMenuEmpresas">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Encabezado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="160px"
-                android:layout_height="155px"
-                android:scaleType="fitXY"
-                android:src="@drawable/solinx_logo"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="end">
-            <Button
+            android:gravity="center_vertical"
+            android:padding="8dp">
+
+            <!-- Logo -->
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/solinx_logo"
+                android:contentDescription="Logo SoLinX" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Boleta y Avatar -->
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical|end"
-                android:text="BOLETA "
-                android:textSize="15dp"
-                android:layout_weight="1"
-                android:textColor="@color/black"
-                android:backgroundTint="@android:color/transparent"
-                android:id="@+id/btnboleta"/>
-            <ImageButton
-                android:id="@+id/fotoperfil"
-                android:layout_width="160px"
-                android:layout_height="155px"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/imagen_prederterminada"
-                android:background="@android:color/transparent"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/btnboleta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BOLETA"
+                    android:textSize="14sp"
+                    android:textColor="#2b859f"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="12dp"
+                    android:background="?attr/selectableItemBackground" />
+
+                <ImageView
+                    android:id="@+id/fotoperfil"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/imagen_prederterminada"
+                    android:contentDescription="Foto de perfil"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="8px"
-        android:backgroundTint="#2b859f"
-        android:layout_marginTop="12dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="12dp">
-        <ImageView
-            android:layout_width="250px"
-            android:layout_height="250px"
-            android:src="@drawable/solinx_logo"/>
-        <LinearLayout
+
+        <!-- Barra AZUL -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/barra_azul"
+            android:layout_marginVertical="12dp" />
+
+        <!-- Empresa 1 -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            android:backgroundTint="#FFFFFF"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="13dp"
-                android:text="Prestatario:"
-                android:id="@+id/prestatario"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13dp"
-                android:text="Fecha Inicio:"
-                android:id="@+id/fechas"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13dp"
-                android:text="Representante: "
-                android:id="@+id/representante"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13dp"
-                android:text="Vacantes: "
-                android:id="@+id/vacantes"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13dp"
-                android:text="Mas información..."
-                android:backgroundTint="@android:color/transparent"
-                android:textColor="#2b859f"
-                android:padding="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"
-                android:layout_margin="0dp"
-                android:id="@+id/masinfo"/>
-        </LinearLayout>
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/solinx_logo"
+                    android:contentDescription="Logo SoLinX"
+                    android:background="@color/white" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp">
+
+                    <TextView
+                        android:id="@+id/prestatario"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SoLinX"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp" />
+
+                    <TextView
+                        android:id="@+id/fechas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fecha: 18/10/2025 - 18/10/2026"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="2dp" />
+
+                    <TextView
+                        android:id="@+id/representante"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Representante: Velázquez Reynoso Adrian"
+                        android:textColor="#666666"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="2dp" />
+
+                    <TextView
+                        android:id="@+id/vacantes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vacantes disponibles: 9"
+                        android:textColor="#2b859f"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/masinfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="VER DETALLES →"
+                        android:textColor="#2b859f"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:paddingVertical="4dp"
+                        android:background="?attr/selectableItemBackground" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
-</LinearLayout>
+</ScrollView>
