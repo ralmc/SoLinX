@@ -48,7 +48,7 @@ CREATE TABLE Proyecto (
     idProyecto INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nombreProyecto VARCHAR(150) NOT NULL DEFAULT '',
     objetivo TEXT NOT NULL,
-    fechaInicio TIMESTAMP NOT NULL DEFAULT NULL,
+    fechaInicio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     vacantes INT NOT NULL DEFAULT 1,
     ubicacion VARCHAR(100) NOT NULL DEFAULT '',
     justificacion VARCHAR(255) NOT NULL DEFAULT '',
@@ -66,3 +66,13 @@ CREATE TABLE Solicitud (
     FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE Perfil (
+	idPerfil INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    foto BLOB,
+    tema ENUM('claro', 'oscuro'),
+    idUsuario INT NOT NULL,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+SHOW TABLES FROM solinx;
