@@ -46,26 +46,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (v.getId() == R.id.btnIniciarSesion) {
             Intent intento = new Intent(this, iniSesion.class);
             startActivity(intento);
-        }
-
-        else if (v.getId() == R.id.btnCrearCuenta) {
+        } else if (v.getId() == R.id.btnCrearCuenta) {
             Intent intento = new Intent(this, creSesion.class);
             startActivity(intento);
-        }
-
-        else if (v.getId() == R.id.tvSupervisor) {
-            Toast.makeText(MainActivity.this, "Modo Supervisor", Toast.LENGTH_SHORT).show();
+        } else if (v.getId() == R.id.tvSupervisor) {
             Intent intent = new Intent(this, MenuSupervisorActivity.class);
             startActivity(intent);
-        }
-
-        else if (v.getId() == R.id.tvAlumno) {
-            Toast.makeText(MainActivity.this, "Modo Alumno", Toast.LENGTH_SHORT).show();
-
-        }
-
-        else if (v.getId() == R.id.tvEmpresa) {
-            Toast.makeText(MainActivity.this, "Modo Empresa", Toast.LENGTH_SHORT).show();
+        } else if (v.getId() == R.id.tvAlumno) {
+        } else if (v.getId() == R.id.tvEmpresa) {
             Intent intent = new Intent(this, CrearEmpresa.class);
             startActivity(intent);
         }

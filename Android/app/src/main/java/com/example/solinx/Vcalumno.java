@@ -98,7 +98,7 @@ public class Vcalumno extends AppCompatActivity implements View.OnClickListener 
             Intent intento = new Intent(this, MainActivity.class);
             startActivity(intento);
         } if (regresar.getId() == id) {
-            Intent intento = new Intent(this, MenuEmpresas.class);
+            Intent intento = new Intent(this, AlumnoMenuEmpresas.class);
             startActivity(intento);
         }
     }

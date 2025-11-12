@@ -29,7 +29,7 @@ public class iniSesion extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(this, MenuEmpresas.class);
+        Intent intent = new Intent(this, AlumnoMenuEmpresas.class);
         startActivity(intent);
     }
 }

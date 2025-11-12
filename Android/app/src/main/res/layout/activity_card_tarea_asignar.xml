@@ -30,13 +30,15 @@
             android:layout_height="wrap_content"
             android:text="Asignar"
             android:textSize="18sp"
-            android:textColor="#0E0F0F"  android:textStyle="normal"
+            android:textColor="#0E0F0F"
+            android:textStyle="normal"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <LinearLayout
+            android:id="@+id/layout_admin_num"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -61,5 +63,4 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

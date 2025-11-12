@@ -12,60 +12,38 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SoLinX"
         tools:targetApi="31">
-        <activity
-            android:name=".menu_super"
-            android:exported="false" />
-        <!-- 1. CargaActivity: PUNTO DE INICIO (LAUNCHER) -->
+
+        <!-- SPLASH SCREEN (launcher) -->
         <activity
             android:name=".CargaActivity"
             android:exported="true"
             android:theme="@style/Theme.SoLinX">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- 2. MainActivity: El destino de la carga (Se mantiene) -->
+        </activity>
+
+        <!-- MAIN -->
         <activity
             android:name=".MainActivity"
-            android:exported="false" /> <!-- 3. Las demás Activities (el orden no importa) -->
-        <activity
-            android:name=".creSesion"
-            android:exported="false" />
-        <activity
-            android:name=".NotificacionesEmp"
-            android:exported="false"
-            android:theme="@style/Theme.SoLinX" />
-        <activity
-            android:name=".Vcalumno"
-            android:exported="false" />
-        <activity
-            android:name=".iniSesion"
-            android:exported="false" />
-        <activity
-            android:name=".EnviarSolicitud"
-            android:exported="false" />
-        <activity
-            android:name=".MenuSupervisorActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SupervisorAdminActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SupervisorTareasActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MenuEmpresas"
-            android:exported="false" />
-        <activity
-            android:name=".CrearEmpresa"
-            android:exported="false" />
-        <activity
-            android:name=".VistaEmpresas"
             android:exported="false" />
 
+        <!-- ACTIVIDADES QUE SE ABREN POR INTENT -->
+        <activity android:name=".creSesion" android:exported="true" />
+        <activity android:name=".iniSesion" android:exported="true" />
+        <activity android:name=".MenuSupervisorActivity" android:exported="true" />
+        <activity android:name=".CrearEmpresa" android:exported="true" />
+        <activity android:name=".AlumnoEnviarSolicitud" android:exported="true" />
+        <activity android:name=".AlumnoMenuEmpresas" android:exported="true" />
+        <activity android:name=".VistaEmpresas" android:exported="true" />
 
+        <!-- ACTIVIDADES INTERNAS QUE NO SE ABREN POR INTENT DIRECTO -->
+        <activity android:name=".menu_super" android:exported="false" />
+        <activity android:name=".EmpresaNotificaciones" android:exported="false" />
+        <activity android:name=".Vcalumno" android:exported="false" />
+        <activity android:name=".SupervisorAdminActivity" android:exported="false" />
+        <activity android:name=".SupervisorTareasActivity" android:exported="false" />
 
     </application>
-
 </manifest>

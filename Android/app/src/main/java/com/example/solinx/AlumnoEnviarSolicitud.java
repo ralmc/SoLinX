@@ -1,6 +1,5 @@
 package com.example.solinx;
-
-import android.annotation.SuppressLint;
+// LANDA CABALLERO ANGEL
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,11 +10,8 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-public class EnviarSolicitud extends AppCompatActivity implements View.OnClickListener {
+public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnClickListener {
     ImageButton regresar;
     TextView presta, fechaini, fechafin, repre, vacantes, ubi, obj, just, apoyos;
     Button enviar;
@@ -23,7 +19,7 @@ public class EnviarSolicitud extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_enviar_solicitud);
+        setContentView(R.layout.activity_alumno_enviar_solicitud);
 
         regresar = findViewById(R.id.regresar);
         regresar.setOnClickListener(this);
@@ -56,7 +52,7 @@ public class EnviarSolicitud extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.regresar) {
-            Intent intento = new Intent(this, MenuEmpresas.class);
+            Intent intento = new Intent(this, AlumnoMenuEmpresas.class);
             startActivity(intento);
         }
         if (id == R.id.enviar) {
