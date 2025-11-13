@@ -30,18 +30,44 @@ CREATE TABLE Administrador (
 );
 
 CREATE TABLE Usuario (
-    idUsuario INT NOT NULL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL DEFAULT '',
+    idUsuario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
     correo VARCHAR(150) UNIQUE NOT NULL,
     telefono VARCHAR(20) UNIQUE DEFAULT NULL,
     userPassword VARCHAR(255) NOT NULL,
-    rol ENUM('estudiante', 'empresa', 'supervisor', 'administrador') NOT NULL,
+    rol ENUM('estudiante', 'empresa', 'supervisor', 'administrador') NOT NULL
+);
+
+CREATE TABLE UsuarioEstudiante (
+    idUsuario INT NOT NULL,
     boleta INT NOT NULL,
-    idAdministrador INT DEFAULT NULL,
-    idEmpresa INT DEFAULT NULL,
-    FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (idAdministrador) REFERENCES Administrador(idAdministrador) ON UPDATE CASCADE ON DELETE CASCADE,
+    PRIMARY KEY (idUsuario),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE UsuarioEmpresa (
+    idUsuario INT NOT NULL,
+    idEmpresa INT NOT NULL,
+    PRIMARY KEY (idUsuario),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE UsuarioSupervisor (
+    idUsuario INT NOT NULL,
+    idSupervisor INT NOT NULL,
+    PRIMARY KEY (idUsuario),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (idSupervisor) REFERENCES Supervisor(idSupervisor) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE UsuarioAdministrador (
+    idUsuario INT NOT NULL,
+    idAdministrador INT NOT NULL,
+    PRIMARY KEY (idUsuario),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (idAdministrador) REFERENCES Administrador(idAdministrador) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Proyecto (
@@ -70,7 +96,7 @@ CREATE TABLE Solicitud (
 CREATE TABLE Perfil (
 	idPerfil INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     foto BLOB,
-    tema ENUM('claro', 'oscuro'),
+    tema ENUM('claro', 'oscuro') NOT NULL DEFAULT 'claro',
     idUsuario INT NOT NULL,
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
 );
