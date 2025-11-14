@@ -1,39 +1,35 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-.kotlin
+# === Archivos Compilados y de Build ===
+# Directorios de salida de compilación
+/target/
+/build/
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
+# Archivos de clase compilados
+*.class
+
+# Logs
+*.log
+*.log.*
+
+# === IDE: IntelliJ IDEA ===
+# Ignora la carpeta de configuración completa (más seguro)
+.idea/
+
+# Archivos de módulo de IntelliJ
 *.iml
+*.iws
 *.ipr
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+# === IDE: VS Code ===
 .vscode/
 
-### Mac OS ###
+# === Seguridad (¡Crítico!) ===
+# Ignora el archivo de propiedades para proteger tu contraseña de la base de datos
+/src/main/resources/application.properties
+
+# === Sistema Operativo ===
+# Archivos del sistema operativo de Mac
 .DS_Store
+
+# === Otros ===
+# Archivos temporales de Kotlin
+.kotlin/
