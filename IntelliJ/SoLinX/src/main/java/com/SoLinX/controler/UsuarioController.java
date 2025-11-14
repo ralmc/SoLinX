@@ -89,7 +89,6 @@ public class UsuarioController {
     public ResponseEntity<UsuarioDto> save(@RequestBody UsuarioDto usuarioDto) {
         Usuario u = Usuario.
                 builder()
-                        .idUsuario( usuarioDto.getIdUsuario())
                         .nombre( usuarioDto.getNombre())
                         .correo( usuarioDto.getCorreo())
                         .telefono(usuarioDto.getTelefono())
@@ -98,7 +97,6 @@ public class UsuarioController {
                 .build();
         usuarioService.save(u);
         return ResponseEntity.ok(UsuarioDto.builder()
-                .idUsuario(u.getIdUsuario())
                 .nombre(u.getNombre())
                 .correo(u.getCorreo())
                 .telefono(u.getTelefono())

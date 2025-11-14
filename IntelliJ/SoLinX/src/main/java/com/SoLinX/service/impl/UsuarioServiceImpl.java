@@ -26,9 +26,9 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario save(Usuario usuario)
+    public Usuario save(Usuario busuario)
     {
-        return usuarioRepository.save( usuario );
+        return usuarioRepository.save(busuario);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         aux.setTelefono(busuario.getTelefono());
         aux.setUserPassword(busuario.getUserPassword());
         aux.setRol(busuario.getRol());
-        usuarioRepository.save( aux );
+        usuarioRepository.save(aux);
         return aux;
     }
 }
