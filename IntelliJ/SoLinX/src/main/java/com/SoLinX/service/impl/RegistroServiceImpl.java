@@ -55,9 +55,10 @@ public class RegistroServiceImpl implements RegistroService {
 
         usuarioRepository.save(u);
 
+        // Código CORRECTO
         UsuarioEstudiante ue = UsuarioEstudiante.builder()
-                .usuario(u)
-                .estudiante(est)
+                .idUsuario(u.getIdUsuario()) // <-- Cambia 'usuario' por 'idUsuario'
+                .boleta(est.getBoleta())
                 .build();
 
         usuarioEstudianteRepository.save(ue);

@@ -21,6 +21,7 @@ public class UsuarioSupervisorServicempl implements UsuarioSupervisorService {
 
     @Override
     public UsuarioSupervisor getById(Integer idUsuario) {
+        // findById es el método estándar de JpaRepository
         return repository.findById(idUsuario).orElse(null);
     }
 
@@ -36,9 +37,19 @@ public class UsuarioSupervisorServicempl implements UsuarioSupervisorService {
 
     @Override
     public UsuarioSupervisor update(Integer idUsuario, UsuarioSupervisor usuarioSupervisor) {
-        UsuarioSupervisor aux = repository.getById(idUsuario);
-        aux.setSupervisor(usuarioSupervisor.getSupervisor());
+        // 1. Usar findById (forma moderna) en lugar de getById (obsoleto)
+        UsuarioSupervisor aux = repository.findById(idUsuario).orElse(null);
+
+        // 2. Es buena práctica verificar si existe antes de actualizar
+        if (aux == null) {
+            return null; // O lanzar una excepción de "No Encontrado"
+        }
+
+        // 3. --- ESTA ES LA CORRECCIÓN ---
+        // Los métodos getter y setter usan los nombres de campo (asumiendo 'idSupervisor')
+        // El idUsuario (la llave) no se cambia, solo el supervisor asignado.
+        aux.setIdSupervisor(usuarioSupervisor.getIdSupervisor());
+
         return repository.save(aux);
     }
 }
-

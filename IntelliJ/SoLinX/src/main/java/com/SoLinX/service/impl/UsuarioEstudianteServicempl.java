@@ -36,9 +36,19 @@ public class UsuarioEstudianteServicempl implements UsuarioEstudianteService {
 
     @Override
     public UsuarioEstudiante update(Integer id, UsuarioEstudiante ue) {
-        UsuarioEstudiante aux = usuarioEstudianteRepository.getById(id);
-        aux.setUsuario(ue.getUsuario());
-        aux.setEstudiante(ue.getEstudiante());
+        // 1. Usar findById (forma moderna) en lugar de getById (obsoleto)
+        UsuarioEstudiante aux = usuarioEstudianteRepository.findById(id).orElse(null);
+
+        // 2. Es buena práctica verificar si existe antes de actualizar
+        if (aux == null) {
+            return null; // O lanzar una excepción de "No Encontrado"
+        }
+
+        // 3. --- ESTA ES LA CORRECCIÓN ---
+        // Los métodos getter y setter usan los nombres de campo 'idUsuario' y 'boleta'
+        aux.setIdUsuario(ue.getIdUsuario());
+        aux.setBoleta(ue.getBoleta());
+
         return usuarioEstudianteRepository.save(aux);
     }
 }
