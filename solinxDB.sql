@@ -131,7 +131,7 @@ INSERT INTO UsuarioEmpresa (idUsuario, idEmpresa) VALUES
 -- USUARIOSUPERVISOR
 INSERT INTO UsuarioSupervisor (idUsuario, idSupervisor) VALUES
 (3, 1),
-(3, 2);
+(2, 2);
 
 -- PROYECTO
 INSERT INTO Proyecto (nombreProyecto, objetivo, vacantes, ubicacion, justificacion, idEmpresa) VALUES
