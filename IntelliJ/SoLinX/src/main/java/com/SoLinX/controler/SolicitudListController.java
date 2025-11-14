@@ -2,22 +2,22 @@ package com.SoLinX.controler;
 
 import com.SoLinX.dto.SolicitudListDto;
 import com.SoLinX.service.SolicitudListService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequestMapping("/SoLinX/api")
 @RestController
-@RequestMapping("/solicitud/list")
+@AllArgsConstructor
 public class SolicitudListController {
 
     private final SolicitudListService solicitudListService;
 
-    public SolicitudListController(SolicitudListService solicitudListService) {
-        this.solicitudListService = solicitudListService;
-    }
-
-    @GetMapping("/{idEmpresa}")
-    public List<SolicitudListDto> listar(@PathVariable Integer idEmpresa) {
-        return solicitudListService.listarSolicitudesDeEmpresa(idEmpresa);
+    @GetMapping("/solicitud/list/{idEmpresa}")
+    public ResponseEntity<List<SolicitudListDto>> listar(@PathVariable Integer idEmpresa) {
+        List<SolicitudListDto> lista = solicitudListService.listarSolicitudesDeEmpresa(idEmpresa);
+        return ResponseEntity.ok(lista);
     }
 }

@@ -2,18 +2,20 @@ package com.SoLinX.controler;
 
 import com.SoLinX.dto.PasswordUpdateDto;
 import com.SoLinX.service.PasswordUpdateService;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequestMapping("/SoLinX/api")
 @RestController
-@RequestMapping("/password")
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class PasswordUpdateController {
 
     private final PasswordUpdateService passwordUpdateService;
 
-    @PostMapping("/update")
-    public String actualizarPassword(@RequestBody PasswordUpdateDto dto) {
-        return passwordUpdateService.actualizarPassword(dto);
+    @PostMapping("/password/update")
+    public ResponseEntity<String> actualizarPassword(@RequestBody PasswordUpdateDto dto) {
+        String respuesta = passwordUpdateService.actualizarPassword(dto);
+        return ResponseEntity.ok(respuesta);
     }
 }

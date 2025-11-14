@@ -18,7 +18,6 @@ public class SupervisorController {
 
     private final SupervisorService supervisorService;
 
-    // -------------------- CREATE ---------------------
     @PostMapping("/supervisor")
     public ResponseEntity<SupervisorDto> save(@RequestBody SupervisorDto dto) {
 
@@ -28,7 +27,6 @@ public class SupervisorController {
         return ResponseEntity.ok(convertToDto(saved));
     }
 
-    // -------------------- LIST ---------------------
     @GetMapping("/supervisor")
     public ResponseEntity<List<SupervisorDto>> lista() {
         List<Supervisor> supervisores = supervisorService.getAll();
@@ -44,14 +42,12 @@ public class SupervisorController {
         return ResponseEntity.ok(dtos);
     }
 
-    // -------------------- GET BY ID ---------------------
     @GetMapping("/supervisor/{id}")
     public ResponseEntity<SupervisorDto> getById(@PathVariable Integer id) {
         Supervisor supervisor = supervisorService.getById(id);
         return ResponseEntity.ok(convertToDto(supervisor));
     }
 
-    // -------------------- UPDATE ---------------------
     @PutMapping("/supervisor/{id}")
     public ResponseEntity<SupervisorDto> update(@PathVariable Integer id, @RequestBody SupervisorDto dto) {
 
@@ -61,16 +57,12 @@ public class SupervisorController {
         return ResponseEntity.ok(convertToDto(actualizado));
     }
 
-    // -------------------- DELETE ---------------------
     @DeleteMapping("/supervisor/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         supervisorService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    // ============================================================
-    //              MÉTODOS DE CONVERSIÓN DTO <-> ENTITY
-    // ============================================================
 
     private SupervisorDto convertToDto(Supervisor supervisor) {
         return SupervisorDto.builder()
@@ -81,7 +73,7 @@ public class SupervisorController {
     }
 
     private Supervisor convertToEntity(SupervisorDto dto) {
-        Empresa empresa = new Empresa();     // solo mandamos el ID, JPA se encarga
+        Empresa empresa = new Empresa();
         empresa.setIdEmpresa(dto.getIdEmpresa());
 
         return Supervisor.builder()

@@ -18,7 +18,6 @@ public class ProyectoController {
 
     private final ProyectoService proyectoService;
 
-    // -------------------- CREATE ---------------------
     @PostMapping("/proyecto")
     public ResponseEntity<ProyectoDto> save(@RequestBody ProyectoDto dto) {
 
@@ -28,7 +27,6 @@ public class ProyectoController {
         return ResponseEntity.ok(convertToDto(guardado));
     }
 
-    // -------------------- LIST ---------------------
     @GetMapping("/proyecto")
     public ResponseEntity<List<ProyectoDto>> lista() {
 
@@ -45,14 +43,12 @@ public class ProyectoController {
         return ResponseEntity.ok(dtos);
     }
 
-    // -------------------- GET BY ID ---------------------
     @GetMapping("/proyecto/{id}")
     public ResponseEntity<ProyectoDto> getById(@PathVariable Integer id) {
         Proyecto proyecto = proyectoService.getById(id);
         return ResponseEntity.ok(convertToDto(proyecto));
     }
 
-    // -------------------- UPDATE ---------------------
     @PutMapping("/proyecto/{id}")
     public ResponseEntity<ProyectoDto> update(@PathVariable Integer id, @RequestBody ProyectoDto dto) {
 
@@ -62,16 +58,12 @@ public class ProyectoController {
         return ResponseEntity.ok(convertToDto(actualizado));
     }
 
-    // -------------------- DELETE ---------------------
     @DeleteMapping("/proyecto/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         proyectoService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    // ====================================================
-    //      CONVERTIR DE ENTITY → DTO
-    // ====================================================
     private ProyectoDto convertToDto(Proyecto proyecto) {
         return ProyectoDto.builder()
                 .idProyecto(proyecto.getIdProyecto())
@@ -86,9 +78,6 @@ public class ProyectoController {
                 .build();
     }
 
-    // ====================================================
-    //      CONVERTIR DE DTO → ENTITY
-    // ====================================================
     private Proyecto convertToEntity(ProyectoDto dto) {
 
         Empresa empresa = new Empresa();

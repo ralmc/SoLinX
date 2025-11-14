@@ -20,15 +20,8 @@ public class SolicitudController {
 
     private final SolicitudService solicitudService;
 
-    // --- INICIO DE CAMBIOS ---
-
-    // 1. Define un formateador de fecha. Puedes cambiar el patrón "dd/MM/yyyy HH:mm"
-    //    al formato de String que prefieras usar en tu DTO.
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    /**
-     * Helper para convertir un Timestamp (de la Entidad) a un String (para el DTO).
-     */
     private String formatTimestamp(Timestamp ts) {
         if (ts == null) {
             return null;
@@ -36,9 +29,6 @@ public class SolicitudController {
         return ts.toLocalDateTime().format(formatter);
     }
 
-    /**
-     * Helper para convertir un String (del DTO) a un Timestamp (para la Entidad).
-     */
     private Timestamp parseString(String s) {
         if (s == null || s.isEmpty()) {
             return null;
@@ -47,20 +37,10 @@ public class SolicitudController {
             LocalDateTime ldt = LocalDateTime.parse(s, formatter);
             return Timestamp.valueOf(ldt);
         } catch (java.time.format.DateTimeParseException e) {
-            // Maneja el error si el String del DTO no tiene el formato correcto
-            // Por ahora, solo imprimimos el error y retornamos null.
             System.err.println("Error al parsear la fecha: " + s);
             return null;
-            // O podrías lanzar una excepción:
-            // throw new IllegalArgumentException("Formato de fecha inválido. Usar: " + formatter.toString());
         }
     }
-
-    // 2. He eliminado la lista 'solicitudDtos' y el método 'loadList()'
-    //    porque no se estaban usando y parecían ser solo de prueba.
-
-    // --- FIN DE CAMBIOS ---
-
 
     @RequestMapping("/solicitud")
     public ResponseEntity<List<SolicitudDto>> lista() {
@@ -73,8 +53,7 @@ public class SolicitudController {
                                 .stream()
                                 .map(u -> SolicitudDto.builder()
                                         .idSolicitud(u.getIdSolicitud())
-                                        // APLICAMOS LA CONVERSIÓN (Timestamp -> String)
-                                        .fechaSolicitud(formatTimestamp(u.getFechaSolicitud())) // <-- CAMBIO
+                                        .fechaSolicitud(formatTimestamp(u.getFechaSolicitud()))
                                         .estadoSolicitud( u.getEstadoSolicitud())
                                         .boleta(u.getBoleta())
                                         .idProyecto(u.getIdProyecto())
@@ -90,8 +69,7 @@ public class SolicitudController {
             return  ResponseEntity.notFound().build();
         } return ResponseEntity.ok(SolicitudDto.builder()
                 .idSolicitud(u.getIdSolicitud())
-                // APLICAMOS LA CONVERSIÓN (Timestamp -> String)
-                .fechaSolicitud(formatTimestamp(u.getFechaSolicitud())) // <-- CAMBIO
+                .fechaSolicitud(formatTimestamp(u.getFechaSolicitud()))
                 .estadoSolicitud( u.getEstadoSolicitud())
                 .boleta(u.getBoleta())
                 .idProyecto(u.getIdProyecto())
@@ -102,18 +80,16 @@ public class SolicitudController {
     public ResponseEntity<SolicitudDto> save(@RequestBody SolicitudDto solicitudDto) {
         Solicitud u = Solicitud.
                 builder()
-                // APLICAMOS LA CONVERSIÓN INVERSA (String -> Timestamp)
-                .fechaSolicitud(parseString(solicitudDto.getFechaSolicitud())) // <-- CAMBIO
+                .fechaSolicitud(parseString(solicitudDto.getFechaSolicitud()))
                 .estadoSolicitud( solicitudDto.getEstadoSolicitud())
                 .boleta(solicitudDto.getBoleta())
                 .idProyecto(solicitudDto.getIdProyecto())
                 .build();
-        solicitudService.save(u); // 'u' ahora tiene el ID generado por la DB
+        solicitudService.save(u);
 
         return ResponseEntity.ok(SolicitudDto.builder()
-                .idSolicitud(u.getIdSolicitud()) // Devuelve el ID generado
-                // APLICAMOS LA CONVERSIÓN (Timestamp -> String)
-                .fechaSolicitud(formatTimestamp(u.getFechaSolicitud())) // <-- CAMBIO
+                .idSolicitud(u.getIdSolicitud())
+                .fechaSolicitud(formatTimestamp(u.getFechaSolicitud()))
                 .estadoSolicitud( u.getEstadoSolicitud())
                 .boleta(u.getBoleta())
                 .idProyecto(u.getIdProyecto())
@@ -130,16 +106,14 @@ public class SolicitudController {
     public ResponseEntity<SolicitudDto>update( @PathVariable Integer id, @RequestBody SolicitudDto solicitudDto) {
         Solicitud aux = solicitudService.update( id, Solicitud
                 .builder()
-                // APLICAMOS LA CONVERSIÓN INVERSA (String -> Timestamp)
-                .fechaSolicitud(parseString(solicitudDto.getFechaSolicitud())) // <-- CAMBIO
+                .fechaSolicitud(parseString(solicitudDto.getFechaSolicitud()))
                 .estadoSolicitud( solicitudDto.getEstadoSolicitud())
                 .boleta(solicitudDto.getBoleta())
                 .idProyecto(solicitudDto.getIdProyecto())
                 .build());
 
         return ResponseEntity.ok(SolicitudDto.builder()
-                // APLICAMOS LA CONVERSIÓN (Timestamp -> String)
-                .fechaSolicitud(formatTimestamp(aux.getFechaSolicitud())) // <-- CAMBIO
+                .fechaSolicitud(formatTimestamp(aux.getFechaSolicitud()))
                 .estadoSolicitud(aux.getEstadoSolicitud())
                 .boleta(aux.getBoleta())
                 .idProyecto(aux.getIdProyecto())
