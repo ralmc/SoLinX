@@ -1,26 +1,23 @@
 package com.SoLinX.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "usuario_empresa")
+@Table(name = "UsuarioEmpresa")
 public class UsuarioEmpresa {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idUsuarioEmpresa")
-    private Integer idUsuarioEmpresa;
+    @Column(name = "idUsuario")
+    private Integer idUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idUsuario", nullable = false)
-    private Usuario usuario;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idEmpresa", nullable = false)
-    private Empresa empresa;
+    @Column(name = "idEmpresa")
+    private Integer idEmpresa;
 }

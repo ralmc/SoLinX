@@ -11,14 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "usuariosupervisor")
+@Table(name = "UsuarioSupervisor")
 public class UsuarioSupervisor {
 
     @Id
     @Column(name = "idUsuario")
     private Integer idUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idSupervisor")
-    private Supervisor supervisor;
+    @Column(name = "idSupervisor")
+    private Integer idSupervisor;
 }

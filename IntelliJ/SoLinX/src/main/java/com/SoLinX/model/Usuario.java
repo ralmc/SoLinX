@@ -17,14 +17,19 @@ public class Usuario {
     @Column(name = "idUsuario")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idUsuario;
+
     @Column(name = "nombre")
     private String nombre;
+
     @Column(name = "correo")
     private String correo;
+
     @Column(name = "telefono")
     private String telefono;
+
     @Column(name = "userPassword")
     private String userPassword;
+
     @Column(name = "rol")
     private String rol;
 }

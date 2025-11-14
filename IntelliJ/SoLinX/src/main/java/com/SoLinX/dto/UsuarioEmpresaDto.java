@@ -1,11 +1,11 @@
 package com.SoLinX.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class UsuarioEmpresaDTO {
-
-    private Integer idUsuarioEmpresa;
+@Builder
+public class UsuarioEmpresaDto {
     private Integer idUsuario;
     private Integer idEmpresa;
 }

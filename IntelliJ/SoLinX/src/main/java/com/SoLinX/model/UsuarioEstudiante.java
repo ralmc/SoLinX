@@ -1,7 +1,10 @@
 package com.SoLinX.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -15,12 +18,6 @@ public class UsuarioEstudiante {
     @Column(name = "idUsuario")
     private Integer idUsuario;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "idUsuario", nullable = false)
-    private Usuario usuario;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "boleta", nullable = false)
-    private Estudiante estudiante;
+    @Column(name = "boleta")
+    private Integer boleta;
 }
