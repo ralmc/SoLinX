@@ -1,0 +1,137 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_inicio"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/solinx"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:fontFamily="@font/molgan"
+            android:paddingVertical="10dp"
+            android:paddingRight="40dp"
+            android:text="SoLinX"
+            android:textAlignment="center"
+            android:textColor="#1497B9"
+            android:textSize="70sp"
+            android:textStyle="bold"/>
+        <ImageView
+            android:id="@+id/imgLogoAve"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="Logo SoLinX"
+            android:src="@drawable/solinx_logo" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="140dp" />
+
+    <Button
+        android:id="@+id/btnIniciarSesion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Sesión"
+        android:textColor="#000000"
+        android:textSize="50sp"
+        android:stateListAnimator="@null"
+        android:textStyle="bold"
+        android:paddingBottom="5dp"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/molgan" />
+
+    <View
+        android:layout_width="300dp"
+        android:layout_height="5dp"
+        android:background="#000000"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="18dp" />
+
+    <Button
+        android:id="@+id/btnCrearCuenta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crear Cuenta"
+        android:textColor="#808080"
+        android:stateListAnimator="@null"
+        android:textSize="45sp"
+        android:textStyle="normal"
+        android:backgroundTint="@android:color/transparent"
+        android:fontFamily="@font/molgan"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:id="@+id/layoutInferior"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="28dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tvAlumno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alumno"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/molgan"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  |  "
+            android:textColor="#808080"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvEmpresa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Empresa"
+            android:textColor="#808080"
+            android:textSize="14sp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/molgan"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  |  "
+            android:textColor="#808080"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvSupervisor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Supervisor"
+            android:textColor="#808080"
+            android:textSize="14sp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/molgan"/>
+    </LinearLayout>
+</LinearLayout>
