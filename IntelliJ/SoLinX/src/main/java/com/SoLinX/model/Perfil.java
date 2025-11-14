@@ -1,10 +1,7 @@
 package com.SoLinX.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -13,15 +10,18 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "perfil")
 public class Perfil {
+
     @Id
-    @Column(name = "idPerfil")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idPerfil")
     private Integer idPerfil;
+
     @Column(name = "foto")
-    private String foto; //Cambiar por Byte[]
+    private String foto;
+
     @Column(name = "tema")
     private String tema;
-    @Column(name = "idUsuario")
+
+    @Column(name = "idUsuario", nullable = false)
     private Integer idUsuario;
 }
-

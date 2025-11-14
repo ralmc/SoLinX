@@ -1,27 +1,23 @@
 package com.SoLinX.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "estudiante")
+@Table(name = "Estudiante")
 public class Estudiante {
+
     @Id
     @Column(name = "boleta")
     private Integer boleta;
-    @Column(name = "carrera")
+
+    @Column(name = "carrera", nullable = false)
     private String carrera;
-    @Column(name = "escuela")
+
+    @Column(name = "escuela", nullable = false)
     private String escuela;
 }
-

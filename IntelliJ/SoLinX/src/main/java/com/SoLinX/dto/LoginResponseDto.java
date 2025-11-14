@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PerfilDto {
-    private int idPerfil;
-    private String foto;
-    private String tema;
+public class LoginResponseDto {
     private int idUsuario;
+    private String nombre;
+    private String correo;
+    private String rol;
 }

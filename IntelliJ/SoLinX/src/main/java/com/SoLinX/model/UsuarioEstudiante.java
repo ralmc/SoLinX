@@ -8,19 +8,19 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "usuario_estudiante")
+@Table(name = "UsuarioEstudiante")
 public class UsuarioEstudiante {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idUsuarioEstudiante")
-    private Integer idUsuarioEstudiante;
+    @Column(name = "idUsuario")
+    private Integer idUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idEstudiante", nullable = false)
+    @JoinColumn(name = "boleta", nullable = false)
     private Estudiante estudiante;
 }
