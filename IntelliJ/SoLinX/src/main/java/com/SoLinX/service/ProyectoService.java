@@ -1,18 +1,13 @@
 package com.SoLinX.service;
 
-import com.SoLinX.dto.ProyectoDto;
+import com.SoLinX.model.Proyecto;
 
 import java.util.List;
 
 public interface ProyectoService {
-
-    List<ProyectoDto> getAll();
-
-    ProyectoDto getById(Integer id);
-
-    ProyectoDto save(ProyectoDto proyectoDto);
-
-    ProyectoDto update(Integer id, ProyectoDto proyectoDto);
-
+    List<Proyecto> getAll();
+    Proyecto getById(Integer id);
+    Proyecto save(Proyecto Proyecto);
+    Proyecto update(Integer id, Proyecto Proyecto);
     void delete(Integer id);
 }

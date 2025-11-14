@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RestController
 @AllArgsConstructor
 public class PerfilController {
-    private final PerfilService PerfilService;
+    private final PerfilService perfilService;
     private List<PerfilDto> PerfilDtos;
 
     public void loadList() {
@@ -34,7 +34,7 @@ public class PerfilController {
 
     @RequestMapping("/perfil")
     public ResponseEntity<List<PerfilDto>> lista() {
-        List<Perfil> perfils = PerfilService.getAll();
+        List<Perfil> perfils = perfilService.getAll();
         if(perfils == null || perfils.size()== 0) {
             return ResponseEntity.notFound( ).build( );
         } return ResponseEntity
@@ -52,7 +52,7 @@ public class PerfilController {
 
     @RequestMapping("/perfil/{id}")
     public ResponseEntity<PerfilDto>getById(@PathVariable Integer id) {
-        Perfil u = PerfilService.getById(id);
+        Perfil u = perfilService.getById(id);
 
         if(u == null ) {
             return  ResponseEntity.notFound().build();
@@ -72,7 +72,7 @@ public class PerfilController {
                         .tema( PerfilDto.getTema())
                         .idUsuario(PerfilDto.getIdUsuario())
                 .build();
-        PerfilService.save(u);
+        perfilService.save(u);
         return ResponseEntity.ok(PerfilDto.builder()
                 .idPerfil(u.getIdPerfil())
                 .foto(u.getFoto())
@@ -83,22 +83,22 @@ public class PerfilController {
 
     @DeleteMapping( "/perfil/{id}")
     public ResponseEntity<PerfilDto> delete(@PathVariable Integer id) {
-        PerfilService.delete(id);
+        perfilService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping( "/perfil/{id}")
     public ResponseEntity<PerfilDto>update( @PathVariable Integer id, @RequestBody PerfilDto PerfilDto) {
-        Perfil aux = PerfilService.update( id, Perfil
+        Perfil aux = perfilService.update( id, Perfil
                 .builder()
-                .foto( PerfilDto.getFoto())
-                .tema( PerfilDto.getTema())
+                .foto(PerfilDto.getFoto())
+                .tema(PerfilDto.getTema())
                 .idUsuario(PerfilDto.getIdUsuario())
                 .build());
         return ResponseEntity.ok(PerfilDto.builder()
-                .foto( PerfilDto.getFoto())
-                .tema( PerfilDto.getTema())
-                .idUsuario(PerfilDto.getIdUsuario())
+                .foto(aux.getFoto())
+                .tema(aux.getTema())
+                .idUsuario(aux.getIdUsuario())
                 .build());
     }
 }

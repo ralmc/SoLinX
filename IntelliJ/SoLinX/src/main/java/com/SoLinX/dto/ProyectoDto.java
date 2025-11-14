@@ -16,6 +16,5 @@ public class ProyectoDto {
     private String ubicacion;
     private String justificacion;
     private Timestamp fechaTermino;
-
     private int idEmpresa;
 }

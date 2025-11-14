@@ -44,5 +44,5 @@ public class Proyecto {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idEmpresa")
-    private Empresa empresa;
+    private Empresa idEmpresa;
 }
