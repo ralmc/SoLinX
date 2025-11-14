@@ -35,13 +35,24 @@ public class SolicitudServiceImpl implements SolicitudService {
 
     @Override
     public Solicitud update(Integer id, Solicitud bSolicitud) {
-        Solicitud aux = solicitudRepository.getById(id);
-        aux.setIdSolicitud(bSolicitud.getBoleta());
+        // 1. Usar findById (forma moderna) en lugar de getById (obsoleto)
+        Solicitud aux = solicitudRepository.findById(id).orElse(null);
+
+        // 2. Verificar si la solicitud existe
+        if (aux == null) {
+            // No podemos actualizar algo que no existe
+            return null;
+        }
+
+        // 3. ¡ESTA ES LA CORRECCIÓN!
+        // Copiamos los datos de 'bSolicitud' (los datos nuevos) a 'aux' (la entidad existente)
+        // NUNCA se debe tocar el ID (aux.setIdSolicitud(...))
         aux.setFechaSolicitud(bSolicitud.getFechaSolicitud());
         aux.setEstadoSolicitud(bSolicitud.getEstadoSolicitud());
         aux.setBoleta(bSolicitud.getBoleta());
         aux.setIdProyecto(bSolicitud.getIdProyecto());
-        solicitudRepository.save(aux);
-        return aux;
+
+        // 4. Guardamos la entidad 'aux' (que sigue teniendo su ID original)
+        return solicitudRepository.save(aux);
     }
 }

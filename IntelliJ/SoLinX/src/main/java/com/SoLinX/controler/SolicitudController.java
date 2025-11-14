@@ -111,8 +111,13 @@ public class SolicitudController {
                 .boleta(solicitudDto.getBoleta())
                 .idProyecto(solicitudDto.getIdProyecto())
                 .build());
+        
+        if (aux == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok(SolicitudDto.builder()
+                .idSolicitud(aux.getIdSolicitud())
                 .fechaSolicitud(formatTimestamp(aux.getFechaSolicitud()))
                 .estadoSolicitud(aux.getEstadoSolicitud())
                 .boleta(aux.getBoleta())
