@@ -19,7 +19,7 @@ public class SupervisorEmpresaAceptarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_lista_aceptaciones_empresas);
+        setContentView(R.layout.activity_empresas_lista_aceptaciones);
 
         recyclerViewAceptaciones = findViewById(R.id.recycler_view_aceptaciones);
 

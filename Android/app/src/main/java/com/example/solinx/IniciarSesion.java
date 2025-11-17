@@ -8,18 +8,15 @@ import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-public class iniSesion extends AppCompatActivity implements View.OnClickListener {
+public class IniciarSesion extends AppCompatActivity implements View.OnClickListener {
     EditText nombre, contraseña;
     Button enviar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_ini_sesion);
+        setContentView(R.layout.activity_iniciar_sesion);
 
         nombre = findViewById(R.id.etUsuario);
         contraseña = findViewById(R.id.etContrasena);

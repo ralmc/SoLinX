@@ -11,22 +11,22 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class CrearSesionAlumno extends AppCompatActivity implements View.OnClickListener {
+public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClickListener {
     Spinner spEscuela, spCarrera;
     Button btnEnviar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_alumno_crear_sesion);
+        setContentView(R.layout.activity_alumno_crear_cuenta);
 
         spEscuela = findViewById(R.id.spEscuela);
         spCarrera = findViewById(R.id.spCarrera);
         btnEnviar = findViewById(R.id.btnEnviar);
         btnEnviar.setOnClickListener(this);
 
-        String[] escuelas = {"Selecciona", "Cecyt 9"};
-        String[] carreras = {"Selecciona", "Programación"};
+        String[] escuelas = {"Escuela", "Cecyt 9"};
+        String[] carreras = {"Carrera", "Programación"};
 
         ArrayAdapter<String> adapterEscuela = new ArrayAdapter<>(
                 this,

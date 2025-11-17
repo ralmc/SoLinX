@@ -18,7 +18,7 @@ public class SupervisorSolicitudesAlumnoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_lista_solicitudes_alumnos);
+        setContentView(R.layout.activity_alumnos_lista_solicitudes);
 
         recyclerViewSolicitudes = findViewById(R.id.recycler_view_solicitudes);
         miListaDeSolicitudes = new ArrayList<>();

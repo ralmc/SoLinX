@@ -3,8 +3,6 @@ package com.example.solinx;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +38,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
             Intent intento = new Intent(this, AlumnoEnviarSolicitud.class);
             startActivity(intento);
         } else if (id == fotoperfil.getId()) {
-            Intent intento = new Intent(this, Vcalumno.class);
+            Intent intento = new Intent(this, AlumnoVistaCuenta.class);
             startActivity(intento);
         }
     }

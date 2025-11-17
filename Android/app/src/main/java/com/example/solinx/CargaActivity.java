@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.solinx.iniSesion;
 //INICAR PROYECTO EN: CargaActivity
 public class CargaActivity extends AppCompatActivity {
 

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class CrearEmpresa extends AppCompatActivity {
+public class EmpresaCrear extends AppCompatActivity {
 
     private Button btnRegister;
     private TextView tvLoginLink;
@@ -16,7 +16,7 @@ public class CrearEmpresa extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cre_empresa);
+        setContentView(R.layout.activity_empresa_crear);
 
 
         btnRegister = findViewById(R.id.btn_register);
@@ -43,7 +43,7 @@ public class CrearEmpresa extends AppCompatActivity {
      * 🔹 Abre la pantalla VistaEmpresas
      */
     private void abrirVistaEmpresas() {
-        Intent intent = new Intent(CrearEmpresa.this, iniSesion.class);
+        Intent intent = new Intent(EmpresaCrear.this, IniciarSesion.class);
         startActivity(intent);
     }
 }

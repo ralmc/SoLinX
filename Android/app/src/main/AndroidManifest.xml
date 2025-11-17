@@ -30,10 +30,10 @@
             android:exported="false" />
 
         <!-- ACTIVIDADES QUE SE ABREN POR INTENT -->
-        <activity android:name=".CrearSesionAlumno" android:exported="true" />
-        <activity android:name=".iniSesion" android:exported="true" />
+        <activity android:name=".AlumnoCrearCuenta" android:exported="true" />
+        <activity android:name=".IniciarSesion" android:exported="true" />
         <activity android:name=".MenuSupervisorActivity" android:exported="true" />
-        <activity android:name=".CrearEmpresa" android:exported="true" />
+        <activity android:name=".EmpresaCrear" android:exported="true" />
         <activity android:name=".AlumnoEnviarSolicitud" android:exported="true" />
         <activity android:name=".AlumnoMenuEmpresas" android:exported="true" />
         <activity android:name=".EmpresaVista" android:exported="true" />
@@ -41,7 +41,7 @@
         <!-- ACTIVIDADES INTERNAS QUE NO SE ABREN POR INTENT DIRECTO -->
         <activity android:name=".menu_super" android:exported="false" />
         <activity android:name=".EmpresaNotificaciones" android:exported="false" />
-        <activity android:name=".Vcalumno" android:exported="false" />
+        <activity android:name=".AlumnoVistaCuenta" android:exported="false" />
         <activity android:name=".SupervisorEmpresaAceptarActivity" android:exported="false" />
         <activity android:name=".SupervisorSolicitudesAlumnoActivity" android:exported="false" />
 

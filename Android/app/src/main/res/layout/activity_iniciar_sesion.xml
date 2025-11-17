@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:fillViewport="true"
-    tools:context=".iniSesion">
+    tools:context=".IniciarSesion">
 
     <LinearLayout
         android:layout_width="match_parent"

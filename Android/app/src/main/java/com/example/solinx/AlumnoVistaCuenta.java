@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class Vcalumno extends AppCompatActivity implements View.OnClickListener {
+public class AlumnoVistaCuenta extends AppCompatActivity implements View.OnClickListener {
 
     Button btnCerrarSesion;
     ImageButton regresar;
@@ -36,7 +36,7 @@ public class Vcalumno extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vcalumno); // tu XML
+        setContentView(R.layout.activity_alumno_vista_cuenta); // tu XML
 
         // --- Header ---
         tvBoleta = findViewById(R.id.tvBoleta);

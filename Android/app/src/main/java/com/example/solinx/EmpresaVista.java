@@ -27,9 +27,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
         tvEliminar = findViewById(R.id.tvEliminar);
         logoEmpresa = findViewById(R.id.logoEmpresa);
         btnotificaciones = findViewById(R.id.notificaciones);
-        btnaceptado = findViewById(R.id.aceptado);
-        btnrechazado = findViewById(R.id.rechazado);
-        btnpendiente = findViewById(R.id.pendiente);
 
         btnotificaciones.setOnClickListener(this);
         btnEditar.setOnClickListener(this);
@@ -54,13 +51,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Eliminado", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.btnEditar){
             Toast.makeText(this, "Editado", Toast.LENGTH_SHORT).show();
-        }else if (id == R.id.aceptado){
-            Toast.makeText(this, "Aceptado", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.rechazado) {
-            Toast.makeText(this, "Rechazado", Toast.LENGTH_SHORT).show();
-        } else if(id == R.id.pendiente){
-            Toast.makeText(this, "Pendiente", Toast.LENGTH_SHORT).show();
         }
-
     }
 }

@@ -43,17 +43,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
 
         if (v.getId() == R.id.btnIniciarSesion) {
-            Intent intento = new Intent(this, iniSesion.class);
+            Intent intento = new Intent(this, IniciarSesion.class);
             startActivity(intento);
         } else if (v.getId() == R.id.btnCrearCuenta) {
-            Intent intento = new Intent(this, CrearSesionAlumno.class);
+            Intent intento = new Intent(this, AlumnoCrearCuenta.class);
             startActivity(intento);
         } else if (v.getId() == R.id.tvSupervisor) {
             Intent intent = new Intent(this, MenuSupervisorActivity.class);
             startActivity(intent);
         } else if (v.getId() == R.id.tvAlumno) {
         } else if (v.getId() == R.id.tvEmpresa) {
-            Intent intent = new Intent(this, CrearEmpresa.class);
+            Intent intent = new Intent(this, EmpresaCrear.class);
             startActivity(intent);
         }
     }
