@@ -157,3 +157,7 @@ INSERT INTO Perfil (tema, idUsuario) VALUES
 ('claro', 3),
 ('oscuro', 4),
 ('claro', 5);
+
+select* from estudiante;
+select* from Usuario;
+

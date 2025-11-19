@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- PERMISOS DE RED -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,6 +16,7 @@
         android:roundIcon="@mipmap/ic_solinx_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SoLinX"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
 
         <!-- SPLASH SCREEN (launcher) -->
@@ -44,6 +50,11 @@
         <activity android:name=".AlumnoVistaCuenta" android:exported="false" />
         <activity android:name=".SupervisorEmpresaAceptarActivity" android:exported="false" />
         <activity android:name=".SupervisorSolicitudesAlumnoActivity" android:exported="false" />
+
+        <!-- COMPATIBILIDAD CON HTTP (solo desarrollo) -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
     </application>
 </manifest>

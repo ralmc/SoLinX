@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +19,6 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_alumno_menu_empresas);
 
-        //Declarar los textViews
         masinfo = findViewById(R.id.masinfo);
         masinfo.setOnClickListener(this);
         fotoperfil = findViewById(R.id.fotoperfil);
@@ -28,7 +28,13 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         representante = findViewById(R.id.representante);
         vacantes = findViewById(R.id.vacantes);
 
-        //Declarar los setOnClickListener
+        Intent intent = getIntent();
+        Long idUsuario = intent.getLongExtra("idUsuario", 0);
+        String nombre = intent.getStringExtra("nombre");
+        String correo = intent.getStringExtra("correo");
+        String rol = intent.getStringExtra("rol");
+
+        Toast.makeText(this, "Hola " + nombre + " (" + rol + ")", Toast.LENGTH_SHORT).show();
     }
 
     @Override
