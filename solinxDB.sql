@@ -1,5 +1,5 @@
 -- SoLinX
-
+Drop Database solinx;
 CREATE DATABASE IF NOT EXISTS solinx;
 USE solinx;
 
@@ -117,7 +117,7 @@ INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
 ('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa'),
 ('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor'),
 ('Admin Master', 'admin@solinx.com', '5500112233', 'admin123', 'administrador'),
-('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pass123', 'estudiante');
+('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante');
 
 -- USUARIOESTUDIANTE
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
@@ -161,3 +161,11 @@ INSERT INTO Perfil (tema, idUsuario) VALUES
 select* from estudiante;
 select* from Usuario;
 
+-- Verifica que el usuario existe con esos datos exactos
+SELECT * FROM Usuario 
+WHERE correo = 'mauro@correo.com' 
+AND userPassword = 'pass123';
+
+-- Verifica la relación con estudiante
+SELECT * FROM UsuarioEstudiante 
+WHERE idUsuario = (SELECT idUsuario FROM Usuario WHERE correo = 'mauro@correo.com');

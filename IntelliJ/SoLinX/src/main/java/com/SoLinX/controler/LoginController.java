@@ -16,13 +16,11 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
-
         LoginResponseDto response = loginService.login(loginDto);
 
         if (response == null) {
             return ResponseEntity.status(401).build();
         }
-
         return ResponseEntity.ok(response);
     }
 }

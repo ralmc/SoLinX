@@ -43,7 +43,7 @@
                 android:id="@+id/etUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre de Usuario"
+                android:hint="Correo electrónico"
                 android:inputType="textPersonName"
                 android:textColor="#333333"
                 android:textSize="16sp" />

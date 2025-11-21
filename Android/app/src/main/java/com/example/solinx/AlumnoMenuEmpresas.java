@@ -1,5 +1,4 @@
 package com.example.solinx;
-// LANDA CABALLERO ANGEL
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -29,7 +28,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         vacantes = findViewById(R.id.vacantes);
 
         Intent intent = getIntent();
-        Long idUsuario = intent.getLongExtra("idUsuario", 0);
+        Integer idUsuario = intent.getIntExtra("idUsuario", 0);
         String nombre = intent.getStringExtra("nombre");
         String correo = intent.getStringExtra("correo");
         String rol = intent.getStringExtra("rol");
