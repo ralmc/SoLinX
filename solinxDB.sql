@@ -85,9 +85,70 @@ CREATE TABLE Perfil (
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-SHOW TABLES FROM solinx;
+-- EMPIEZA SISTEMA DE AUDOTORIA
+-- Tabla CAMBIOS
+CREATE TABLE CAMBIOS (
+	ID_aud INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	ROL VARCHAR (25),
+	Accion ENUM ('INSERT','UPDATE','DELETE') NOT NULL,
+	ID_afectado SMALLINT,
+	Usuario_nombre VARCHAR(100)
+);
 
--- FOR TESTING
+DELIMITER $$
+-- ============================================
+-- TRIGGER PARA INSERT EN USUARIO
+-- ============================================
+DROP TRIGGER IF EXISTS usuario_insert $$
+CREATE TRIGGER usuario_insert
+AFTER INSERT ON Usuario
+FOR EACH ROW
+BEGIN
+    INSERT INTO CAMBIOS (ROL, Accion, ID_afectado, Usuario_nombre)
+    VALUES (
+        NEW.rol,
+        'INSERT',
+        NEW.idUsuario,
+        NEW.nombre
+    );
+END $$
+
+-- ============================================
+-- TRIGGER PARA UPDATE EN USUARIO
+-- ============================================
+DROP TRIGGER IF EXISTS usuario_update $$
+CREATE TRIGGER usuario_update
+AFTER UPDATE ON Usuario
+FOR EACH ROW
+BEGIN
+    INSERT INTO CAMBIOS (ROL, Accion, ID_afectado, Usuario_nombre)
+    VALUES (
+        NEW.rol,
+        'UPDATE',
+        NEW.idUsuario,
+        NEW.nombre
+    );
+END $$
+
+-- ============================================
+-- TRIGGER PARA DELETE EN USUARIO
+-- ============================================
+DROP TRIGGER IF EXISTS usuario_delete $$
+CREATE TRIGGER usuario_delete
+AFTER DELETE ON Usuario
+FOR EACH ROW
+BEGIN
+    INSERT INTO CAMBIOS (ROL, Accion, ID_afectado, Usuario_nombre)
+    VALUES (
+        OLD.rol,
+        'DELETE',
+        OLD.idUsuario,
+        OLD.nombre
+    );
+END $$
+DELIMITER ;
+-- TERMINA SISTEMA DE AUDOTORIA
 
 -- ESTUDIANTE
 INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
@@ -158,14 +219,4 @@ INSERT INTO Perfil (tema, idUsuario) VALUES
 ('oscuro', 4),
 ('claro', 5);
 
-select* from estudiante;
-select* from Usuario;
-
--- Verifica que el usuario existe con esos datos exactos
-SELECT * FROM Usuario 
-WHERE correo = 'mauro@correo.com' 
-AND userPassword = 'pass123';
-
--- Verifica la relación con estudiante
-SELECT * FROM UsuarioEstudiante 
-WHERE idUsuario = (SELECT idUsuario FROM Usuario WHERE correo = 'mauro@correo.com');
+select * from CAMBIOS;
