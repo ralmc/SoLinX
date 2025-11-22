@@ -1,5 +1,5 @@
 -- SoLinX
-Drop Database solinx;
+DROP DATABASE IF EXISTS solinx;
 CREATE DATABASE IF NOT EXISTS solinx;
 USE solinx;
 
@@ -78,35 +78,43 @@ CREATE TABLE Solicitud (
 );
 
 CREATE TABLE Perfil (
-	idPerfil INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    idPerfil INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     foto BLOB,
     tema ENUM('claro', 'oscuro') NOT NULL DEFAULT 'claro',
     idUsuario INT NOT NULL,
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- EMPIEZA SISTEMA DE AUDOTORIA
--- Tabla CAMBIOS
+-- ============================================
+-- EMPIEZA SISTEMA DE AUDITORÍA
+-- ============================================
 CREATE TABLE CAMBIOS (
-	ID_aud INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-	Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	ROL VARCHAR (25),
-	Accion ENUM ('INSERT','UPDATE','DELETE') NOT NULL,
-	ID_afectado SMALLINT,
-	Usuario_nombre VARCHAR(100)
+    ID_aud INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Usuario_BD VARCHAR(50),  -- Usuario de MySQL (angel, mauro, erick, adrian)
+    ROL VARCHAR(25),  -- Rol en la aplicación (estudiante, empresa, etc.)
+    Accion ENUM('INSERT','UPDATE','DELETE') NOT NULL,
+    ID_afectado SMALLINT,
+    Usuario_nombre VARCHAR(100)  -- Nombre del usuario afectado
 );
 
+-- ============================================
+-- TRIGGERS
+-- ============================================
 DELIMITER $$
--- ============================================
+
 -- TRIGGER PARA INSERT EN USUARIO
--- ============================================
 DROP TRIGGER IF EXISTS usuario_insert $$
 CREATE TRIGGER usuario_insert
 AFTER INSERT ON Usuario
 FOR EACH ROW
 BEGIN
-    INSERT INTO CAMBIOS (ROL, Accion, ID_afectado, Usuario_nombre)
+    DECLARE v_usuario_bd VARCHAR(50);
+    SET v_usuario_bd = SUBSTRING_INDEX(USER(), '@', 1);
+    
+    INSERT INTO CAMBIOS (Usuario_BD, ROL, Accion, ID_afectado, Usuario_nombre)
     VALUES (
+        v_usuario_bd,
         NEW.rol,
         'INSERT',
         NEW.idUsuario,
@@ -114,16 +122,17 @@ BEGIN
     );
 END $$
 
--- ============================================
--- TRIGGER PARA UPDATE EN USUARIO
--- ============================================
 DROP TRIGGER IF EXISTS usuario_update $$
 CREATE TRIGGER usuario_update
 AFTER UPDATE ON Usuario
 FOR EACH ROW
 BEGIN
-    INSERT INTO CAMBIOS (ROL, Accion, ID_afectado, Usuario_nombre)
+    DECLARE v_usuario_bd VARCHAR(50);
+    SET v_usuario_bd = SUBSTRING_INDEX(USER(), '@', 1);
+    
+    INSERT INTO CAMBIOS (Usuario_BD, ROL, Accion, ID_afectado, Usuario_nombre)
     VALUES (
+        v_usuario_bd,
         NEW.rol,
         'UPDATE',
         NEW.idUsuario,
@@ -131,16 +140,17 @@ BEGIN
     );
 END $$
 
--- ============================================
--- TRIGGER PARA DELETE EN USUARIO
--- ============================================
 DROP TRIGGER IF EXISTS usuario_delete $$
 CREATE TRIGGER usuario_delete
 AFTER DELETE ON Usuario
 FOR EACH ROW
 BEGIN
-    INSERT INTO CAMBIOS (ROL, Accion, ID_afectado, Usuario_nombre)
+    DECLARE v_usuario_bd VARCHAR(50);
+    SET v_usuario_bd = SUBSTRING_INDEX(USER(), '@', 1);
+    
+    INSERT INTO CAMBIOS (Usuario_BD, ROL, Accion, ID_afectado, Usuario_nombre)
     VALUES (
+        v_usuario_bd,
         OLD.rol,
         'DELETE',
         OLD.idUsuario,
@@ -148,8 +158,59 @@ BEGIN
     );
 END $$
 DELIMITER ;
--- TERMINA SISTEMA DE AUDOTORIA
+-- ============================================
+-- TERMINA SISTEMA DE AUDITORÍA
+-- ============================================
+-- ============================================
+-- CREAR ROLES
+-- ============================================
+DROP ROLE IF EXISTS 'administrador';
+DROP ROLE IF EXISTS 'empresa';
+DROP ROLE IF EXISTS 'supervisor';
+DROP ROLE IF EXISTS 'estudiante';
+DROP USER IF EXISTS 'angel'@'localhost';
+DROP USER IF EXISTS 'mauro'@'localhost';
+DROP USER IF EXISTS 'erick'@'localhost';
+DROP USER IF EXISTS 'adrian'@'localhost';
 
+CREATE ROLE 'administrador';
+CREATE ROLE 'empresa';
+CREATE ROLE 'supervisor';
+CREATE ROLE 'estudiante';
+
+-- ============================================
+-- PERMISOS POR ROL
+-- ============================================
+GRANT ALL PRIVILEGES ON solinx.* TO 'administrador';
+GRANT SELECT ON solinx.* TO 'empresa';
+GRANT INSERT, UPDATE, DELETE ON solinx.Proyecto TO 'empresa';
+GRANT SELECT, UPDATE ON solinx.Solicitud TO 'empresa';
+GRANT SELECT ON solinx.* TO 'supervisor';
+GRANT SELECT ON solinx.Proyecto TO 'estudiante';
+GRANT SELECT ON solinx.Empresa TO 'estudiante';
+GRANT INSERT, SELECT ON solinx.Solicitud TO 'estudiante';
+-- ============================================
+-- CREAR USUARIOS
+-- ============================================
+CREATE USER 'angel'@'localhost' IDENTIFIED BY '12345';
+CREATE USER 'mauro'@'localhost' IDENTIFIED BY '12345';
+CREATE USER 'erick'@'localhost' IDENTIFIED BY '12345';
+CREATE USER 'adrian'@'localhost' IDENTIFIED BY '12345';
+-- ============================================
+-- ASIGNAR ROLES A USUARIOS
+-- ============================================
+GRANT 'administrador' TO 'angel'@'localhost';
+GRANT 'empresa' TO 'mauro'@'localhost';
+GRANT 'supervisor' TO 'erick'@'localhost';
+GRANT 'estudiante' TO 'adrian'@'localhost';
+SET DEFAULT ROLE ALL TO 'angel'@'localhost';
+SET DEFAULT ROLE ALL TO 'mauro'@'localhost';
+SET DEFAULT ROLE ALL TO 'erick'@'localhost';
+SET DEFAULT ROLE ALL TO 'adrian'@'localhost';
+FLUSH PRIVILEGES;
+-- ============================================
+-- TERMINA CONFIGURACIÓN DE ROLES
+-- ============================================
 -- ESTUDIANTE
 INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
 (20230001, 'Ingeniería en Software', 'ESCOM'),
@@ -219,4 +280,7 @@ INSERT INTO Perfil (tema, idUsuario) VALUES
 ('oscuro', 4),
 ('claro', 5);
 
-select * from CAMBIOS;
+-- ============================================
+-- CONSULTA MEJORADA PARA VER AUDITORÍA
+-- ============================================
+SELECT * FROM CAMBIOS
