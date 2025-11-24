@@ -1,17 +1,16 @@
 package com.SoLinX.controler;
 
-import com.SoLinX.dto.LoginDto;
-import com.SoLinX.dto.LoginResponseDto;
-import com.SoLinX.service.LoginService;
-import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+// ... imports ...
 
-@RequestMapping("/SoLinX/api")
-@RestController
+import lombok.AllArgsConstructor;
+//ADRIAN- ESTE DABA ERROR Y LO COMENTO PARA QUE ME DEJE FUNCIONAR LO DEMAS, LA OTRA OPCION ERA BORRARLO
+// COMENTA ESTAS DOS LÍNEAS (O BORRA EL ARCHIVO)
+// @RequestMapping("/SoLinX/api")
+// @RestController
 @AllArgsConstructor
 public class LoginController {
 
+    /* <--- ABRE COMENTARIO AQUÍ PARA BLOQUEAR TODO EL BLOQUE
     private final LoginService loginService;
 
     @PostMapping("/login")
@@ -23,4 +22,5 @@ public class LoginController {
         }
         return ResponseEntity.ok(response);
     }
+    CIERRA COMENTARIO AQUÍ ---> */
 }

@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class SolicitudServiceImpl implements SolicitudService {
+
     private final SolicitudRepository solicitudRepository;
 
     @Override
@@ -23,7 +24,7 @@ public class SolicitudServiceImpl implements SolicitudService {
         return solicitudRepository.findById(id).orElse(null);
     }
 
-    @Override 
+    @Override
     public Solicitud save(Solicitud bSolicitud) {
         return solicitudRepository.save(bSolicitud);
     }
@@ -40,12 +41,17 @@ public class SolicitudServiceImpl implements SolicitudService {
         if (aux == null) {
             return null;
         }
-
         aux.setFechaSolicitud(bSolicitud.getFechaSolicitud());
         aux.setEstadoSolicitud(bSolicitud.getEstadoSolicitud());
-        aux.setBoleta(bSolicitud.getBoleta());
-        aux.setIdProyecto(bSolicitud.getIdProyecto());
+
+        aux.setEstudiante(bSolicitud.getEstudiante());
+        aux.setProyecto(bSolicitud.getProyecto());
 
         return solicitudRepository.save(aux);
+    }
+
+    @Override
+    public List<Solicitud> obtenerPorEmpresa(Integer idEmpresa) {
+        return solicitudRepository.findSolicitudesByEmpresa(idEmpresa);
     }
 }

@@ -1,7 +1,13 @@
 package com.SoLinX.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -15,9 +21,9 @@ public class Estudiante {
     @Column(name = "boleta")
     private Integer boleta;
 
-    @Column(name = "carrera", nullable = false)
+    @Column(name = "carrera")
     private String carrera;
 
-    @Column(name = "escuela", nullable = false)
+    @Column(name = "escuela")
     private String escuela;
 }

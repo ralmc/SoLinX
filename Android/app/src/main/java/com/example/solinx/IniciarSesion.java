@@ -3,6 +3,7 @@ package com.example.solinx;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -54,52 +55,59 @@ public class IniciarSesion extends AppCompatActivity {
             public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
 
                 if (response.code() == 401) {
-                    Toast.makeText(IniciarSesion.this,
-                            "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IniciarSesion.this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (!response.isSuccessful() || response.body() == null) {
-                    Toast.makeText(IniciarSesion.this,
-                            "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IniciarSesion.this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 LoginResponseDTO loginResponse = response.body();
 
-                // Mostrar mensaje
-                Toast.makeText(IniciarSesion.this,
-                        "Bienvenido " + loginResponse.getNombre(),
-                        Toast.LENGTH_LONG).show();
+                // Guardar sesión básica
+                SharedPreferences preferences = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("idUsuario", loginResponse.getIdUsuario());
+                editor.apply();
 
-                // Obtener rol
+                Toast.makeText(IniciarSesion.this, "Bienvenido " + loginResponse.getNombre(), Toast.LENGTH_LONG).show();
+
                 String rol = loginResponse.getRol();
 
-                // --- RUTEO POR ROL ---
                 if ("estudiante".equalsIgnoreCase(rol)) {
-
                     Intent intent = new Intent(IniciarSesion.this, AlumnoMenuEmpresas.class);
                     intent.putExtra("idUsuario", loginResponse.getIdUsuario());
                     intent.putExtra("nombre", loginResponse.getNombre());
                     intent.putExtra("correo", loginResponse.getCorreo());
                     intent.putExtra("rol", loginResponse.getRol());
-                    intent.putExtra("tipoUsuario", loginResponse.getTipoUsuario());
+                    startActivity(intent);
+                    finish();
+
+                } else if ("empresa".equalsIgnoreCase(rol)) {
+
+                    Intent intent = new Intent(IniciarSesion.this, EmpresaVista.class);
+
+                    Integer idEmpresaReal = loginResponse.getIdEmpresa();
+                    if (idEmpresaReal == null || idEmpresaReal == 0) {
+                        idEmpresaReal = 1; // Seguridad por si falla
+                    }
+
+                    intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresaReal);
+                    intent.putExtra("nombre", loginResponse.getNombre());
 
                     startActivity(intent);
                     finish();
-                    return;
-                }
 
-                // Otros roles aquí en el futuro
-                Toast.makeText(IniciarSesion.this,
-                        "Rol no permitido en esta app", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(IniciarSesion.this, "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
-                Toast.makeText(IniciarSesion.this,
-                        "Error de red: " + t.getMessage(),
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(IniciarSesion.this, "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
