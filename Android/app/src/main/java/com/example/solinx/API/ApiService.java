@@ -2,6 +2,7 @@ package com.example.solinx.API;
 
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
+import com.example.solinx.DTO.RegistroAlumnoDTO;
 import com.example.solinx.DTO.RegistroEmpresaDTO;
 import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
 import com.example.solinx.RESPONSE.ProyectoResponse;
@@ -25,6 +26,10 @@ public interface ApiService {
 
     @POST("registro/empresa")
     Call<RegistroEmpresaResponseDTO> registrarEmpresa(@Body RegistroEmpresaDTO dto);
+
+    // NUEVO: Endpoint para registrar alumno
+    @POST("registro")
+    Call<String> registrarAlumno(@Body RegistroAlumnoDTO dto);
 
     @GET("proyecto")
     Call<List<ProyectoResponse>> obtenerProyectos();

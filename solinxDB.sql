@@ -235,6 +235,8 @@ VALUES (NOW(), 'enviada', 20250003, (SELECT idProyecto FROM Proyecto WHERE idEmp
 SELECT * FROM Usuario WHERE correo IN ('aa@gmail.com', 'oo@gmail.com');
 SELECT * FROM Solicitud;
 select * from Proyecto;
+select * from usuario;
+select * from Estudiante;
 -- ============================================
 -- PRUEBAS PARA EMPRESA MENU/NOTIFICACIONES
 -- ============================================
