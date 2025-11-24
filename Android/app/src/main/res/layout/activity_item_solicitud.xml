@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:backgroundTint="#FFFFFF"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/imgFotoEstudiante"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/imagen_prederterminada"
+            android:contentDescription="Foto" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:id="@+id/tvNumeroSolicitud"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Solicitud #1"
+                android:text="Cargando..."
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="4dp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvNombreProyecto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Proyecto: Sistema"
+                android:textColor="#2b859f"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvBoleta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Boleta: 123"
+                android:textColor="#666666"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvCarreraAlumno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Carrera: Sistemas"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvEstadoSolicitud"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Estado: Enviada"
+                android:textColor="#FF9800"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+
+            <LinearLayout
+                android:id="@+id/layoutBotonesAccion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/btnAdmitir"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Admitir"
+                    android:textColor="#7ed957"
+                    android:textStyle="bold"
+                    android:padding="8dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="|"
+                    android:paddingHorizontal="4dp"/>
+
+                <TextView
+                    android:id="@+id/btnRechazar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rechazar"
+                    android:textColor="#ff5757"
+                    android:textStyle="bold"
+                    android:padding="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

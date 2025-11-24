@@ -7,23 +7,14 @@ public class LoginResponseDTO {
     private String rol;
     private String tipoUsuario;
 
-    public Integer getIdUsuario() {
-        return idUsuario;
-    }
+    private Integer idEmpresa;
 
-    public String getNombre() {
-        return nombre;
-    }
+    public Integer getIdUsuario() { return idUsuario; }
+    public String getNombre() { return nombre; }
+    public String getCorreo() { return correo; }
+    public String getRol() { return rol; }
+    public String getTipoUsuario() { return tipoUsuario; }
 
-    public String getCorreo() {
-        return correo;
-    }
-
-    public String getRol() {
-        return rol;
-    }
-
-    public String getTipoUsuario() {
-        return tipoUsuario;
-    }
+    public Integer getIdEmpresa() { return idEmpresa; }
+    public void setIdEmpresa(Integer idEmpresa) { this.idEmpresa = idEmpresa; }
 }
