@@ -31,7 +31,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         tvSupervisor = findViewById(R.id.tvSupervisor);
         layoutInferior = findViewById(R.id.layoutInferior);
 
-        // Listeners generales
         btnIniciarSesion.setOnClickListener(this);
         btnCrearCuenta.setOnClickListener(this);
         tvSupervisor.setOnClickListener(this);

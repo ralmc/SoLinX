@@ -26,14 +26,6 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         fecha = findViewById(R.id.fechas);
         representante = findViewById(R.id.representante);
         vacantes = findViewById(R.id.vacantes);
-
-        Intent intent = getIntent();
-        Integer idUsuario = intent.getIntExtra("idUsuario", 0);
-        String nombre = intent.getStringExtra("nombre");
-        String correo = intent.getStringExtra("correo");
-        String rol = intent.getStringExtra("rol");
-
-        Toast.makeText(this, "Hola " + nombre + " (" + rol + ")", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -17,7 +17,7 @@ public class ProyectoResponse implements Serializable {
     private Integer idEmpresa;
     private String nombreEmpresa;
 
-    // ================= GETTERS =================
+    // GETTERS
     public Integer getIdProyecto() { return idProyecto; }
     public String getCarreraEnfocada() { return carreraEnfocada; }
     public String getNombreProyecto() { return nombreProyecto; }
@@ -30,7 +30,7 @@ public class ProyectoResponse implements Serializable {
     public Integer getIdEmpresa() { return idEmpresa; }
     public String getNombreEmpresa() { return nombreEmpresa; }
 
-    // ================= SETTERS =================
+    // SETTERS
     public void setIdProyecto(Integer idProyecto) { this.idProyecto = idProyecto; }
     public void setCarreraEnfocada(String carreraEnfocada) { this.carreraEnfocada = carreraEnfocada; }
     public void setNombreProyecto(String nombreProyecto) { this.nombreProyecto = nombreProyecto; }

@@ -23,20 +23,15 @@ import retrofit2.Response;
 
 public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClickListener {
 
-    // Campos de texto
     TextInputEditText etNombreUsuario, etBoleta, etCorreo, etConfirmarCorreo,
             etContrasena, etConfirmarContrasena;
 
-    // Dropdowns (AutoCompleteTextView)
     AutoCompleteTextView spEscuela, spCarrera;
 
-    // Botón
     Button btnEnviar;
 
-    // Link a login
     TextView tvLoginLink;
 
-    // API Service
     private ApiService apiService;
 
     @Override
@@ -45,10 +40,8 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_alumno_crear_cuenta);
 
-        // Inicializar API Service
         apiService = ApiClient.getClient().create(ApiService.class);
 
-        // Inicializar vistas
         etNombreUsuario = findViewById(R.id.etNombreUsuario);
         etBoleta = findViewById(R.id.etBoleta);
         etCorreo = findViewById(R.id.etCorreo);
@@ -63,14 +56,12 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
 
         btnEnviar.setOnClickListener(this);
 
-        // Listener para ir al login
         tvLoginLink.setOnClickListener(v -> {
             Intent intent = new Intent(AlumnoCrearCuenta.this, IniciarSesion.class);
             startActivity(intent);
             finish();
         });
 
-        // Configurar dropdowns con estilo moderno
         String[] escuelas = {
                 "ESCOM",
                 "UPIICSA",
@@ -96,7 +87,6 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
                 "Programación"
         };
 
-        // Adapter para Escuela
         ArrayAdapter<String> adapterEscuela = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
@@ -104,7 +94,6 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
         );
         spEscuela.setAdapter(adapterEscuela);
 
-        // Adapter para Carrera
         ArrayAdapter<String> adapterCarrera = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
@@ -121,7 +110,6 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
     }
 
     private void registrarAlumno() {
-        // Obtener valores de los campos
         String nombreUsuario = etNombreUsuario.getText().toString().trim();
         String boletaStr = etBoleta.getText().toString().trim();
         String correo = etCorreo.getText().toString().trim();
@@ -131,7 +119,6 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
         String escuela = spEscuela.getText().toString().trim();
         String carrera = spCarrera.getText().toString().trim();
 
-        // Validaciones básicas
         if (nombreUsuario.isEmpty()) {
             Toast.makeText(this, "Ingresa tu nombre de usuario", Toast.LENGTH_SHORT).show();
             etNombreUsuario.requestFocus();
@@ -153,7 +140,6 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
             return;
         }
 
-        // Validar que la boleta tenga exactamente 10 dígitos
         if (boletaStr.length() != 10) {
             Toast.makeText(this, "La boleta debe tener 10 dígitos", Toast.LENGTH_SHORT).show();
             etBoleta.requestFocus();
@@ -220,7 +206,6 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
             return;
         }
 
-        // Crear objeto DTO
         RegistroAlumnoDTO dto = new RegistroAlumnoDTO(
                 nombreUsuario,
                 boleta,
@@ -232,17 +217,14 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
                 confirmarContrasena
         );
 
-        // Deshabilitar botón mientras se procesa
         btnEnviar.setEnabled(false);
         btnEnviar.setText("Registrando...");
 
-        // Hacer la petición HTTP
         Call<String> call = apiService.registrarAlumno(dto);
 
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                // Rehabilitar botón
                 btnEnviar.setEnabled(true);
                 btnEnviar.setText("Crear Cuenta");
 
@@ -254,18 +236,15 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
                                 "¡Cuenta creada exitosamente!",
                                 Toast.LENGTH_LONG).show();
 
-                        // Regresar a MainActivity o a la pantalla de login
                         Intent intent = new Intent(AlumnoCrearCuenta.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
-                        // Mostrar mensaje de error del servidor
                         Toast.makeText(AlumnoCrearCuenta.this,
                                 mensaje,
                                 Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    // Leer el mensaje de error del servidor (para códigos 400, 404, etc.)
                     String mensajeError = "Error en el servidor";
                     try {
                         if (response.errorBody() != null) {
@@ -283,7 +262,6 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                // Rehabilitar botón
                 btnEnviar.setEnabled(true);
                 btnEnviar.setText("Crear Cuenta");
 

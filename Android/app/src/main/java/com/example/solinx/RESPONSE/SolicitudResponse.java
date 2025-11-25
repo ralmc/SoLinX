@@ -18,6 +18,4 @@ public class SolicitudResponse implements Serializable {
     public Integer getBoletaAlumno() { return boletaAlumno; }
     public Integer getIdProyecto() { return idProyecto; }
     public String getEstadoSolicitud() { return estadoSolicitud; }
-
-    // Si más adelante necesitas Setters, puedes agregarlos
 }

@@ -66,7 +66,6 @@ public class IniciarSesion extends AppCompatActivity {
 
                 LoginResponseDTO loginResponse = response.body();
 
-                // Guardar sesión básica
                 SharedPreferences preferences = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putInt("idUsuario", loginResponse.getIdUsuario());
@@ -91,7 +90,7 @@ public class IniciarSesion extends AppCompatActivity {
 
                     Integer idEmpresaReal = loginResponse.getIdEmpresa();
                     if (idEmpresaReal == null || idEmpresaReal == 0) {
-                        idEmpresaReal = 1; // Seguridad por si falla
+                        idEmpresaReal = 1;
                     }
 
                     intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresaReal);

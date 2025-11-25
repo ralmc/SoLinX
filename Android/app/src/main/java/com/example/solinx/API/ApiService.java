@@ -27,7 +27,6 @@ public interface ApiService {
     @POST("registro/empresa")
     Call<RegistroEmpresaResponseDTO> registrarEmpresa(@Body RegistroEmpresaDTO dto);
 
-    // NUEVO: Endpoint para registrar alumno
     @POST("registro")
     Call<String> registrarAlumno(@Body RegistroAlumnoDTO dto);
 

@@ -14,7 +14,6 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!-- Encabezado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +21,6 @@
             android:gravity="center_vertical"
             android:padding="8dp">
 
-            <!-- Botón Regresar -->
             <ImageView
                 android:id="@+id/btnRegresar"
                 android:layout_width="40dp"
@@ -34,7 +32,6 @@
                 android:contentDescription="regresar"
                 android:padding="8dp" />
 
-            <!-- Logo -->
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
@@ -42,13 +39,11 @@
                 android:src="@drawable/solinx_logo"
                 android:layout_marginStart="16dp" />
 
-            <!-- Espacio flexible -->
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <!-- Boleta y Avatar -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,14 +74,12 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Barra AZUL -->
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:background="@drawable/barra_azul"
             android:layout_marginVertical="12dp" />
 
-        <!-- Tarjeta Principal del Proyecto -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,7 +95,6 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Imagen del Proyecto -->
                 <ImageView
                     android:layout_width="200dp"
                     android:layout_height="200dp"
@@ -113,7 +105,6 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Información del Proyecto -->
                 <TextView
                     android:id="@+id/prestatario"
                     android:layout_width="wrap_content"
@@ -196,7 +187,6 @@
                     android:textSize="13sp"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Botón Enviar Solicitud -->
                 <TextView
                     android:id="@+id/btnEnviar"
                     android:layout_width="match_parent"

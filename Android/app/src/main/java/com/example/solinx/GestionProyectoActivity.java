@@ -93,7 +93,6 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
         } else if (id == R.id.notificaciones) {
             startActivity(new Intent(this, EmpresaNotificaciones.class));
         } else if (id == R.id.btnCerrarSesion) {
-            // Limpiar sesión y salir
             SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
             prefs.edit().clear().apply();
 
@@ -125,12 +124,10 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
             p.setVacantes(!vacantesTxt.isEmpty() ? Integer.parseInt(vacantesTxt) : 1);
         } catch (NumberFormatException e) { p.setVacantes(1); }
 
-        // AQUÍ USAMOS EL ID RECUPERADO DE MEMORIA
         int idSesion = obtenerIdEmpresaActual();
         if (idSesion != -1) {
             p.setIdEmpresa(idSesion);
         } else {
-            // Manejo de error si se perdió la sesión (raro)
             Toast.makeText(this, "Sesión perdida, relogueate", Toast.LENGTH_SHORT).show();
             p.setIdEmpresa(1); // Fallback
         }

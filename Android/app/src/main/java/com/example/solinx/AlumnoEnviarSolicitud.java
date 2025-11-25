@@ -21,7 +21,6 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_alumno_enviar_solicitud);
 
-        //Declarar los textViews e ImageView
         btnRegresar = findViewById(R.id.btnRegresar);
         btnEnviar = findViewById(R.id.btnEnviar);
         presta = findViewById(R.id.prestatario);

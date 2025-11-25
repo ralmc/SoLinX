@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-//VELAZQUEZ REYNOSO ADRIAN
 public class MenuSupervisorActivity extends AppCompatActivity {
 
     private TextView optionSolicitudesAlumnos;
@@ -45,10 +44,6 @@ public class MenuSupervisorActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Método genérico para abrir cualquier Activity.
-     * @param targetActivity La clase de la Activity de destino
-     */
     private void abrirActivity(Class<?> targetActivity) {
         Intent intent = new Intent(MenuSupervisorActivity.this, targetActivity);
         startActivity(intent);

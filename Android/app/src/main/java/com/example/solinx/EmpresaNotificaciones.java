@@ -25,12 +25,10 @@ import retrofit2.Response;
 
 public class EmpresaNotificaciones extends AppCompatActivity implements View.OnClickListener {
 
-    // UI
     LinearLayout contenedorNotificaciones;
     TextView btnMenu, btnNoti, tvMensajeVacio;
     ImageView logoEmpresa, btnCerrarSesion;
 
-    // Variables de Sesión
     private int idEmpresaSesion;
 
     @Override
@@ -38,12 +36,10 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa_notificaciones);
 
-        // 1. Obtener ID de la sesión guardada
         idEmpresaSesion = obtenerIdEmpresaActual();
 
         inicializarVistas();
 
-        // 2. Cargar datos si la sesión es válida
         if (idEmpresaSesion != -1) {
             cargarSolicitudes();
         } else {
@@ -60,19 +56,15 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
         contenedorNotificaciones = findViewById(R.id.contenedorNotificaciones);
         tvMensajeVacio = findViewById(R.id.tvMensajeVacio);
 
-        // Encabezado
         btnMenu = findViewById(R.id.btnMenu);
         btnNoti = findViewById(R.id.btnNoti);
         logoEmpresa = findViewById(R.id.logoEmpresa);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
 
-        // Listeners
         btnMenu.setOnClickListener(this);
         logoEmpresa.setOnClickListener(this);
         btnCerrarSesion.setOnClickListener(this);
     }
-
-    // --- LÓGICA DE CARGA ---
 
     private void cargarSolicitudes() {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
@@ -83,7 +75,6 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
                 if (response.isSuccessful() && response.body() != null) {
                     renderizarSolicitudes(response.body());
                 } else {
-                    // Si está vacío o hay error, limpiamos
                     renderizarSolicitudes(java.util.Collections.emptyList());
                 }
             }
@@ -104,16 +95,13 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
         }
         tvMensajeVacio.setVisibility(View.GONE);
 
-        // --- INICIO CONTADOR VISUAL ---
         int contadorVisual = 1;
 
         for (SolicitudResponse solicitud : lista) {
 
-            // Asegúrate de que el nombre del layout sea correcto (activity_item_solicitud o item_solicitud)
             View tarjeta = LayoutInflater.from(this).inflate(R.layout.activity_item_solicitud, contenedorNotificaciones, false);
 
-            // Enlazar Vistas
-            TextView tvNum = tarjeta.findViewById(R.id.tvNumeroSolicitud); // <--- NUEVO: Enlazamos el número
+            TextView tvNum = tarjeta.findViewById(R.id.tvNumeroSolicitud);
             TextView tvProyecto = tarjeta.findViewById(R.id.tvNombreProyecto);
             TextView tvBoleta = tarjeta.findViewById(R.id.tvBoleta);
             TextView tvCarrera = tarjeta.findViewById(R.id.tvCarreraAlumno);
@@ -122,12 +110,8 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
             TextView btnRechazar = tarjeta.findViewById(R.id.btnRechazar);
             LinearLayout layoutBotones = tarjeta.findViewById(R.id.layoutBotonesAccion);
 
-            // Llenar Datos
-
-            // --- ASIGNAMOS EL NÚMERO SECUENCIAL ---
             tvNum.setText("Solicitud #" + contadorVisual);
             contadorVisual++;
-            // --------------------------------------
 
             tvProyecto.setText("Proyecto: " + solicitud.getNombreProyecto());
             tvBoleta.setText("Boleta: " + solicitud.getBoletaAlumno());
@@ -143,21 +127,17 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
                 btnRechazar.setOnClickListener(v -> actualizarEstado(solicitud.getIdSolicitud(), "rechazada"));
 
             } else {
-                // Si ya se respondió, ocultamos botones y cambiamos color
                 layoutBotones.setVisibility(View.GONE);
 
                 if ("aceptada".equalsIgnoreCase(solicitud.getEstadoSolicitud())) {
-                    tvEstado.setTextColor(Color.parseColor("#4CAF50")); // Verde
+                    tvEstado.setTextColor(Color.parseColor("#4CAF50"));
                 } else {
-                    tvEstado.setTextColor(Color.parseColor("#F44336")); // Rojo
+                    tvEstado.setTextColor(Color.parseColor("#F44336"));
                 }
             }
-
             contenedorNotificaciones.addView(tarjeta);
         }
     }
-
-    // --- LÓGICA DE ACEPTAR / RECHAZAR ---
 
     private void actualizarEstado(int idSolicitud, String nuevoEstado) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
@@ -167,7 +147,6 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(EmpresaNotificaciones.this, "Solicitud " + nuevoEstado, Toast.LENGTH_SHORT).show();
-                    // Recargamos la lista para ver el cambio reflejado
                     cargarSolicitudes();
                 } else {
                     Toast.makeText(EmpresaNotificaciones.this, "Error al actualizar", Toast.LENGTH_SHORT).show();
@@ -181,23 +160,18 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
         });
     }
 
-    // --- MANEJO DE CLICKS (NAVEGACIÓN) ---
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
 
         if (id == R.id.btnMenu) {
-            // Regresar al menú principal
             finish();
 
         } else if (id == R.id.logoEmpresa) {
-            // Refrescar la lista
             Toast.makeText(this, "Actualizando...", Toast.LENGTH_SHORT).show();
             cargarSolicitudes();
 
         } else if (id == R.id.btnCerrarSesion) {
-            // Cerrar sesión completo
             SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
             prefs.edit().clear().apply();
 

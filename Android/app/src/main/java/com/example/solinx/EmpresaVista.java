@@ -29,15 +29,11 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
     TextView btnAñadir, tvMensajeVacio, btnotificaciones;
     ImageView logoEmpresa, btnCerrarSesion;
 
-    // YA NO NECESITAMOS VARIABLE GLOBAL FIJA
-    // int idEmpresaSesion = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa_vista_menu);
 
-        // 1. GESTIÓN DE SESIÓN SEGURA
         gestionarSesion();
 
         inicializarVistas();
@@ -47,25 +43,21 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
     private void gestionarSesion() {
         SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
 
-        // A) Si venimos del Login con un ID nuevo, lo GUARDAMOS
         if (getIntent().hasExtra("ID_EMPRESA_ACTUAL")) {
             int idRecibido = getIntent().getIntExtra("ID_EMPRESA_ACTUAL", -1);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("id_empresa_activa", idRecibido);
-            editor.apply(); // Guardar en disco
         }
     }
 
-    // Método auxiliar para obtener el ID siempre que lo necesitemos
     private int obtenerIdEmpresaActual() {
         SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-        return prefs.getInt("id_empresa_activa", -1); // -1 si no hay nadie
+        return prefs.getInt("id_empresa_activa", -1);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Recargar siempre al volver a esta pantalla
         cargarDatosDelBackend();
     }
 
@@ -93,7 +85,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        // USAMOS EL ID RECUPERADO DE MEMORIA
         apiService.obtenerProyectosPorEmpresa(idActual).enqueue(new Callback<List<ProyectoResponse>>() {
             @Override
             public void onResponse(Call<List<ProyectoResponse>> call, Response<List<ProyectoResponse>> response) {
@@ -163,7 +154,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
             btnEdit.setOnClickListener(v -> {
                 Intent intent = new Intent(EmpresaVista.this, GestionProyectoActivity.class);
-                intent.putExtra("idProyecto", proyecto.getIdProyecto()); // <--- ID REAL
+                intent.putExtra("idProyecto", proyecto.getIdProyecto());
                 intent.putExtra("carrera", proyecto.getCarreraEnfocada());
                 intent.putExtra("nombre", proyecto.getNombreProyecto());
                 intent.putExtra("objetivo", proyecto.getObjetivo());
@@ -173,8 +164,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
             });
 
-            btnEliminar.setOnClickListener(v -> eliminarProyecto(proyecto.getIdProyecto())); // <--- ID REAL
-
+            btnEliminar.setOnClickListener(v -> eliminarProyecto(proyecto.getIdProyecto()));
             contenedorProyectos.addView(tarjeta);
         }
     }
@@ -209,7 +199,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
         int id = v.getId();
 
         if (id == R.id.btnAñadir) {
-            // Vamos directo, sin cargar extras, porque GestionProyecto lo leerá de SharedPreferences
             startActivity(new Intent(this, GestionProyectoActivity.class));
 
         } else if (id == R.id.logoEmpresa) {
@@ -220,7 +209,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(this, EmpresaNotificaciones.class));
 
         } else if (id == R.id.btnCerrarSesion) {
-            // BORRAMOS LA SESIÓN AL SALIR
             SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
             prefs.edit().clear().apply();
 
