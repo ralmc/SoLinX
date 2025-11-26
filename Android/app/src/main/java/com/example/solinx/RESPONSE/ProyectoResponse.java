@@ -13,11 +13,12 @@ public class ProyectoResponse implements Serializable {
     private String fechaInicio;
     private String fechaTermino;
     private String imagenRef;
-
     private Integer idEmpresa;
     private String nombreEmpresa;
+    private String telefonoEmpresa;
 
-    // GETTERS
+    public ProyectoResponse() {}
+
     public Integer getIdProyecto() { return idProyecto; }
     public String getCarreraEnfocada() { return carreraEnfocada; }
     public String getNombreProyecto() { return nombreProyecto; }
@@ -29,8 +30,8 @@ public class ProyectoResponse implements Serializable {
     public String getImagenRef() { return imagenRef; }
     public Integer getIdEmpresa() { return idEmpresa; }
     public String getNombreEmpresa() { return nombreEmpresa; }
+    public String getTelefonoEmpresa() { return telefonoEmpresa; }
 
-    // SETTERS
     public void setIdProyecto(Integer idProyecto) { this.idProyecto = idProyecto; }
     public void setCarreraEnfocada(String carreraEnfocada) { this.carreraEnfocada = carreraEnfocada; }
     public void setNombreProyecto(String nombreProyecto) { this.nombreProyecto = nombreProyecto; }
@@ -40,8 +41,16 @@ public class ProyectoResponse implements Serializable {
     public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }
     public void setFechaTermino(String fechaTermino) { this.fechaTermino = fechaTermino; }
     public void setImagenRef(String imagenRef) { this.imagenRef = imagenRef; }
-
     public void setIdEmpresa(Integer idEmpresa) { this.idEmpresa = idEmpresa; }
-
     public void setNombreEmpresa(String nombreEmpresa) { this.nombreEmpresa = nombreEmpresa; }
+    public void setTelefonoEmpresa(String telefonoEmpresa) { this.telefonoEmpresa = telefonoEmpresa; }
+
+    public String getFechasFormateadas() {
+        if (fechaInicio != null && fechaTermino != null) {
+            return "Fecha: " + fechaInicio + " - " + fechaTermino;
+        } else if (fechaInicio != null) {
+            return "Fecha Inicio: " + fechaInicio;
+        }
+        return "Fechas no disponibles";
+    }
 }

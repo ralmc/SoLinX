@@ -5,7 +5,6 @@ import java.util.List;
 
 public interface ProyectoService {
 
-    // Métodos que ya tenías
     List<Proyecto> getAll();
     Proyecto getById(Integer id);
     Proyecto save(Proyecto proyecto);

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.solinx.API.ApiClient;
@@ -22,6 +23,7 @@ import retrofit2.Response;
 public class IniciarSesion extends AppCompatActivity {
 
     TextInputEditText etUsuario, etContrasena;
+    TextView tvRegistroLink;
     Button btnEnviar;
 
     @Override
@@ -29,11 +31,18 @@ public class IniciarSesion extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iniciar_sesion);
 
+        tvRegistroLink = findViewById(R.id.tvRegistroLink);
         etUsuario = findViewById(R.id.etUsuario);
         etContrasena = findViewById(R.id.etContrasena);
         btnEnviar = findViewById(R.id.btnEnviar);
 
         btnEnviar.setOnClickListener(v -> hacerLogin());
+        tvRegistroLink.setOnClickListener(v -> registroAlumno());
+    }
+
+    private void registroAlumno() {
+        Intent intent = new Intent(this, AlumnoCrearCuenta.class);
+        startActivity(intent);
     }
 
     private void hacerLogin() {
@@ -70,8 +79,6 @@ public class IniciarSesion extends AppCompatActivity {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putInt("idUsuario", loginResponse.getIdUsuario());
                 editor.apply();
-
-                Toast.makeText(IniciarSesion.this, "Bienvenido " + loginResponse.getNombre(), Toast.LENGTH_LONG).show();
 
                 String rol = loginResponse.getRol();
 

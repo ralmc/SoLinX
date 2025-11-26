@@ -3,6 +3,8 @@ package com.SoLinX.controler;
 import com.SoLinX.dto.ProyectoDto;
 import com.SoLinX.model.Empresa;
 import com.SoLinX.model.Proyecto;
+import com.SoLinX.model.Usuario;
+import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.ProyectoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class ProyectoController {
 
     private final ProyectoService proyectoService;
+    private final UsuarioRepository usuarioRepository; // 🆕 NUEVO
 
     @PostMapping("/proyecto")
     public ResponseEntity<ProyectoDto> save(@RequestBody ProyectoDto dto) {
@@ -26,7 +29,6 @@ public class ProyectoController {
         return ResponseEntity.ok(convertToDto(guardado));
     }
 
-    // Este trae TODOS (Cuidado con este, trae de todas las empresas)
     @GetMapping("/proyecto")
     public ResponseEntity<List<ProyectoDto>> lista() {
         List<Proyecto> proyectos = proyectoService.getAll();
@@ -38,7 +40,6 @@ public class ProyectoController {
         return ResponseEntity.ok(dtos);
     }
 
-    // --- NUEVO ENDPOINT: Trae solo los de UNA empresa ---
     @GetMapping("/proyecto/empresa/{idEmpresa}")
     public ResponseEntity<List<ProyectoDto>> listarPorEmpresa(@PathVariable Integer idEmpresa) {
 
@@ -54,7 +55,6 @@ public class ProyectoController {
 
         return ResponseEntity.ok(dtos);
     }
-    // ---------------------------------------------------
 
     @GetMapping("/proyecto/{id}")
     public ResponseEntity<ProyectoDto> getById(@PathVariable Integer id) {
@@ -82,9 +82,22 @@ public class ProyectoController {
         return ResponseEntity.noContent().build();
     }
 
-    // --- MÉTODOS AUXILIARES ---
+    private String obtenerTelefonoEmpresa(Integer idEmpresa) {
+        try {
+            Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa);
+            if (usuario != null && usuario.getTelefono() != null) {
+                return usuario.getTelefono();
+            }
+        } catch (Exception e) {
+            // Log error si quieres
+            System.err.println("Error obteniendo teléfono: " + e.getMessage());
+        }
+        return "No disponible";
+    }
 
     private ProyectoDto convertToDto(Proyecto proyecto) {
+        Integer idEmpresa = proyecto.getEmpresa() != null ? proyecto.getEmpresa().getIdEmpresa() : null;
+
         return ProyectoDto.builder()
                 .idProyecto(proyecto.getIdProyecto())
                 .carreraEnfocada(proyecto.getCarreraEnfocada())
@@ -95,8 +108,9 @@ public class ProyectoController {
                 .ubicacion(proyecto.getUbicacion())
                 .fechaTermino(proyecto.getFechaTermino())
                 .imagenRef(proyecto.getImagenRef())
-                .idEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getIdEmpresa() : null)
+                .idEmpresa(idEmpresa)
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
+                .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible") // 🆕 NUEVO
                 .build();
     }
 

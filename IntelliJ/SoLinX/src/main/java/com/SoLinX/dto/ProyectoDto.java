@@ -22,6 +22,7 @@ public class ProyectoDto {
     private Integer vacantes;
     private String ubicacion;
     private Date fechaTermino;
+    private String telefonoEmpresa;
 
     private Integer idEmpresa;
 

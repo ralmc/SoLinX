@@ -149,7 +149,6 @@ public class SolicitudController {
         return ResponseEntity.noContent().build();
     }
 
-    // [IMPORTANTE] Endpoint para cambiar estado desde Android (Aceptar/Rechazar)
     @PutMapping("/solicitud/{id}/estado")
     public ResponseEntity<Void> cambiarEstado(@PathVariable Integer id, @RequestParam String nuevoEstado) {
         Solicitud s = solicitudService.getById(id);

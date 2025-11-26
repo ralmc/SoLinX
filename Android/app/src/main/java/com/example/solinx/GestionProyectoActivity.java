@@ -59,7 +59,6 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
     }
 
-    // Método seguro para obtener ID
     private int obtenerIdEmpresaActual() {
         SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
         return prefs.getInt("id_empresa_activa", -1);
