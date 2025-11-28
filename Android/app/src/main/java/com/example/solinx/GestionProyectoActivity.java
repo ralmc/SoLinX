@@ -1,7 +1,7 @@
 package com.example.solinx;
 
 import android.content.Intent;
-import android.content.SharedPreferences; // IMPORTANTE
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -67,6 +67,7 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     private void verificarModoEdicion() {
         if (getIntent().hasExtra("idProyecto")) {
             esEdicion = true;
+            // CORRECCIÓN AQUÍ: getIntIntra -> getIntExtra
             idProyectoEditar = getIntent().getIntExtra("idProyecto", -1);
 
             btnGuardar.setText("ACTUALIZAR PROYECTO");
@@ -103,9 +104,52 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     }
 
     private boolean validarCampos() {
-        if (etCarrera.getText().toString().trim().isEmpty()) { etCarrera.setError("Requerido"); return false; }
-        if (etNombreProyecto.getText().toString().trim().isEmpty()) { etNombreProyecto.setError("Requerido"); return false; }
-        return true;
+        boolean esValido = true;
+        String vacantesTxt = etVacantes.getText().toString().trim();
+
+        // 1. Carrera
+        if (etCarrera.getText().toString().trim().isEmpty()) {
+            etCarrera.setError("Campo de Carrera requerido");
+            esValido = false;
+        }
+
+        // 2. Nombre del Proyecto
+        if (etNombreProyecto.getText().toString().trim().isEmpty()) {
+            etNombreProyecto.setError("Campo de Nombre de Proyecto requerido");
+            esValido = false;
+        }
+
+        // 3. Objetivo
+        if (etObjetivo.getText().toString().trim().isEmpty()) {
+            etObjetivo.setError("Campo de Objetivo requerido");
+            esValido = false;
+        }
+
+        // 4. Ubicación
+        if (etUbicacion.getText().toString().trim().isEmpty()) {
+            etUbicacion.setError("Campo de Ubicación requerido");
+            esValido = false;
+        }
+
+        // 5. Vacantes (Validación de Número y Requerido)
+        if (vacantesTxt.isEmpty()) {
+            etVacantes.setError("Número de Vacantes requerido");
+            esValido = false;
+        } else {
+            try {
+                int vacantes = Integer.parseInt(vacantesTxt);
+                if (vacantes <= 0) {
+                    etVacantes.setError("El número debe ser mayor a cero");
+                    esValido = false;
+                }
+            } catch (NumberFormatException e) {
+                etVacantes.setError("Debe ser un número entero");
+                esValido = false;
+            }
+        }
+
+
+        return esValido;
     }
 
     private ProyectoResponse armarObjetoProyecto() {
@@ -120,15 +164,17 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
 
         try {
             String vacantesTxt = etVacantes.getText().toString().trim();
-            p.setVacantes(!vacantesTxt.isEmpty() ? Integer.parseInt(vacantesTxt) : 1);
-        } catch (NumberFormatException e) { p.setVacantes(1); }
+            p.setVacantes(Integer.parseInt(vacantesTxt));
+        } catch (NumberFormatException e) {
+            p.setVacantes(1);
+        }
 
         int idSesion = obtenerIdEmpresaActual();
         if (idSesion != -1) {
             p.setIdEmpresa(idSesion);
         } else {
             Toast.makeText(this, "Sesión perdida, relogueate", Toast.LENGTH_SHORT).show();
-            p.setIdEmpresa(1); // Fallback
+            p.setIdEmpresa(1);
         }
 
         return p;
@@ -136,6 +182,7 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
 
     private void crearNuevoProyecto() {
         ProyectoResponse nuevoProyecto = armarObjetoProyecto();
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
         apiService.crearProyecto(nuevoProyecto).enqueue(new Callback<ProyectoResponse>() {
             @Override
             public void onResponse(Call<ProyectoResponse> call, Response<ProyectoResponse> response) {
@@ -152,6 +199,7 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     private void actualizarProyecto() {
         ProyectoResponse proyectoEditado = armarObjetoProyecto();
         proyectoEditado.setIdProyecto(idProyectoEditar);
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
         apiService.actualizarProyecto(idProyectoEditar, proyectoEditado).enqueue(new Callback<ProyectoResponse>() {
             @Override
             public void onResponse(Call<ProyectoResponse> call, Response<ProyectoResponse> response) {
