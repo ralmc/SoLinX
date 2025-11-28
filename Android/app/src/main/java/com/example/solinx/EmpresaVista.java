@@ -45,8 +45,16 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
         if (getIntent().hasExtra("ID_EMPRESA_ACTUAL")) {
             int idRecibido = getIntent().getIntExtra("ID_EMPRESA_ACTUAL", -1);
+
+            android.util.Log.d("EmpresaVista", "ID Empresa recibido del Intent: " + idRecibido);
+
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("id_empresa_activa", idRecibido);
+            editor.apply(); // 🔥 IMPORTANTE
+
+            android.util.Log.d("EmpresaVista", "ID Empresa guardado en SharedPreferences");
+        } else {
+            android.util.Log.e("EmpresaVista", "❌ No se recibió ID_EMPRESA_ACTUAL en el Intent");
         }
     }
 

@@ -64,7 +64,7 @@ public class IniciarSesion extends AppCompatActivity {
             public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
 
                 if (response.code() == 401) {
-                    Toast.makeText(IniciarSesion.this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IniciarSesion.this, "Contraseña/Email Incorrectos", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
