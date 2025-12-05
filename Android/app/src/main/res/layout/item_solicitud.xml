@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nombre del estudiante -->
+        <TextView
+            android:id="@+id/tv_nombre_estudiante"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre del Estudiante"
+            android:textSize="18sp"
+            android:textColor="#0E0F0F"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Boleta -->
+        <TextView
+            android:id="@+id/tv_boleta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Boleta: 20230001"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Carrera -->
+        <TextView
+            android:id="@+id/tv_carrera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ingeniería en Software"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Proyecto -->
+        <TextView
+            android:id="@+id/tv_proyecto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Proyecto: Sistema de Gestión"
+            android:textSize="14sp"
+            android:textColor="#00BCD4"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EEEEEE"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Botones de Acción -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <!-- Botón Rechazar -->
+            <Button
+                android:id="@+id/btn_rechazar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rechazar"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#F44336"
+                android:layout_marginEnd="8dp"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <!-- Botón Aprobar -->
+            <Button
+                android:id="@+id/btn_aprobar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aprobar"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#4CAF50"
+                style="@style/Widget.MaterialComponents.Button" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.solinx.UTIL.ThemeUtils;
+
 public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnClickListener {
     ImageView btnRegresar, imgLogoProyecto;
     TextView btnEnviar, txtNombreEmpresa, txtNombreProyecto, fechaini, fechafin;
@@ -20,6 +22,8 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_alumno_enviar_solicitud);

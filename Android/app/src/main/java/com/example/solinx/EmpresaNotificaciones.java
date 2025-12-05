@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.SolicitudResponse;
+import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa_notificaciones);
 

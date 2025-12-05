@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@style/Theme.SoLinX"
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
     <application
         android:allowBackup="true"
@@ -35,18 +38,13 @@
         <activity android:name=".EmpresaCrear" android:exported="true" />
         <activity android:name=".AlumnoEnviarSolicitud" android:exported="true" />
         <activity android:name=".AlumnoMenuEmpresas" android:exported="true" />
-
         <activity android:name=".EmpresaVista" android:exported="true" />
-
         <activity android:name=".GestionProyectoActivity" android:exported="false" />
-
         <activity android:name=".menu_super" android:exported="false" />
-
         <activity android:name=".EmpresaNotificaciones" android:exported="false" />
-
         <activity android:name=".AlumnoVistaCuenta" android:exported="false" />
-        <activity android:name=".SupervisorEmpresaAceptarActivity" android:exported="false" />
-        <activity android:name=".SupervisorSolicitudesAlumnoActivity" android:exported="false" />
+        <activity android:name=".AprobarSolicitudesAlumnosActivity" android:exported="false" />
+        <activity android:name=".AprobarAceptacionesEmpresaActivity" android:exported="false" />
 
         <uses-library
             android:name="org.apache.http.legacy"

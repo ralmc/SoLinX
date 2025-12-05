@@ -14,6 +14,7 @@ import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
+import com.example.solinx.UTIL.ThemeUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
@@ -28,6 +29,8 @@ public class IniciarSesion extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iniciar_sesion);
 
@@ -75,14 +78,23 @@ public class IniciarSesion extends AppCompatActivity {
 
                 LoginResponseDTO loginResponse = response.body();
 
+                // Guardar sesión
                 SharedPreferences preferences = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putInt("idUsuario", loginResponse.getIdUsuario());
+                editor.putString("rol", loginResponse.getRol());
+                editor.putString("nombre", loginResponse.getNombre());
+                editor.putString("correo", loginResponse.getCorreo());
                 editor.apply();
 
                 String rol = loginResponse.getRol();
 
+                // ============================================
+                // NAVEGACIÓN SEGÚN ROL
+                // ============================================
+
                 if ("estudiante".equalsIgnoreCase(rol)) {
+                    // ESTUDIANTE → AlumnoMenuEmpresas
                     Intent intent = new Intent(IniciarSesion.this, AlumnoMenuEmpresas.class);
                     intent.putExtra("idUsuario", loginResponse.getIdUsuario());
                     intent.putExtra("nombre", loginResponse.getNombre());
@@ -92,7 +104,7 @@ public class IniciarSesion extends AppCompatActivity {
                     finish();
 
                 } else if ("empresa".equalsIgnoreCase(rol)) {
-
+                    // EMPRESA → EmpresaVista
                     Intent intent = new Intent(IniciarSesion.this, EmpresaVista.class);
 
                     Integer idEmpresaReal = loginResponse.getIdEmpresa();
@@ -102,9 +114,21 @@ public class IniciarSesion extends AppCompatActivity {
 
                     intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresaReal);
                     intent.putExtra("nombre", loginResponse.getNombre());
-
                     startActivity(intent);
                     finish();
+
+                } else if ("supervisor".equalsIgnoreCase(rol)) {
+                    Intent intent = new Intent(IniciarSesion.this, MenuSupervisorActivity.class);
+                    intent.putExtra("idUsuario", loginResponse.getIdUsuario());
+                    intent.putExtra("nombre", loginResponse.getNombre());
+                    intent.putExtra("correo", loginResponse.getCorreo());
+                    intent.putExtra("rol", loginResponse.getRol());
+                    startActivity(intent);
+                    finish();
+
+                } else if ("administrador".equalsIgnoreCase(rol)) {
+                    // ADMINISTRADOR (opcional, si tienes esta vista)
+                    Toast.makeText(IniciarSesion.this, "Panel de administrador próximamente", Toast.LENGTH_SHORT).show();
 
                 } else {
                     Toast.makeText(IniciarSesion.this, "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.DTO.RegistroAlumnoDTO;
+import com.example.solinx.UTIL.ThemeUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
@@ -36,6 +37,8 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_alumno_crear_cuenta);
