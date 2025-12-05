@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class Supervisor {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idSupervisor")
     private Integer idSupervisor;
 

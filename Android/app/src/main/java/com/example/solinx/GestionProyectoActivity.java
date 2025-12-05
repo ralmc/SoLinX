@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.ProyectoResponse;
+import com.example.solinx.UTIL.ThemeUtils;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,6 +34,8 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestion_proyecto);
 

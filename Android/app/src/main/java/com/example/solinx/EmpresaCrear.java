@@ -12,6 +12,7 @@ import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.DTO.RegistroEmpresaDTO;
 import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
+import com.example.solinx.UTIL.ThemeUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
@@ -27,6 +28,8 @@ public class EmpresaCrear extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa_crear);
 

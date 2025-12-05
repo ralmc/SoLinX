@@ -20,6 +20,7 @@ import com.example.solinx.ADAPTER.ProyectoAdapter;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.ProyectoResponse;
+import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.List;
 
@@ -47,6 +48,8 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_alumno_menu_empresas);

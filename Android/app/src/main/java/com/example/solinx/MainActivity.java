@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.solinx.UTIL.ThemeUtils;
+
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private TextView solinx;
@@ -19,6 +21,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

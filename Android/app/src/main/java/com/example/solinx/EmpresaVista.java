@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.ProyectoResponse;
+import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa_vista_menu);
 

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.solinx.ADAPTER.AceptacionesEmpresaAdapter;
+import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ public class SupervisorEmpresaAceptarActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_empresas_lista_aceptaciones);
