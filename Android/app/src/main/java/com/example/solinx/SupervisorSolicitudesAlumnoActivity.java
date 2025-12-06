@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.solinx.ADAPTER.SolicitudesAlumnoAdapter;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.ArrayList;

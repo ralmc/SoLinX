@@ -1,5 +1,5 @@
 
-package com.example.solinx;
+package com.example.solinx.ADAPTER;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.solinx.R;
+import com.example.solinx.Solicitud;
 
 import java.util.List;
 

@@ -16,8 +16,7 @@ import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.AprobacionResponse;
 import com.example.solinx.RESPONSE.SolicitudesResponse;
-import com.example.solinx.SolicitudesAdapter;
-import com.example.solinx.Solicitudes;
+import com.example.solinx.ADAPTER.SolicitudesAdapter;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.ArrayList;

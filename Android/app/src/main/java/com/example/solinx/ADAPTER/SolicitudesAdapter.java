@@ -1,4 +1,4 @@
-package com.example.solinx;
+package com.example.solinx.ADAPTER;
 
 import android.view.LayoutInflater;
 import android.view.View;

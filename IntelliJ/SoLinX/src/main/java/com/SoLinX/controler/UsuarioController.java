@@ -23,7 +23,7 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
     private final UsuarioEmpresaService usuarioEmpresaService;
 
-    @PostMapping("/login")
+    /* <-- COMENTAR @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
 
         List<Usuario> usuarios = usuarioService.getAll();
@@ -59,7 +59,7 @@ public class UsuarioController {
         }
 
         return ResponseEntity.status(401).build();
-    }
+    } */
 
     @RequestMapping("/usuario")
     public ResponseEntity<List<UsuarioDto>> lista(@RequestParam (name = "nombre", defaultValue = "", required = false) String nombre) {
