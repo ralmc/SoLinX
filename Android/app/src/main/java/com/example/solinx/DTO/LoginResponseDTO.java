@@ -8,13 +8,18 @@ public class LoginResponseDTO {
     private String tipoUsuario;
     private Integer idEmpresa;
 
-    // Datos adicionales del estudiante
+    private Integer idSupervisor;
+    private String area;
+
     private Integer boleta;
     private String carrera;
     private String escuela;
     private String telefono;
 
-    // Getters y Setters existentes
+    // ============================================
+    // GETTERS Y SETTERS BÁSICOS
+    // ============================================
+
     public Integer getIdUsuario() { return idUsuario; }
     public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
 
@@ -33,7 +38,20 @@ public class LoginResponseDTO {
     public Integer getIdEmpresa() { return idEmpresa; }
     public void setIdEmpresa(Integer idEmpresa) { this.idEmpresa = idEmpresa; }
 
-    // Nuevos Getters y Setters para datos del estudiante
+    // ============================================
+    // GETTERS Y SETTERS SUPERVISOR ✅ NUEVO
+    // ============================================
+
+    public Integer getIdSupervisor() { return idSupervisor; }
+    public void setIdSupervisor(Integer idSupervisor) { this.idSupervisor = idSupervisor; }
+
+    public String getArea() { return area; }
+    public void setArea(String area) { this.area = area; }
+
+    // ============================================
+    // GETTERS Y SETTERS ESTUDIANTE
+    // ============================================
+
     public Integer getBoleta() { return boleta; }
     public void setBoleta(Integer boleta) { this.boleta = boleta; }
 

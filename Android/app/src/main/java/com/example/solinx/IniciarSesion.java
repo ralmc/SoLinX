@@ -107,9 +107,8 @@ public class IniciarSesion extends AppCompatActivity {
                     navegarVistaSupervisor(loginResponse);
 
                 } else if ("administrador".equalsIgnoreCase(rol)) {
-                    // ADMINISTRADOR (opcional, si tienes esta vista)
+                    // ADMINISTRADOR → Mostrar mensaje temporal
                     Toast.makeText(IniciarSesion.this, "Panel de administrador próximamente", Toast.LENGTH_SHORT).show();
-
                 } else {
                     Toast.makeText(IniciarSesion.this, "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();
                 }
@@ -174,42 +173,69 @@ public class IniciarSesion extends AppCompatActivity {
     private void navegarVistaEmpresa(LoginResponseDTO loginResponse) {
         Integer idEmpresa = loginResponse.getIdEmpresa();
 
-        Log.d(TAG, "============================================");
-        Log.d(TAG, "NAVEGANDO A EMPRESA VISTA");
-        Log.d(TAG, "idEmpresa recibido del backend: " + idEmpresa);
-        Log.d(TAG, "============================================");
-
         if (idEmpresa == null || idEmpresa == 0) {
             Log.e(TAG, "❌ ERROR: idEmpresa es null o 0");
             Toast.makeText(this, "Error crítico: ID Empresa no encontrado. Contacta soporte.", Toast.LENGTH_LONG).show();
-            return; // ✅ NO NAVEGAR SI NO HAY idEmpresa
+            return;
         }
 
         SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
         boolean guardado = prefs.edit()
                 .putInt("id_empresa_activa", idEmpresa)
-                .commit(); // ✅ CAMBIAR apply() por commit()
+                .commit();
 
         if (guardado) {
-            Log.d(TAG, "✅ ID Empresa guardado exitosamente en SharedPreferences: " + idEmpresa);
+            Log.d(TAG, "ID Empresa guardado exitosamente en SharedPreferences: " + idEmpresa);
         } else {
-            Log.e(TAG, "❌ ERROR al guardar idEmpresa en SharedPreferences");
+            Log.e(TAG, "ERROR al guardar idEmpresa en SharedPreferences");
         }
 
         Intent intent = new Intent(IniciarSesion.this, EmpresaVista.class);
         intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresa);
         intent.putExtra("nombre", loginResponse.getNombre());
 
-        Log.d(TAG, "✅ Navegando a EmpresaVista con idEmpresa: " + idEmpresa);
+        Log.d(TAG, "Navegando a EmpresaVista con idEmpresa: " + idEmpresa);
         startActivity(intent);
         finish();
     }
 
     private void navegarVistaSupervisor(LoginResponseDTO loginResponse) {
+        Integer idSupervisor = loginResponse.getIdSupervisor();
+        Integer idEmpresa = loginResponse.getIdEmpresa();
+
+        Log.d(TAG, "============================================");
+        Log.d(TAG, "NAVEGANDO A SUPERVISOR VISTA");
+        Log.d(TAG, "idSupervisor: " + idSupervisor);
+        Log.d(TAG, "idEmpresa: " + idEmpresa);
+        Log.d(TAG, "Area: " + loginResponse.getArea());
+        Log.d(TAG, "============================================");
+
+        if (idSupervisor == null || idSupervisor == 0) {
+            Log.e(TAG, "ERROR: idSupervisor es null o 0");
+            Toast.makeText(this, "Error: Datos de supervisor no encontrados. Contacta soporte.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+        boolean guardado = prefs.edit()
+                .putInt("idSupervisor", idSupervisor)
+                .putInt("idEmpresa", idEmpresa != null ? idEmpresa : -1)
+                .putString("area", loginResponse.getArea())
+                .commit();
+
+        if (guardado) {
+            Log.d(TAG, "✅ Sesión de supervisor guardada");
+        } else {
+            Log.e(TAG, "❌ ERROR al guardar sesión de supervisor");
+        }
+
         Intent intent = new Intent(IniciarSesion.this, MenuSupervisorActivity.class);
         intent.putExtra("idUsuario", loginResponse.getIdUsuario());
+        intent.putExtra("idSupervisor", idSupervisor);
+        intent.putExtra("idEmpresa", idEmpresa);
         intent.putExtra("nombre", loginResponse.getNombre());
         intent.putExtra("correo", loginResponse.getCorreo());
+        intent.putExtra("area", loginResponse.getArea());
         intent.putExtra("rol", loginResponse.getRol());
 
         Log.d(TAG, "Navegando a MenuSupervisorActivity");

@@ -17,6 +17,10 @@ public class LoginResponseDto {
     private String tipoUsuario;
     private Integer idEmpresa;
 
+    // Datos supervisor
+    private Integer idSupervisor;
+    private String area;
+
     // Datos estudiante
     private Integer boleta;
     private String carrera;
