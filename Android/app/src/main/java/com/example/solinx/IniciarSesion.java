@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +22,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class IniciarSesion extends AppCompatActivity {
+
+    private static final String TAG = "IniciarSesion";
 
     TextInputEditText etUsuario, etContrasena;
     TextView tvRegistroLink;
@@ -78,14 +80,12 @@ public class IniciarSesion extends AppCompatActivity {
 
                 LoginResponseDTO loginResponse = response.body();
 
-                // Guardar sesión
-                SharedPreferences preferences = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putInt("idUsuario", loginResponse.getIdUsuario());
-                editor.putString("rol", loginResponse.getRol());
-                editor.putString("nombre", loginResponse.getNombre());
-                editor.putString("correo", loginResponse.getCorreo());
-                editor.apply();
+                // Log para debugging
+                Log.d(TAG, "Login exitoso - Usuario: " + loginResponse.getNombre());
+                Log.d(TAG, "Rol: " + loginResponse.getRol());
+
+                // Guardar sesión básica
+                guardarSesionBasica(loginResponse);
 
                 String rol = loginResponse.getRol();
 
@@ -94,37 +94,17 @@ public class IniciarSesion extends AppCompatActivity {
                 // ============================================
 
                 if ("estudiante".equalsIgnoreCase(rol)) {
-                    // ESTUDIANTE → AlumnoMenuEmpresas
-                    Intent intent = new Intent(IniciarSesion.this, AlumnoMenuEmpresas.class);
-                    intent.putExtra("idUsuario", loginResponse.getIdUsuario());
-                    intent.putExtra("nombre", loginResponse.getNombre());
-                    intent.putExtra("correo", loginResponse.getCorreo());
-                    intent.putExtra("rol", loginResponse.getRol());
-                    startActivity(intent);
-                    finish();
+                    // ESTUDIANTE → Guardar datos adicionales y navegar a AlumnoMenuEmpresas
+                    guardarDatosEstudiante(loginResponse);
+                    navegarVistaAlumno(loginResponse);
 
                 } else if ("empresa".equalsIgnoreCase(rol)) {
                     // EMPRESA → EmpresaVista
-                    Intent intent = new Intent(IniciarSesion.this, EmpresaVista.class);
-
-                    Integer idEmpresaReal = loginResponse.getIdEmpresa();
-                    if (idEmpresaReal == null || idEmpresaReal == 0) {
-                        idEmpresaReal = 1;
-                    }
-
-                    intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresaReal);
-                    intent.putExtra("nombre", loginResponse.getNombre());
-                    startActivity(intent);
-                    finish();
+                    navegarVistaEmpresa(loginResponse);
 
                 } else if ("supervisor".equalsIgnoreCase(rol)) {
-                    Intent intent = new Intent(IniciarSesion.this, MenuSupervisorActivity.class);
-                    intent.putExtra("idUsuario", loginResponse.getIdUsuario());
-                    intent.putExtra("nombre", loginResponse.getNombre());
-                    intent.putExtra("correo", loginResponse.getCorreo());
-                    intent.putExtra("rol", loginResponse.getRol());
-                    startActivity(intent);
-                    finish();
+                    // SUPERVISOR → MenuSupervisorActivity
+                    navegarVistaSupervisor(loginResponse);
 
                 } else if ("administrador".equalsIgnoreCase(rol)) {
                     // ADMINISTRADOR (opcional, si tienes esta vista)
@@ -137,8 +117,101 @@ public class IniciarSesion extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
+                Log.e(TAG, "Error de red: " + t.getMessage());
                 Toast.makeText(IniciarSesion.this, "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Guarda los datos básicos de sesión del usuario
+     */
+    private void guardarSesionBasica(LoginResponseDTO loginResponse) {
+        SharedPreferences preferences = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("idUsuario", loginResponse.getIdUsuario());
+        editor.putString("rol", loginResponse.getRol());
+        editor.putString("nombre", loginResponse.getNombre());
+        editor.putString("correo", loginResponse.getCorreo());
+        editor.apply();
+
+        Log.d(TAG, "Sesión básica guardada");
+    }
+
+    /**
+     * Guarda los datos específicos del estudiante en SharedPreferences
+     * Esto es importante para que AlumnoVistaCuenta pueda recuperarlos
+     */
+    private void guardarDatosEstudiante(LoginResponseDTO loginResponse) {
+        SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Guardar datos del estudiante
+        String boleta = loginResponse.getBoleta() != null ?
+                loginResponse.getBoleta().toString() : "N/A";
+
+        editor.putString("boleta", boleta);
+        editor.putString("nombre", loginResponse.getNombre());
+        editor.putString("correo", loginResponse.getCorreo());
+        editor.putString("carrera", loginResponse.getCarrera() != null ?
+                loginResponse.getCarrera() : "N/A");
+        editor.putString("escuela", loginResponse.getEscuela() != null ?
+                loginResponse.getEscuela() : "N/A");
+        editor.putString("telefono", loginResponse.getTelefono() != null ?
+                loginResponse.getTelefono() : "N/A");
+        editor.apply();
+
+        Log.d(TAG, "Datos del estudiante guardados - Boleta: " + boleta);
+    }
+
+    /**
+     * ✅ CORREGIDO - Navega a AlumnoMenuEmpresas (menú principal)
+     */
+    private void navegarVistaAlumno(LoginResponseDTO loginResponse) {
+        Intent intent = new Intent(IniciarSesion.this, AlumnoMenuEmpresas.class);
+
+        // Enviar datos básicos necesarios para el menú
+        intent.putExtra("idUsuario", loginResponse.getIdUsuario());
+        intent.putExtra("nombre", loginResponse.getNombre());
+        intent.putExtra("correo", loginResponse.getCorreo());
+        intent.putExtra("rol", loginResponse.getRol());
+
+        Log.d(TAG, "Navegando a AlumnoMenuEmpresas");
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * Navega a la vista de empresa
+     */
+    private void navegarVistaEmpresa(LoginResponseDTO loginResponse) {
+        Intent intent = new Intent(IniciarSesion.this, EmpresaVista.class);
+
+        Integer idEmpresaReal = loginResponse.getIdEmpresa();
+        if (idEmpresaReal == null || idEmpresaReal == 0) {
+            idEmpresaReal = 1;
+        }
+
+        intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresaReal);
+        intent.putExtra("nombre", loginResponse.getNombre());
+
+        Log.d(TAG, "Navegando a EmpresaVista");
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * Navega a la vista de supervisor
+     */
+    private void navegarVistaSupervisor(LoginResponseDTO loginResponse) {
+        Intent intent = new Intent(IniciarSesion.this, MenuSupervisorActivity.class);
+        intent.putExtra("idUsuario", loginResponse.getIdUsuario());
+        intent.putExtra("nombre", loginResponse.getNombre());
+        intent.putExtra("correo", loginResponse.getCorreo());
+        intent.putExtra("rol", loginResponse.getRol());
+
+        Log.d(TAG, "Navegando a MenuSupervisorActivity");
+        startActivity(intent);
+        finish();
     }
 }

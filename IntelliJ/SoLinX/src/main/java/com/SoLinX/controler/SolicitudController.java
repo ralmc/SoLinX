@@ -39,6 +39,7 @@ public class SolicitudController {
             return new Date();
         }
     }
+
     @GetMapping("/solicitud/empresa/{idEmpresa}")
     public ResponseEntity<List<SolicitudDto>> listarPorEmpresa(@PathVariable Integer idEmpresa) {
 
@@ -52,7 +53,7 @@ public class SolicitudController {
                 .map(s -> SolicitudDto.builder()
                         .idSolicitud(s.getIdSolicitud())
                         .fechaSolicitud(formatDate(s.getFechaSolicitud()))
-                        .estadoSolicitud(s.getEstadoSolicitud()) // <--- AQUI SE GUARDA EL ESTADO
+                        .estadoSolicitud(s.getEstadoSolicitud())
 
                         // Llenamos los datos visuales
                         .nombreProyecto(s.getProyecto() != null ? s.getProyecto().getNombreProyecto() : "Sin Nombre")
@@ -96,6 +97,7 @@ public class SolicitudController {
                 .idProyecto(s.getProyecto().getIdProyecto())
                 .build());
     }
+
     @PostMapping("/solicitud")
     public ResponseEntity<SolicitudDto> save(@RequestBody SolicitudDto dto) {
 
@@ -105,8 +107,13 @@ public class SolicitudController {
         Proyecto pro = new Proyecto();
         pro.setIdProyecto(dto.getIdProyecto());
 
+        // 🆕 Si la fecha es null, usar la fecha actual
+        Date fechaSolicitud = dto.getFechaSolicitud() != null
+                ? parseString(dto.getFechaSolicitud())
+                : new Date();  // ✅ USAR FECHA ACTUAL
+
         Solicitud s = Solicitud.builder()
-                .fechaSolicitud(parseString(dto.getFechaSolicitud()))
+                .fechaSolicitud(fechaSolicitud)
                 .estadoSolicitud(dto.getEstadoSolicitud())
                 .estudiante(est)
                 .proyecto(pro)
@@ -117,6 +124,7 @@ public class SolicitudController {
         dto.setIdSolicitud(s.getIdSolicitud());
         return ResponseEntity.ok(dto);
     }
+
     @PutMapping("/solicitud/{id}")
     public ResponseEntity<SolicitudDto> update(@PathVariable Integer id, @RequestBody SolicitudDto dto) {
         Estudiante est = new Estudiante();
@@ -158,5 +166,31 @@ public class SolicitudController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/solicitudes/estudiante/{boleta}")
+    public ResponseEntity<List<SolicitudDto>> obtenerSolicitudesEstudiante(@PathVariable("boleta") Integer boleta) {
+        try {
+            System.out.println("============================================");
+            System.out.println("Endpoint: /solicitudes/estudiante/" + boleta);
+            System.out.println("Buscando solicitudes para boleta: " + boleta);
+
+            List<SolicitudDto> solicitudes = solicitudService.obtenerSolicitudesPorBoleta(boleta);
+
+            System.out.println("Solicitudes encontradas: " + solicitudes.size());
+
+            for (SolicitudDto s : solicitudes) {
+                System.out.println("- " + s.getNombreProyecto() + " | " + s.getNombreEmpresa() + " | " + s.getEstadoSolicitud());
+            }
+
+            System.out.println("============================================");
+
+            return ResponseEntity.ok(solicitudes);
+
+        } catch (Exception e) {
+            System.err.println("❌ ERROR al obtener solicitudes: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 }

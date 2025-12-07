@@ -1,9 +1,9 @@
 package com.SoLinX.dto;
 
-import lombok.AllArgsConstructor; // Recomendado
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor; // Recomendado
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -15,7 +15,9 @@ public class LoginResponseDto {
     private String correo;
     private String rol;
     private String tipoUsuario;
-
-    // --- ESTE ES EL CAMPO QUE FALTABA ---
     private Integer idEmpresa;
+    private Integer boleta;
+    private String carrera;
+    private String escuela;
+    private String telefono;
 }

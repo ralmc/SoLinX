@@ -11,12 +11,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -25,22 +26,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.solinx.API.ApiClient;
+import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AlumnoVistaCuenta extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 100;
+    private static final String TAG = "AlumnoVistaCuenta";
 
     private ImageButton btnRegresar;
     private TextView tvBoleta;
-    private TextView tvPuntosInfo;
+    private TextView tvNombre;
+    private TextView tvCorreo;
+    private TextView tvEscuela;
+    private TextView tvCarrera;
     private TextView tvPuntosStatus;
-    private TextView tvEmpresa1Title;
-    private TextView tvEmpresa2Title;
     private ImageView imgPerfil;
     private View viewModoClaro;
     private View viewModoOscuro;
@@ -51,16 +62,13 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private String carrera;
     private String escuela;
     private String correo;
-    private String telefono;
 
     private SharedPreferences preferences;
-
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumno_vista_cuenta);
 
@@ -70,19 +78,19 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         cargarDatosUsuario();
         setupListeners();
         actualizarIndicadoresTema();
-
         setupImagePicker();
-
         cargarFotoPerfil();
+        cargarSolicitudes(boleta);
     }
 
     private void initViews() {
         btnRegresar = findViewById(R.id.regresar);
         tvBoleta = findViewById(R.id.tvBoleta);
-        tvPuntosInfo = findViewById(R.id.tvPuntosInfo);
+        tvNombre = findViewById(R.id.tvNombre);
+        tvCorreo = findViewById(R.id.tvCorreo);
+        tvEscuela = findViewById(R.id.tvEscuela);
+        tvCarrera = findViewById(R.id.tvCarrera);
         tvPuntosStatus = findViewById(R.id.tvPuntosStatus);
-        tvEmpresa1Title = findViewById(R.id.tvEmpresa1Title);
-        tvEmpresa2Title = findViewById(R.id.tvEmpresa2Title);
         imgPerfil = findViewById(R.id.imgPerfil);
         viewModoClaro = findViewById(R.id.viewModoClaro);
         viewModoOscuro = findViewById(R.id.viewModoOscuro);
@@ -131,25 +139,103 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
             correo = preferences.getString("correo", "N/A");
         }
 
-        telefono = intent.getStringExtra("telefono");
-        if (telefono == null) {
-            telefono = preferences.getString("telefono", "N/A");
-        }
-
         mostrarDatos();
     }
 
     private void mostrarDatos() {
         tvBoleta.setText(boleta);
-
-        String infoAlumno = "Nombre: " + nombre + "\n" +
-                "Carrera: " + carrera + "\n" +
-                "Escuela: " + escuela + "\n" +
-                "Correo: " + correo + "\n" +
-                "Teléfono: " + telefono;
-        tvPuntosInfo.setText(infoAlumno);
-
+        tvNombre.setText(nombre);
+        tvCorreo.setText(correo);
+        tvEscuela.setText(escuela);
+        tvCarrera.setText(carrera);
         tvPuntosStatus.setText("Cargando solicitudes...");
+    }
+
+    private void cargarSolicitudes(String boleta) {
+        Log.d(TAG, "Cargando solicitudes - Boleta: " + boleta);
+
+        if (boleta == null || boleta.equals("N/A")) {
+            Log.e(TAG, "Boleta inválida");
+            tvPuntosStatus.setText("No se pudo cargar la información de solicitudes.");
+            return;
+        }
+
+        try {
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            Call<List<SolicitudDTO>> call = apiService.obtenerSolicitudesEstudiante(Integer.parseInt(boleta));
+
+            call.enqueue(new Callback<List<SolicitudDTO>>() {
+                @Override
+                public void onResponse(Call<List<SolicitudDTO>> call, Response<List<SolicitudDTO>> response) {
+                    Log.d(TAG, "Response code: " + response.code());
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<SolicitudDTO> solicitudes = response.body();
+                        Log.d(TAG, "Solicitudes cargadas: " + solicitudes.size());
+
+                        for (int i = 0; i < solicitudes.size(); i++) {
+                            SolicitudDTO s = solicitudes.get(i);
+                            Log.d(TAG, "[" + i + "] Proyecto: " + s.getNombreProyecto() +
+                                    " | Empresa: " + s.getNombreEmpresa() +
+                                    " | Estado: " + s.getEstadoSolicitud());
+                        }
+
+                        mostrarSolicitudes(solicitudes);
+                    } else {
+                        Log.e(TAG, "Error al cargar solicitudes: " + response.code());
+                        runOnUiThread(() -> tvPuntosStatus.setText("Error al cargar solicitudes."));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<SolicitudDTO>> call, Throwable t) {
+                    Log.e(TAG, "Error de red: " + t.getMessage());
+                    t.printStackTrace();
+                    runOnUiThread(() -> tvPuntosStatus.setText("Error de conexión al cargar solicitudes."));
+                }
+            });
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Boleta inválida al parsear: " + boleta);
+            tvPuntosStatus.setText("Boleta inválida.");
+        }
+    }
+
+    private void mostrarSolicitudes(List<SolicitudDTO> solicitudes) {
+        Log.d(TAG, "Mostrando solicitudes: " + solicitudes.size());
+
+        runOnUiThread(() -> {
+            if (solicitudes.isEmpty()) {
+                tvPuntosStatus.setText("No tienes solicitudes enviadas.");
+                Log.d(TAG, "Lista vacía");
+                return;
+            }
+
+            StringBuilder texto = new StringBuilder();
+
+            for (SolicitudDTO solicitud : solicitudes) {
+                texto.append("Empresa: ").append(solicitud.getNombreEmpresa()).append("\n");
+                texto.append("Proyecto: ").append(solicitud.getNombreProyecto()).append("\n");
+
+                String estado = solicitud.getEstadoSolicitud();
+                if (estado != null) {
+                    if (estado.equalsIgnoreCase("aceptada")) {
+                        texto.append("Estado: Admitido\n");
+                    } else if (estado.equalsIgnoreCase("rechazada")) {
+                        texto.append("Estado: Rechazado\n");
+                    } else {
+                        texto.append("Estado: Pendiente\n");
+                    }
+                } else {
+                    texto.append("Estado: Desconocido\n");
+                }
+
+                texto.append("\n");
+            }
+
+            Log.d(TAG, "Texto generado: " + texto.toString());
+            tvPuntosStatus.setText(texto.toString());
+            Log.d(TAG, "TextView actualizado");
+        });
     }
 
     private void setupListeners() {
@@ -334,7 +420,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
 
         Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(AlumnoVistaCuenta.this, IniciarSesion.class);
+        Intent intent = new Intent(AlumnoVistaCuenta.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

@@ -1,10 +1,15 @@
 package com.SoLinX.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class RegistroDto {
     private String nombreUsuario;
     private Integer boleta;
