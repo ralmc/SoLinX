@@ -168,14 +168,27 @@ public class SolicitudController {
         return ResponseEntity.notFound().build();
     }
 
-    // 🆕 ENDPOINT NUEVO PARA ESTUDIANTES
     @GetMapping("/solicitudes/estudiante/{boleta}")
-    public ResponseEntity<List<SolicitudDto>> obtenerSolicitudesEstudiante(@PathVariable Integer boleta) {
+    public ResponseEntity<List<SolicitudDto>> obtenerSolicitudesEstudiante(@PathVariable("boleta") Integer boleta) {
         try {
+            System.out.println("============================================");
+            System.out.println("Endpoint: /solicitudes/estudiante/" + boleta);
+            System.out.println("Buscando solicitudes para boleta: " + boleta);
+
             List<SolicitudDto> solicitudes = solicitudService.obtenerSolicitudesPorBoleta(boleta);
+
+            System.out.println("Solicitudes encontradas: " + solicitudes.size());
+
+            for (SolicitudDto s : solicitudes) {
+                System.out.println("- " + s.getNombreProyecto() + " | " + s.getNombreEmpresa() + " | " + s.getEstadoSolicitud());
+            }
+
+            System.out.println("============================================");
+
             return ResponseEntity.ok(solicitudes);
+
         } catch (Exception e) {
-            System.err.println("Error al obtener solicitudes: " + e.getMessage());
+            System.err.println("❌ ERROR al obtener solicitudes: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(500).build();
         }

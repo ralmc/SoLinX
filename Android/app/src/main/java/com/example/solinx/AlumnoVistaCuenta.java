@@ -12,12 +12,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -47,7 +47,10 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
 
     private ImageButton btnRegresar;
     private TextView tvBoleta;
-    private TextView tvPuntosInfo;
+    private TextView tvNombre;
+    private TextView tvCorreo;
+    private TextView tvEscuela;
+    private TextView tvCarrera;
     private TextView tvPuntosStatus;
     private ImageView imgPerfil;
     private View viewModoClaro;
@@ -59,16 +62,13 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private String carrera;
     private String escuela;
     private String correo;
-    private String telefono;
 
     private SharedPreferences preferences;
-
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumno_vista_cuenta);
 
@@ -78,19 +78,18 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         cargarDatosUsuario();
         setupListeners();
         actualizarIndicadoresTema();
-
         setupImagePicker();
-
         cargarFotoPerfil();
-
-        // 🆕 CARGAR SOLICITUDES
         cargarSolicitudes(boleta);
     }
 
     private void initViews() {
         btnRegresar = findViewById(R.id.regresar);
         tvBoleta = findViewById(R.id.tvBoleta);
-        tvPuntosInfo = findViewById(R.id.tvPuntosInfo);
+        tvNombre = findViewById(R.id.tvNombre);
+        tvCorreo = findViewById(R.id.tvCorreo);
+        tvEscuela = findViewById(R.id.tvEscuela);
+        tvCarrera = findViewById(R.id.tvCarrera);
         tvPuntosStatus = findViewById(R.id.tvPuntosStatus);
         imgPerfil = findViewById(R.id.imgPerfil);
         viewModoClaro = findViewById(R.id.viewModoClaro);
@@ -140,99 +139,83 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
             correo = preferences.getString("correo", "N/A");
         }
 
-        telefono = intent.getStringExtra("telefono");
-        if (telefono == null) {
-            telefono = preferences.getString("telefono", "N/A");
-        }
-
         mostrarDatos();
     }
 
     private void mostrarDatos() {
         tvBoleta.setText(boleta);
-
-        String infoAlumno = "Nombre: " + nombre + "\n" +
-                "Carrera: " + carrera + "\n" +
-                "Escuela: " + escuela + "\n" +
-                "Correo: " + correo + "\n" +
-                "Teléfono: " + telefono;
-        tvPuntosInfo.setText(infoAlumno);
-
+        tvNombre.setText(nombre);
+        tvCorreo.setText(correo);
+        tvEscuela.setText(escuela);
+        tvCarrera.setText(carrera);
         tvPuntosStatus.setText("Cargando solicitudes...");
     }
 
-    // 🆕 MÉTODO NUEVO - Cargar solicitudes del estudiante
     private void cargarSolicitudes(String boleta) {
-        Log.d(TAG, "🔵 INICIO cargarSolicitudes - Boleta: " + boleta);
+        Log.d(TAG, "Cargando solicitudes - Boleta: " + boleta);
 
         if (boleta == null || boleta.equals("N/A")) {
-            Log.e(TAG, "❌ Boleta inválida");
+            Log.e(TAG, "Boleta inválida");
             tvPuntosStatus.setText("No se pudo cargar la información de solicitudes.");
             return;
         }
 
         try {
-            Log.d(TAG, "🔵 Creando llamada API...");
             ApiService apiService = ApiClient.getClient().create(ApiService.class);
             Call<List<SolicitudDTO>> call = apiService.obtenerSolicitudesEstudiante(Integer.parseInt(boleta));
 
             call.enqueue(new Callback<List<SolicitudDTO>>() {
                 @Override
                 public void onResponse(Call<List<SolicitudDTO>> call, Response<List<SolicitudDTO>> response) {
-                    Log.d(TAG, "🔵 Response code: " + response.code());
+                    Log.d(TAG, "Response code: " + response.code());
 
                     if (response.isSuccessful() && response.body() != null) {
                         List<SolicitudDTO> solicitudes = response.body();
-                        Log.d(TAG, "✅ Solicitudes cargadas: " + solicitudes.size());
+                        Log.d(TAG, "Solicitudes cargadas: " + solicitudes.size());
 
-                        // Log detallado de cada solicitud
                         for (int i = 0; i < solicitudes.size(); i++) {
                             SolicitudDTO s = solicitudes.get(i);
-                            Log.d(TAG, "  [" + i + "] Proyecto: " + s.getNombreProyecto() +
+                            Log.d(TAG, "[" + i + "] Proyecto: " + s.getNombreProyecto() +
                                     " | Empresa: " + s.getNombreEmpresa() +
                                     " | Estado: " + s.getEstadoSolicitud());
                         }
 
                         mostrarSolicitudes(solicitudes);
                     } else {
-                        Log.e(TAG, "❌ Error al cargar solicitudes: " + response.code());
+                        Log.e(TAG, "Error al cargar solicitudes: " + response.code());
                         runOnUiThread(() -> tvPuntosStatus.setText("Error al cargar solicitudes."));
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<SolicitudDTO>> call, Throwable t) {
-                    Log.e(TAG, "❌ Error de red: " + t.getMessage());
+                    Log.e(TAG, "Error de red: " + t.getMessage());
                     t.printStackTrace();
                     runOnUiThread(() -> tvPuntosStatus.setText("Error de conexión al cargar solicitudes."));
                 }
             });
         } catch (NumberFormatException e) {
-            Log.e(TAG, "❌ Boleta inválida al parsear: " + boleta);
+            Log.e(TAG, "Boleta inválida al parsear: " + boleta);
             tvPuntosStatus.setText("Boleta inválida.");
         }
     }
 
-    // 🆕 MÉTODO NUEVO - Mostrar solicitudes en la UI
     private void mostrarSolicitudes(List<SolicitudDTO> solicitudes) {
-        Log.d(TAG, "🔵 mostrarSolicitudes llamado con: " + solicitudes.size() + " solicitudes");
+        Log.d(TAG, "Mostrando solicitudes: " + solicitudes.size());
 
-        // 🆕 USAR runOnUiThread para asegurar que actualiza la UI
         runOnUiThread(() -> {
             if (solicitudes.isEmpty()) {
                 tvPuntosStatus.setText("No tienes solicitudes enviadas.");
-                Log.d(TAG, "⚠️ Lista vacía");
+                Log.d(TAG, "Lista vacía");
                 return;
             }
 
             StringBuilder texto = new StringBuilder();
 
             for (SolicitudDTO solicitud : solicitudes) {
-                texto.append("Nombre de la Empresa:\n");
-                texto.append(solicitud.getNombreEmpresa()).append("\n");
+                texto.append("Empresa: ").append(solicitud.getNombreEmpresa()).append("\n");
                 texto.append("Proyecto: ").append(solicitud.getNombreProyecto()).append("\n");
 
-                // Mostrar estado con formato
                 String estado = solicitud.getEstadoSolicitud();
                 if (estado != null) {
                     if (estado.equalsIgnoreCase("aceptada")) {
@@ -249,9 +232,9 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                 texto.append("\n");
             }
 
-            Log.d(TAG, "🔵 Texto generado: " + texto.toString());
+            Log.d(TAG, "Texto generado: " + texto.toString());
             tvPuntosStatus.setText(texto.toString());
-            Log.d(TAG, "✅ TextView actualizado");
+            Log.d(TAG, "TextView actualizado");
         });
     }
 
@@ -437,7 +420,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
 
         Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(AlumnoVistaCuenta.this, IniciarSesion.class);
+        Intent intent = new Intent(AlumnoVistaCuenta.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

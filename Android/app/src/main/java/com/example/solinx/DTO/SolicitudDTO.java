@@ -3,7 +3,7 @@ package com.example.solinx.DTO;
 public class SolicitudDTO {
     private Integer idSolicitud;
     private Integer boleta;
-    private Integer boletaAlumno;  // 🆕 AGREGAR ESTE CAMPO
+    private Integer boletaAlumno;
     private String nombreProyecto;
     private String nombreEmpresa;
     private String estadoSolicitud;

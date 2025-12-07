@@ -31,7 +31,10 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
             nativeQuery = true)
     List<Solicitud> findSolicitudesAceptadasByEmpresa(@Param("idEmpresa") Integer idEmpresa);
 
-    // ✅ CORREGIDO - Usar query nativa
-    @Query(value = "SELECT * FROM Solicitud WHERE boleta = :boleta", nativeQuery = true)
+    @Query("SELECT s FROM Solicitud s " +
+            "JOIN FETCH s.proyecto p " +
+            "JOIN FETCH p.empresa e " +
+            "JOIN FETCH s.estudiante est " +
+            "WHERE est.boleta = :boleta")
     List<Solicitud> findByBoleta(@Param("boleta") Integer boleta);
 }

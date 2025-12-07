@@ -12,6 +12,5 @@ public interface SolicitudService {
     Solicitud update(Integer idSolicitud, Solicitud bSolicitud);
     List<Solicitud> obtenerPorEmpresa(Integer idEmpresa);
 
-    // 🆕 AGREGAR ESTA LÍNEA
     List<SolicitudDto> obtenerSolicitudesPorBoleta(Integer boleta);
 }

@@ -103,6 +103,7 @@ public interface ApiService {
     );
     @GET("solicitudes/estudiante/{boleta}")
     Call<List<SolicitudDTO>> obtenerSolicitudesEstudiante(@Path("boleta") Integer boleta);
+
     // Enviar solicitud
     @POST("solicitud")
     Call<SolicitudDTO> enviarSolicitud(@Body SolicitudDTO solicitudDTO);
