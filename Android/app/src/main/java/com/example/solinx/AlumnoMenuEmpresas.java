@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -146,9 +145,46 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         int id = v.getId();
         if (id == fotoperfil.getId()) {
-            Intent intento = new Intent(this, AlumnoVistaCuenta.class);
-            startActivity(intento);
+            // 🆕 NAVEGACIÓN MEJORADA A AlumnoVistaCuenta
+            navegarAVistaCuenta();
         }
+    }
+
+    /**
+     * 🆕 Método mejorado para navegar a la vista de cuenta del alumno
+     * Recupera todos los datos de SharedPreferences y los envía al Intent
+     */
+    private void navegarAVistaCuenta() {
+        Intent intent = new Intent(this, AlumnoVistaCuenta.class);
+
+        // Obtener datos de SharedPreferences (guardados durante el login)
+        SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
+
+        // Enviar datos básicos del usuario
+        intent.putExtra("nombre", nombreUsuario);
+        intent.putExtra("correo", correoUsuario);
+
+        // 🆕 Enviar datos específicos del estudiante desde SharedPreferences
+        String boleta = prefs.getString("boleta", "N/A");
+        String carrera = prefs.getString("carrera", "N/A");
+        String escuela = prefs.getString("escuela", "N/A");
+        String telefono = prefs.getString("telefono", "N/A");
+
+        intent.putExtra("boleta", boleta);
+        intent.putExtra("carrera", carrera);
+        intent.putExtra("escuela", escuela);
+        intent.putExtra("telefono", telefono);
+
+        // Log para debugging
+        Log.d(TAG, "Navegando a AlumnoVistaCuenta con datos:");
+        Log.d(TAG, "  Boleta: " + boleta);
+        Log.d(TAG, "  Nombre: " + nombreUsuario);
+        Log.d(TAG, "  Carrera: " + carrera);
+        Log.d(TAG, "  Escuela: " + escuela);
+        Log.d(TAG, "  Correo: " + correoUsuario);
+        Log.d(TAG, "  Teléfono: " + telefono);
+
+        startActivity(intent);
     }
 
     @Override
@@ -168,7 +204,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
             // Log para verificar que llegaron los datos
             Log.d(TAG, "Usuario logueado: " + nombreUsuario + " (" + correoUsuario + ")");
 
-            // Opcional: Guardar en SharedPreferences para no perderlos
+            // Guardar en SharedPreferences para no perderlos
             guardarEnSharedPreferences();
         }
     }

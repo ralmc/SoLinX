@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -25,22 +26,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.solinx.API.ApiClient;
+import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AlumnoVistaCuenta extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 100;
+    private static final String TAG = "AlumnoVistaCuenta";
 
     private ImageButton btnRegresar;
     private TextView tvBoleta;
     private TextView tvPuntosInfo;
     private TextView tvPuntosStatus;
-    private TextView tvEmpresa1Title;
-    private TextView tvEmpresa2Title;
     private ImageView imgPerfil;
     private View viewModoClaro;
     private View viewModoOscuro;
@@ -74,6 +82,9 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         setupImagePicker();
 
         cargarFotoPerfil();
+
+        // 🆕 CARGAR SOLICITUDES
+        cargarSolicitudes(boleta);
     }
 
     private void initViews() {
@@ -81,8 +92,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         tvBoleta = findViewById(R.id.tvBoleta);
         tvPuntosInfo = findViewById(R.id.tvPuntosInfo);
         tvPuntosStatus = findViewById(R.id.tvPuntosStatus);
-        tvEmpresa1Title = findViewById(R.id.tvEmpresa1Title);
-        tvEmpresa2Title = findViewById(R.id.tvEmpresa2Title);
         imgPerfil = findViewById(R.id.imgPerfil);
         viewModoClaro = findViewById(R.id.viewModoClaro);
         viewModoOscuro = findViewById(R.id.viewModoOscuro);
@@ -150,6 +159,100 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         tvPuntosInfo.setText(infoAlumno);
 
         tvPuntosStatus.setText("Cargando solicitudes...");
+    }
+
+    // 🆕 MÉTODO NUEVO - Cargar solicitudes del estudiante
+    private void cargarSolicitudes(String boleta) {
+        Log.d(TAG, "🔵 INICIO cargarSolicitudes - Boleta: " + boleta);
+
+        if (boleta == null || boleta.equals("N/A")) {
+            Log.e(TAG, "❌ Boleta inválida");
+            tvPuntosStatus.setText("No se pudo cargar la información de solicitudes.");
+            return;
+        }
+
+        try {
+            Log.d(TAG, "🔵 Creando llamada API...");
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            Call<List<SolicitudDTO>> call = apiService.obtenerSolicitudesEstudiante(Integer.parseInt(boleta));
+
+            call.enqueue(new Callback<List<SolicitudDTO>>() {
+                @Override
+                public void onResponse(Call<List<SolicitudDTO>> call, Response<List<SolicitudDTO>> response) {
+                    Log.d(TAG, "🔵 Response code: " + response.code());
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<SolicitudDTO> solicitudes = response.body();
+                        Log.d(TAG, "✅ Solicitudes cargadas: " + solicitudes.size());
+
+                        // Log detallado de cada solicitud
+                        for (int i = 0; i < solicitudes.size(); i++) {
+                            SolicitudDTO s = solicitudes.get(i);
+                            Log.d(TAG, "  [" + i + "] Proyecto: " + s.getNombreProyecto() +
+                                    " | Empresa: " + s.getNombreEmpresa() +
+                                    " | Estado: " + s.getEstadoSolicitud());
+                        }
+
+                        mostrarSolicitudes(solicitudes);
+                    } else {
+                        Log.e(TAG, "❌ Error al cargar solicitudes: " + response.code());
+                        runOnUiThread(() -> tvPuntosStatus.setText("Error al cargar solicitudes."));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<SolicitudDTO>> call, Throwable t) {
+                    Log.e(TAG, "❌ Error de red: " + t.getMessage());
+                    t.printStackTrace();
+                    runOnUiThread(() -> tvPuntosStatus.setText("Error de conexión al cargar solicitudes."));
+                }
+            });
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "❌ Boleta inválida al parsear: " + boleta);
+            tvPuntosStatus.setText("Boleta inválida.");
+        }
+    }
+
+    // 🆕 MÉTODO NUEVO - Mostrar solicitudes en la UI
+    private void mostrarSolicitudes(List<SolicitudDTO> solicitudes) {
+        Log.d(TAG, "🔵 mostrarSolicitudes llamado con: " + solicitudes.size() + " solicitudes");
+
+        // 🆕 USAR runOnUiThread para asegurar que actualiza la UI
+        runOnUiThread(() -> {
+            if (solicitudes.isEmpty()) {
+                tvPuntosStatus.setText("No tienes solicitudes enviadas.");
+                Log.d(TAG, "⚠️ Lista vacía");
+                return;
+            }
+
+            StringBuilder texto = new StringBuilder();
+
+            for (SolicitudDTO solicitud : solicitudes) {
+                texto.append("Nombre de la Empresa:\n");
+                texto.append(solicitud.getNombreEmpresa()).append("\n");
+                texto.append("Proyecto: ").append(solicitud.getNombreProyecto()).append("\n");
+
+                // Mostrar estado con formato
+                String estado = solicitud.getEstadoSolicitud();
+                if (estado != null) {
+                    if (estado.equalsIgnoreCase("aceptada")) {
+                        texto.append("Estado: Admitido\n");
+                    } else if (estado.equalsIgnoreCase("rechazada")) {
+                        texto.append("Estado: Rechazado\n");
+                    } else {
+                        texto.append("Estado: Pendiente\n");
+                    }
+                } else {
+                    texto.append("Estado: Desconocido\n");
+                }
+
+                texto.append("\n");
+            }
+
+            Log.d(TAG, "🔵 Texto generado: " + texto.toString());
+            tvPuntosStatus.setText(texto.toString());
+            Log.d(TAG, "✅ TextView actualizado");
+        });
     }
 
     private void setupListeners() {

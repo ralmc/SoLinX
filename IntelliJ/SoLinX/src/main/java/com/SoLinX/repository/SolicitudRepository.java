@@ -25,10 +25,13 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
             nativeQuery = true)
     List<Solicitud> findSolicitudesEnviadasBySupervisor(@Param("idSupervisor") Integer idSupervisor);
 
-    // Obtener solicitudes con estado 'aceptada' para una empresa específica
     @Query(value = "SELECT sol.* FROM Solicitud sol " +
             "JOIN Proyecto proj ON sol.idProyecto = proj.idProyecto " +
             "WHERE proj.idEmpresa = :idEmpresa AND sol.estadoSolicitud = 'aceptada'",
             nativeQuery = true)
     List<Solicitud> findSolicitudesAceptadasByEmpresa(@Param("idEmpresa") Integer idEmpresa);
+
+    // ✅ CORREGIDO - Usar query nativa
+    @Query(value = "SELECT * FROM Solicitud WHERE boleta = :boleta", nativeQuery = true)
+    List<Solicitud> findByBoleta(@Param("boleta") Integer boleta);
 }
