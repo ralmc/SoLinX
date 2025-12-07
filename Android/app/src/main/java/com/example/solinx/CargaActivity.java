@@ -7,6 +7,8 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.solinx.UTIL.ThemeUtils;
+
 //INICAR PROYECTO EN: CargaActivity
 public class CargaActivity extends AppCompatActivity {
 
@@ -15,6 +17,8 @@ public class CargaActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_carga);

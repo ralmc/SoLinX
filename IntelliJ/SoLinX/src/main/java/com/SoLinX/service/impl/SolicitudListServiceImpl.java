@@ -30,8 +30,11 @@ public class SolicitudListServiceImpl implements SolicitudListService {
                                 s.getFechaSolicitud() != null ? s.getFechaSolicitud().toString() : null
                         )
                         .estadoSolicitud(s.getEstadoSolicitud())
-                        .boleta(s.getBoleta())
-                        .idProyecto(s.getIdProyecto())
+                        .boletaAlumno(s.getEstudiante().getBoleta())
+                        .idProyecto(s.getProyecto().getIdProyecto())
+                        .nombreProyecto(s.getProyecto().getNombreProyecto())
+                        .carreraAlumno(s.getEstudiante().getCarrera())
+
                         .build()
                 ).collect(Collectors.toList());
     }
