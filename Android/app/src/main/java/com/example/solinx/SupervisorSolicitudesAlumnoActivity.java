@@ -4,6 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.solinx.ADAPTER.SolicitudesAlumnoAdapter;
+import com.example.solinx.UTIL.ThemeUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +20,8 @@ public class SupervisorSolicitudesAlumnoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtils.applyTheme(this);
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_alumnos_lista_solicitudes);

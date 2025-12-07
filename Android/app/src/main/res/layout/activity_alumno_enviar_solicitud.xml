@@ -14,7 +14,6 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!-- Encabezado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +21,6 @@
             android:gravity="center_vertical"
             android:padding="8dp">
 
-            <!-- Botón Regresar -->
             <ImageView
                 android:id="@+id/btnRegresar"
                 android:layout_width="40dp"
@@ -34,7 +32,6 @@
                 android:contentDescription="regresar"
                 android:padding="8dp" />
 
-            <!-- Logo -->
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
@@ -42,13 +39,11 @@
                 android:src="@drawable/solinx_logo"
                 android:layout_marginStart="16dp" />
 
-            <!-- Espacio flexible -->
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <!-- Boleta y Avatar -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,14 +74,12 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Barra AZUL -->
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
             android:background="@drawable/barra_azul"
             android:layout_marginVertical="12dp" />
 
-        <!-- Tarjeta Principal del Proyecto -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,23 +95,32 @@
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Imagen del Proyecto -->
                 <ImageView
+                    android:id="@+id/imgLogoProyecto"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/solinx_logo"
-                    android:contentDescription="Proyecto SoLinX"
+                    android:contentDescription="Logo del Proyecto"
                     android:background="@color/white"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Información del Proyecto -->
                 <TextView
-                    android:id="@+id/prestatario"
+                    android:id="@+id/txtNombreEmpresa"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Prestatario: SoLinX"
+                    android:text="Empresa: Nombre"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/txtNombreProyecto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Proyecto: Nombre del Proyecto"
                     android:textColor="#000000"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -143,10 +145,19 @@
                     android:layout_marginBottom="4dp" />
 
                 <TextView
-                    android:id="@+id/representante"
+                    android:id="@+id/txtCarreraEnfocada"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Representante: Velázquez Reynoso Adrian"
+                    android:text="Carrera Enfocada: Ingeniería en Software"
+                    android:textColor="#666666"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/telefono"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Teléfono: +52 55 1234 5678"
                     android:textColor="#666666"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
@@ -164,7 +175,7 @@
                     android:id="@+id/ubicacion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ubicación: Mar Mediterráneo 227, Nextitla, Miguel Hidalgo, 11420 Ciudad de México, CDMX"
+                    android:text="Ubicación: Ciudad de México"
                     android:textColor="#666666"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
@@ -173,30 +184,11 @@
                     android:id="@+id/objetivo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Objetivo: Crear una aplicación que ayude a los estudiantes a realizar su servicio social y que al mismo tiempo tengan experiencia laboral."
-                    android:textColor="#666666"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/justificacion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Justificación: Ayudar a los alumnos con su servicio social creando una aplicación que facilite el proceso."
-                    android:textColor="#666666"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/apoyos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Apoyos: Beca de $1000 al mes. Cursos de adaptación"
+                    android:text="Objetivo: Crear una aplicación..."
                     android:textColor="#666666"
                     android:textSize="13sp"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Botón Enviar Solicitud -->
                 <TextView
                     android:id="@+id/btnEnviar"
                     android:layout_width="match_parent"
