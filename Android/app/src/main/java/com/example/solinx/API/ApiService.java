@@ -7,6 +7,8 @@ import com.example.solinx.DTO.RegistroEmpresaDTO;
 import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
 
 // Importes de la versión upstream
+import com.example.solinx.DTO.RegistroSupervisorDTO;
+import com.example.solinx.DTO.RegistroSupervisorResponseDTO;
 import com.example.solinx.RESPONSE.ProyectoResponse;
 import com.example.solinx.RESPONSE.SolicitudResponse;
 
@@ -100,4 +102,7 @@ public interface ApiService {
             @Field("idSolicitud") int idSolicitud,
             @Field("nuevoEstado") String nuevoEstado
     );
+
+    @POST("registro/supervisor")
+    Call<RegistroSupervisorResponseDTO> registrarSupervisor(@Body RegistroSupervisorDTO dto);
 }

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="4dp"
     app:cardElevation="2dp"
     android:layout_marginBottom="16dp">
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             android:text="Solicitud #001"
             android:textSize="18sp"
-            android:textColor="#333333"
+            android:textColor="@color/textColorPrimary"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -50,15 +51,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Alumno: Nombre Apellido Alumno"
-                android:textColor="#333333"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 android:layout_marginBottom="4dp"/>
+
             <TextView
                 android:id="@+id/tv_boleta_alumno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Boleta: 202409XXXX"
-                android:textColor="#333333"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 android:layout_marginBottom="4dp"/>
 
@@ -67,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Empresa: Nombre de la Empresa"
-                android:textColor="#333333"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 android:layout_marginBottom="4dp"/>
         </LinearLayout>
@@ -79,7 +81,7 @@
             android:orientation="vertical"
             android:layout_marginTop="16dp"
             android:paddingTop="8dp"
-            android:background="#F9F9F9"
+            android:background="@color/surfaceColor"
             android:visibility="gone"
             tools:visibility="visible"
             app:layout_constraintTop_toBottomOf="@id/layout_detalles_resumen"
@@ -89,7 +91,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#E0E0E0"
+                android:background="@color/dividerColor"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
@@ -97,7 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tipo de servicio:"
-                android:textColor="#555555"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="4dp"
                 android:paddingStart="8dp"
@@ -108,7 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Carrera: "
-                android:textColor="#555555"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="4dp"
                 android:paddingStart="8dp"
@@ -119,14 +121,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Eleccion de horario:"
-                android:textColor="#555555"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"/>
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="0dp"
@@ -145,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:text="Rechazar"
                 android:textSize="16sp"
-                android:textColor="#E53935"
+                android:textColor="@color/statusRechazado"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"
@@ -159,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:text="Aprobar"
                 android:textSize="16sp"
-                android:textColor="#43A047"
+                android:textColor="@color/statusAdmitido"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"

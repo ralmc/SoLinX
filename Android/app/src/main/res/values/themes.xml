@@ -2,17 +2,27 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.SoLinX" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#1497B9</item>
-        <item name="colorPrimaryVariant">#0D7A94</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primaryVariant</item>
         <item name="colorOnPrimary">@android:color/white</item>
+
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#03DAC5</item>
-        <item name="colorSecondaryVariant">#018786</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondaryVariant</item>
         <item name="colorOnSecondary">@android:color/black</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@android:color/white</item>
+
+        <!-- Colores de fondo y texto (se adaptan automáticamente) -->
+        <item name="android:windowBackground">@color/backgroundColor</item>
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="android:textColorHint">@color/textColorHint</item>
+
+        <!-- Color de superficie para cards, dialogs, etc. -->
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorOnSurface">@color/textColorPrimary</item>
     </style>
 
     <style name="Theme.SoLinX" parent="Base.Theme.SoLinX" />

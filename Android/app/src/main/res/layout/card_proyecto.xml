@@ -7,7 +7,7 @@
     android:layout_marginHorizontal="16dp"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="12dp"
-    android:backgroundTint="#FFFFFF"
+    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp"
     android:clickable="true"
@@ -27,7 +27,7 @@
             android:scaleType="centerCrop"
             android:src="@drawable/solinx_logo"
             android:contentDescription="Logo Empresa"
-            android:background="@color/white" />
+            android:background="@color/surfaceColor" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre Empresa"
-                android:textColor="#000000"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fecha: DD/MM/YYYY - DD/MM/YYYY"
-                android:textColor="#666666"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="2dp" />
 
@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Carrera: Ingeniería"
-                android:textColor="#666666"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="12sp"
                 android:layout_marginBottom="2dp" />
 
@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Vacantes disponibles: 0"
-                android:textColor="#2b859f"
+                android:textColor="@color/primary"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="VER DETALLES →"
-                android:textColor="#2b859f"
+                android:textColor="@color/primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:paddingVertical="4dp" />

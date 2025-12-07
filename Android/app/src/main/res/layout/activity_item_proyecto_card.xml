@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
-    android:backgroundTint="#FFFFFF"
+    app:cardBackgroundColor="@color/cardBackground"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp">
 
@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Eliminar"
-                    android:textColor="#D32F2F"
+                    android:textColor="@color/statusRechazado"
                     android:textStyle="bold"
                     android:clickable="true"
                     android:focusable="true"/>
@@ -50,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="# 001"
-                    android:textColor="#000000" />
+                    android:textColor="@color/textColorPrimary" />
             </LinearLayout>
 
             <ImageView
@@ -67,6 +67,7 @@
             tools:text="Carrera: Sistemas"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColorPrimary"
             android:textStyle="bold"
             android:layout_marginTop="8dp" />
 
@@ -74,49 +75,57 @@
             android:id="@+id/tvNombreEmpresa"
             tools:text="Empresa: TechNova"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorPrimary" />
 
         <TextView
             android:id="@+id/tvFechaInicio"
             tools:text="Inicio: 2023-01-01"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorSecondary" />
 
         <TextView
             android:id="@+id/tvFechaFin"
             tools:text="Fin: 2023-06-01"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorSecondary" />
 
         <TextView
             android:id="@+id/tvVacantes"
             tools:text="Vacantes: 3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorSecondary" />
 
         <TextView
             android:id="@+id/tvUbicacion"
             tools:text="Ubicación: CDMX"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorSecondary" />
 
         <TextView
             android:id="@+id/tvObjetivo"
             tools:text="Objetivo..."
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorSecondary" />
 
         <TextView
             android:id="@+id/tvNombreProyecto"
             tools:text="Proyecto: Gestión"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColorPrimary"
             android:textStyle="italic"/>
 
         <TextView
             android:id="@+id/tvApoyo"
             tools:text="Apoyo: Beca"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/textColorSecondary" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

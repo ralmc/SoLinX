@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/backgroundColor"
     android:orientation="vertical"
     tools:context=".AlumnoMenuEmpresas">
 
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="BOLETA"
                 android:textSize="14sp"
-                android:textColor="#2b859f"
+                android:textColor="@color/primary"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"
@@ -86,7 +86,7 @@
         android:layout_weight="1"
         android:text="No hay proyectos disponibles"
         android:textSize="16sp"
-        android:textColor="#666666"
+        android:textColor="@color/textColorSecondary"
         android:gravity="center"
         android:visibility="gone" />
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/backgroundColor"
     android:padding="16dp"
     tools:context=".AlumnoEnviarSolicitud">
 
@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:text="BOLETA"
                     android:textSize="14sp"
-                    android:textColor="#2b859f"
+                    android:textColor="@color/primary"
                     android:textStyle="bold"
                     android:clickable="true"
                     android:focusable="true"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#FFFFFF"
+            app:cardBackgroundColor="@color/cardBackground"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp">
 
@@ -102,7 +102,7 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/solinx_logo"
                     android:contentDescription="Logo del Proyecto"
-                    android:background="@color/white"
+                    android:background="@color/surfaceColor"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp" />
 
@@ -111,7 +111,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Empresa: Nombre"
-                    android:textColor="#000000"
+                    android:textColor="@color/textColorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
@@ -121,7 +121,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Proyecto: Nombre del Proyecto"
-                    android:textColor="#000000"
+                    android:textColor="@color/textColorPrimary"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
@@ -131,7 +131,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Fecha Inicio: 18/10/2025"
-                    android:textColor="#666666"
+                    android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
 
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Fecha Termino: 18/10/2026"
-                    android:textColor="#666666"
+                    android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
 
@@ -149,7 +149,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Carrera Enfocada: Ingeniería en Software"
-                    android:textColor="#666666"
+                    android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
 
@@ -158,7 +158,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Teléfono: +52 55 1234 5678"
-                    android:textColor="#666666"
+                    android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
 
@@ -167,7 +167,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Vacantes: 9"
-                    android:textColor="#666666"
+                    android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
 
@@ -176,7 +176,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ubicación: Ciudad de México"
-                    android:textColor="#666666"
+                    android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:layout_marginBottom="4dp" />
 
@@ -185,7 +185,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Objetivo: Crear una aplicación..."
-                    android:textColor="#666666"
+                    android:textColor="@color/textColorSecondary"
                     android:textSize="13sp"
                     android:layout_marginBottom="16dp" />
 
@@ -195,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:text="ENVIAR SOLICITUD"
                     android:textSize="18sp"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@android:color/white"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:background="@drawable/barra_azul"

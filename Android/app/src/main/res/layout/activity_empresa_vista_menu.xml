@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/backgroundColor"
     tools:context=".EmpresaVista">
 
     <LinearLayout
@@ -31,6 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Menú"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginStart="8dp" />
@@ -39,6 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:textColor="@color/textColorPrimary"
                 android:text="|"/>
 
             <TextView
@@ -46,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notificaciones"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="18sp"
                 android:layout_marginStart="4dp" />
 
@@ -63,6 +66,7 @@
                 android:clickable="true"
                 android:focusable="true"/>
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
@@ -75,7 +79,7 @@
             android:layout_height="wrap_content"
             android:text="Proyectos Publicados"
             android:textSize="24sp"
-            android:textColor="#0E0F0F"
+            android:textColor="@color/textColorPrimary"
             android:textStyle="bold"
             android:fontFamily="@font/fonts"
             android:layout_marginTop="2dp"
@@ -92,6 +96,7 @@
         <TextView
             android:id="@+id/tvMensajeVacio"
             android:text="No hay proyectos publicados"
+            android:textColor="@color/textColorSecondary"
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,7 +109,7 @@
             android:text="Añadir Proyecto"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="#2D99A6"
+            android:textColor="@color/primary"
             android:paddingTop="12dp"
             android:clickable="true"
             android:focusable="true" />

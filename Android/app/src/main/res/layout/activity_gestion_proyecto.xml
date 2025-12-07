@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/backgroundColor"
     tools:context=".GestionProyectoActivity">
 
     <LinearLayout
@@ -31,19 +31,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Menú"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginStart="8dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:textColor="@color/textColorPrimary"
                 android:text="|"/>
+
             <TextView
                 android:id="@+id/notificaciones"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Notificaciones"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="18sp"
                 android:layout_marginStart="4dp" />
 
@@ -72,7 +77,7 @@
             android:text="Gestión de Proyecto"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="@color/textColorPrimary"
             android:layout_marginBottom="20dp"
             android:gravity="center"
             android:layout_width="match_parent"
@@ -81,35 +86,47 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCarrera"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Carrera Enfocada (Ej: Sistemas)"
+                android:textColor="@color/textColorPrimary"
                 android:inputType="textCapWords"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombreProyecto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre del Proyecto"/>
+                android:hint="Nombre del Proyecto"
+                android:textColor="@color/textColorPrimary"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etObjetivo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Objetivo del proyecto"
+                android:textColor="@color/textColorPrimary"
                 android:gravity="top"
                 android:inputType="textMultiLine"
                 android:lines="3"/>
@@ -118,42 +135,54 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etVacantes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Número de Vacantes (Ej: 3)"
+                android:textColor="@color/textColorPrimary"
                 android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etUbicacion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ubicación"/>
+                android:hint="Ubicación"
+                android:textColor="@color/textColorPrimary"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp">
-            <EditText
+            android:layout_marginBottom="24dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etImagenRef"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre imagen (ej: img_dron)"/>
+                android:hint="Nombre imagen (ej: img_dron)"
+                android:textColor="@color/textColorPrimary"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btnGuardar"
             android:text="GUARDAR PROYECTO"
-            android:backgroundTint="#2D99A6"
-            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/primary"
+            android:textColor="@android:color/white"
             android:textStyle="bold"
             android:padding="16dp"
             android:layout_width="match_parent"
