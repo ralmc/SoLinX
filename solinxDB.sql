@@ -2,7 +2,7 @@
 -- BASE DE DATOS SOLINX - VERSIÓN FINAL
 -- ============================================
 DROP DATABASE IF EXISTS solinx;
-CREATE DATABASE IF NOT EXISTS solinx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS solinx;
 USE solinx;
 
 -- 1. TABLAS PRINCIPALES
@@ -12,19 +12,19 @@ CREATE TABLE Estudiante (
     escuela VARCHAR(100) NOT NULL DEFAULT ''
 );
 
-CREATE TABLE IF NOT EXISTS Empresa (
+CREATE TABLE Empresa (
     idEmpresa INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nombreEmpresa VARCHAR(100) NOT NULL DEFAULT ''
 );
 
-CREATE TABLE IF NOT EXISTS Supervisor (
+CREATE TABLE Supervisor (
     idSupervisor INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     area VARCHAR(100) NOT NULL DEFAULT '',
     idEmpresa INT NOT NULL,
     FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Usuario (
+CREATE TABLE Usuario (
     idUsuario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     correo VARCHAR(150) UNIQUE NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE UsuarioEstudiante (
     FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS UsuarioEmpresa (
+CREATE TABLE UsuarioEmpresa (
     idUsuario INT NOT NULL,
     idEmpresa INT NOT NULL,
     PRIMARY KEY (idUsuario),
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS UsuarioEmpresa (
     FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS UsuarioSupervisor (
+CREATE TABLE UsuarioSupervisor (
     idUsuario INT NOT NULL,
     idSupervisor INT NOT NULL,
     PRIMARY KEY (idUsuario),
@@ -73,17 +73,17 @@ CREATE TABLE Proyecto (
     FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Solicitud (
+CREATE TABLE Solicitud (
     idSolicitud INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     fechaSolicitud TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estadoSolicitud ENUM('enviada', 'aceptada', 'rechazada', 'aprobada') NOT NULL DEFAULT 'enviada',
+    estadoSolicitud ENUM('enviada', 'aceptada', 'rechazada') NOT NULL DEFAULT 'enviada',
     boleta INT NOT NULL,
     idProyecto INT NOT NULL,
     FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS Perfil (
+CREATE TABLE Perfil (
     idPerfil INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     foto BLOB,
     tema ENUM('claro', 'oscuro') NOT NULL DEFAULT 'claro',
@@ -94,8 +94,7 @@ CREATE TABLE IF NOT EXISTS Perfil (
 -- ============================================
 -- SISTEMA DE AUDITORÍA
 -- ============================================
-
-CREATE TABLE IF NOT EXISTS CAMBIOS (
+CREATE TABLE CAMBIOS (
     ID_aud INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Usuario_BD VARCHAR(50),
@@ -141,21 +140,7 @@ INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
 (20230002, 'Ingeniería Industrial', 'UPIICSA'),
 (20230003, 'Ingeniería Mecatrónica', 'UPIITA'),
 (20230004, 'Ingeniería Informática', 'UPIICSA'),
-(20230005, 'Ingeniería Aeronáutica', 'ESIA Ticomán'),
-(20250001, 'Ingeniería en Sistemas Computacionales', 'ESCOM'),
-(20250002, 'Ingeniería Mecatrónica', 'UPIITA'),
-(20250003, 'Licenciatura en Ciencia de Datos', 'ESFM'),
-(20250004, 'Ingeniería en Telecomunicaciones', 'ESCOM'),
-(20250005, 'Ingeniería Industrial', 'UPIICSA'),
-(20250006, 'Ingeniería Biomédica', 'UPIBI'),
-(20250007, 'Ingeniería Automotriz', 'UPIITA'),
-(20250008, 'Ingeniería en Computación', 'ESCOM'),
-(20250009, 'Ingeniería Aeronáutica', 'ESIA Ticomán'),
-(20250010, 'Ingeniería Electrónica', 'ESIME Culhuacán');
-
--- ============================================
--- EMPRESAS (6 empresas)
--- ============================================
+(20230005, 'Ingeniería Aeronáutica', 'ESIA Ticomán');
 
 -- 2. EMPRESAS (Aquí agregamos a Aa y Ooo)
 INSERT INTO Empresa (nombreEmpresa) VALUES
@@ -171,13 +156,7 @@ INSERT INTO Supervisor (area, idEmpresa) VALUES
 ('Recursos Humanos', 1),
 ('Desarrollo de Software', 1),
 ('Proyectos Aeronáuticos', 2),
-('Sistemas', 3),
-('Recursos Humanos', 5),
-('Operaciones', 6);
-
--- ============================================
--- USUARIOS (20 usuarios totales)
--- ============================================
+('Sistemas', 3);
 
 -- 4. USUARIOS (Aquí creamos las cuentas para Login)
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
@@ -194,25 +173,8 @@ INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
 
 -- Estudiantes
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
-(1, 20230001),   -- Mauro López
-(5, 20230005),   -- Sofía Ramírez
-(6, 20250001),   -- Ana Martínez
-(7, 20250002),   -- Bruno Fernández
-(8, 20250003),   -- Carla Jiménez
-(9, 20250004),   -- Diego Torres
-(10, 20250005),  -- Elena Vega
-(11, 20250006),  -- Fernando López
-(12, 20250007),  -- Gabriela Ruiz
-(13, 20250008),  -- Héctor Morales
-(14, 20250009),  -- Isabel Castro
-(15, 20250010),  -- Jorge Méndez
-(16, 20230002),  -- María González
-(17, 20230003),  -- Pedro Sánchez
-(18, 20230004);  -- Laura Ramírez
-
--- ============================================
--- VÍNCULOS USUARIO-EMPRESA (3 vínculos)
--- ============================================
+(1, 20230001),
+(5, 20230005);
 
 -- Empresas (Aquí es donde vinculamos el Login con la Empresa real)
 INSERT INTO UsuarioEmpresa (idUsuario, idEmpresa) VALUES
