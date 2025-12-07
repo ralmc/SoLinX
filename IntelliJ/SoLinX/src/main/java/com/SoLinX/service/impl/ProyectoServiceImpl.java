@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class ProyectoServiceImpl implements ProyectoService {
-
     private final ProyectoRepository proyectoRepository;
 
     @Override
@@ -36,27 +35,17 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     @Override
     public Proyecto update(Integer id, Proyecto bProyecto) {
-
         Proyecto aux = proyectoRepository.findById(id).orElse(null);
-
-        if (aux != null) {
-            aux.setCarreraEnfocada(bProyecto.getCarreraEnfocada());
-            aux.setNombreProyecto(bProyecto.getNombreProyecto());
-            aux.setObjetivo(bProyecto.getObjetivo());
-            aux.setVacantes(bProyecto.getVacantes());
-            aux.setUbicacion(bProyecto.getUbicacion());
-            aux.setFechaInicio(bProyecto.getFechaInicio());
-            aux.setFechaTermino(bProyecto.getFechaTermino());
-            aux.setImagenRef(bProyecto.getImagenRef());
-            aux.setEmpresa(bProyecto.getEmpresa());
-
-            return proyectoRepository.save(aux);
-        }
-        return null;
-    }
-
-    @Override
-    public List<Proyecto> obtenerPorEmpresa(Integer idEmpresa) {
-        return proyectoRepository.findByEmpresa_IdEmpresa(idEmpresa);
+        aux.setIdProyecto(bProyecto.getIdProyecto());
+        aux.setNombreProyecto(bProyecto.getNombreProyecto());
+        aux.setObjetivo(bProyecto.getObjetivo());
+        aux.setFechaInicio(bProyecto.getFechaInicio());
+        aux.setVacantes(bProyecto.getVacantes());
+        aux.setUbicacion(bProyecto.getUbicacion());
+        aux.setJustificacion(bProyecto.getJustificacion());
+        aux.setFechaTermino(bProyecto.getFechaTermino());
+        aux.setIdEmpresa(bProyecto.getIdEmpresa());
+        proyectoRepository.save(aux);
+        return aux;
     }
 }

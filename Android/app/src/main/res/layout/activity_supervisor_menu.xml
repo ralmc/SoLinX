@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor"
+    android:background="@android:color/white"
     android:padding="16dp"
     tools:context=".MenuSupervisorActivity">
 
@@ -30,13 +30,13 @@
             android:layout_marginEnd="16dp"/>
 
         <TextView
-            android:id="@+id/tv_nombre_supervisor"
+            android:id="@+id/tv_nombre_empresa"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Nombre Supervisor"
             android:textSize="18sp"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="#333333"
             android:textStyle="bold"
             android:gravity="start"/>
 
@@ -56,7 +56,7 @@
         android:id="@+id/divider_top"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/dividerColor"
+        android:background="#CCCCCC"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/top_bar_layout"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:text="Menú Supervisor"
         android:textSize="24sp"
-        android:textColor="@color/textColorPrimary"
+        android:textColor="#0E0F0F"
         android:textStyle="bold"
         android:fontFamily="@font/fonts"
         android:layout_marginTop="24dp"
@@ -86,50 +86,42 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_aprobar_solicitud_alumno"
+        <TextView
+            android:id="@+id/option_aprobar_solicitud_alumno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Aprobar Solicitudes de Alumnos"
+            android:textSize="20sp"
+            android:textColor="#00BCD4"
+            android:textStyle="bold"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@android:color/white"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/cardBackground">
+            android:drawableStart="@drawable/icon_task_scaled"
+            android:drawablePadding="16dp" />
 
-            <TextView
-                android:id="@+id/option_aprobar_solicitud_alumno"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Aprobar Solicitudes de Alumnos"
-                android:textSize="20sp"
-                android:textColor="@color/textColorPrimary"
-                android:textStyle="bold"
-                android:padding="16dp"
-                android:drawableStart="@drawable/icon_task_scaled"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"/>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_aprobar_aceptacion_empresa"
+        <TextView
+            android:id="@+id/option_aprobar_aceptacion_empresa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/cardBackground">
-
-            <TextView
-                android:id="@+id/option_aprobar_aceptacion_empresa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Aprobar Aceptaciones de Empresas"
-                android:textSize="20sp"
-                android:textColor="@color/textColorPrimary"
-                android:textStyle="bold"
-                android:padding="16dp"
-                android:drawableStart="@drawable/icon_task_scaled"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"/>
-        </androidx.cardview.widget.CardView>
+            android:text="Aprobar Aceptaciones de Empresas"
+            android:textSize="20sp"
+            android:textColor="#00BCD4"
+            android:textStyle="bold"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@android:color/white"
+            android:drawableStart="@drawable/icon_task_scaled"
+            android:drawablePadding="16dp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,4 @@ public interface UsuarioEstudianteRepository extends JpaRepository<UsuarioEstudi
 
     @Query("SELECT ue FROM UsuarioEstudiante ue WHERE ue.idUsuario = :idUsuario")
     UsuarioEstudiante findByIdUsuario(@Param("idUsuario") Integer idUsuario);
-
-    // NUEVO: Método para buscar si una boleta ya tiene un usuario asociado (para validar registro)
-    UsuarioEstudiante findByBoleta(Integer boleta);
 }

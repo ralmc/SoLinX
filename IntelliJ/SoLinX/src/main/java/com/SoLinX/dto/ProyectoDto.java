@@ -1,29 +1,20 @@
 package com.SoLinX.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.util.Date;
+
+import java.sql.Timestamp;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class ProyectoDto {
-
     private Integer idProyecto;
-    private String carreraEnfocada;
     private String nombreProyecto;
-    private String imagenRef;
-    private String nombreEmpresa;
     private String objetivo;
-    private Date fechaInicio;
-    private Integer vacantes;
+    private Timestamp fechaInicio;
+    private int vacantes;
     private String ubicacion;
-    private Date fechaTermino;
-    private String telefonoEmpresa;
-
-    private Integer idEmpresa;
-
+    private String justificacion;
+    private Timestamp fechaTermino;
+    private int idEmpresa;
 }

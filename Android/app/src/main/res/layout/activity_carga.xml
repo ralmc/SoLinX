@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundColor">
+    android:background="@android:color/white">
+
 
     <ImageView
         android:id="@+id/logo_image"
@@ -18,13 +19,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/tv_credit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Powered by\n\   R A L M"
         android:textSize="18sp"
-        android:textColor="@color/primary"
+        android:textColor="#00BCD4"
         android:layout_marginBottom="48dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

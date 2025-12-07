@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
 @RequestMapping("/SoLinX/api")
+@RestController
 @AllArgsConstructor
 public class LoginController {
 
@@ -16,19 +16,11 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
-        try {
-            LoginResponseDto response = loginService.login(loginDto);
+        LoginResponseDto response = loginService.login(loginDto);
 
-            if (response == null) {
-                return ResponseEntity.status(401).build();
-            }
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            System.err.println("ERROR EN LOGIN: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
+        if (response == null) {
+            return ResponseEntity.status(401).build();
         }
+        return ResponseEntity.ok(response);
     }
 }

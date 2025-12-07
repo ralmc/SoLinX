@@ -1,5 +1,5 @@
 
-package com.example.solinx.ADAPTER;
+package com.example.solinx;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,11 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.solinx.R;
-import com.example.solinx.Solicitud;
-
 import java.util.List;
-
+//VELAZQUEZ REYNOSO ADRIAN
 public class SolicitudesAlumnoAdapter extends RecyclerView.Adapter<SolicitudesAlumnoAdapter.SolicitudViewHolder> {
 
     private List<Solicitud> listaSolicitudes;
@@ -68,6 +65,7 @@ public class SolicitudesAlumnoAdapter extends RecyclerView.Adapter<SolicitudesAl
         public SolicitudViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            // Conecta los Views con sus IDs del XML
             tvSolicitudId = itemView.findViewById(R.id.tv_solicitud_id);
             tvNombreAlumno = itemView.findViewById(R.id.tv_nombre_alumno);
             tvBoletaAlumno = itemView.findViewById(R.id.tv_boleta_alumno);

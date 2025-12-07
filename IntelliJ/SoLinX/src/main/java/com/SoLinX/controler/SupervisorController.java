@@ -1,60 +1,85 @@
 package com.SoLinX.controler;
 
-import com.SoLinX.dto.AprobacionResponseDto;
-import com.SoLinX.dto.SolicitudesResponseDto;
-import com.SoLinX.dto.SupervisorResponseDto;
-import com.SoLinX.service.SupervisorApproveService;
+import com.SoLinX.dto.SupervisorDto;
+import com.SoLinX.model.Empresa;
+import com.SoLinX.model.Supervisor;
+import com.SoLinX.service.SupervisorService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/SoLinX/api/supervisor")
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RequestMapping("/SoLinX/api")
 @RestController
 @AllArgsConstructor
 public class SupervisorController {
 
-    private final SupervisorApproveService SupervisorApproveService;
+    private final SupervisorService supervisorService;
 
-    @GetMapping("/datos")
-    public ResponseEntity<SupervisorResponseDto> getSupervisorData(@RequestParam Integer idUsuario) {
-        SupervisorResponseDto response = SupervisorApproveService.getSupervisorData(idUsuario);
+    @PostMapping("/supervisor")
+    public ResponseEntity<SupervisorDto> save(@RequestBody SupervisorDto dto) {
 
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(404).body(response);
-        }
-        return ResponseEntity.ok(response);
+        Supervisor supervisor = convertToEntity(dto);
+        Supervisor saved = supervisorService.save(supervisor);
+
+        return ResponseEntity.ok(convertToDto(saved));
     }
 
-    @GetMapping("/solicitudes-enviadas")
-    public ResponseEntity<SolicitudesResponseDto> getSolicitudesEnviadas(@RequestParam Integer idSupervisor) {
-        SolicitudesResponseDto response = SupervisorApproveService.getSolicitudesEnviadas(idSupervisor);
+    @GetMapping("/supervisor")
+    public ResponseEntity<List<SupervisorDto>> lista() {
+        List<Supervisor> supervisores = supervisorService.getAll();
 
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(500).body(response);
+        if (supervisores.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(response);
+
+        List<SupervisorDto> dtos = supervisores.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("/solicitudes-aceptadas")
-    public ResponseEntity<SolicitudesResponseDto> getSolicitudesAceptadas(@RequestParam Integer idEmpresa) {
-        SolicitudesResponseDto response = SupervisorApproveService.getSolicitudesAceptadas(idEmpresa);
-
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(500).body(response);
-        }
-        return ResponseEntity.ok(response);
+    @GetMapping("/supervisor/{id}")
+    public ResponseEntity<SupervisorDto> getById(@PathVariable Integer id) {
+        Supervisor supervisor = supervisorService.getById(id);
+        return ResponseEntity.ok(convertToDto(supervisor));
     }
 
-    @PostMapping("/actualizar-solicitud")
-    public ResponseEntity<AprobacionResponseDto> actualizarSolicitud(
-            @RequestParam Integer idSolicitud,
-            @RequestParam String nuevoEstado) {
+    @PutMapping("/supervisor/{id}")
+    public ResponseEntity<SupervisorDto> update(@PathVariable Integer id, @RequestBody SupervisorDto dto) {
 
-        AprobacionResponseDto response = SupervisorApproveService.actualizarSolicitud(idSolicitud, nuevoEstado);
+        Supervisor supervisor = convertToEntity(dto);
+        Supervisor actualizado = supervisorService.update(id, supervisor);
 
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(400).body(response);
-        }
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(convertToDto(actualizado));
+    }
+
+    @DeleteMapping("/supervisor/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        supervisorService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    private SupervisorDto convertToDto(Supervisor supervisor) {
+        return SupervisorDto.builder()
+                .idSupervisor(supervisor.getIdSupervisor())
+                .area(supervisor.getArea())
+                .idEmpresa(supervisor.getEmpresa().getIdEmpresa())
+                .build();
+    }
+
+    private Supervisor convertToEntity(SupervisorDto dto) {
+        Empresa empresa = new Empresa();
+        empresa.setIdEmpresa(dto.getIdEmpresa());
+
+        return Supervisor.builder()
+                .idSupervisor(dto.getIdSupervisor())
+                .area(dto.getArea())
+                .empresa(empresa)
+                .build();
     }
 }

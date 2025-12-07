@@ -5,29 +5,30 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.Date;
+
+import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Proyecto")
+@Table(name = "proyecto")
 public class Proyecto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idProyecto")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idProyecto;
-
-    @Column(name = "carreraEnfocada")
-    private String carreraEnfocada;
 
     @Column(name = "nombreProyecto")
     private String nombreProyecto;
 
-    @Column(name = "objetivo")
+    @Column(name = "objetivo", columnDefinition = "TEXT") // Para campos TEXT
     private String objetivo;
+
+    @Column(name = "fechaInicio")
+    private Timestamp fechaInicio;
 
     @Column(name = "vacantes")
     private Integer vacantes;
@@ -35,18 +36,13 @@ public class Proyecto {
     @Column(name = "ubicacion")
     private String ubicacion;
 
-    @Column(name = "imagenRef")
-    private String imagenRef;
-
-    @Column(name = "fechaInicio")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaInicio;
+    @Column(name = "justificacion")
+    private String justificacion;
 
     @Column(name = "fechaTermino")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaTermino;
+    private Timestamp fechaTermino;
 
-    @ManyToOne
-    @JoinColumn(name = "idEmpresa", nullable = false)
-    private Empresa empresa;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idEmpresa")
+    private Empresa idEmpresa;
 }

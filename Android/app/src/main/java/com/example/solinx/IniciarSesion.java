@@ -3,18 +3,15 @@ package com.example.solinx;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
-import com.example.solinx.UTIL.ThemeUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
@@ -23,31 +20,19 @@ import retrofit2.Response;
 
 public class IniciarSesion extends AppCompatActivity {
 
-    private static final String TAG = "IniciarSesion";
-
     TextInputEditText etUsuario, etContrasena;
-    TextView tvRegistroLink;
     Button btnEnviar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iniciar_sesion);
 
-        tvRegistroLink = findViewById(R.id.tvRegistroLink);
         etUsuario = findViewById(R.id.etUsuario);
         etContrasena = findViewById(R.id.etContrasena);
         btnEnviar = findViewById(R.id.btnEnviar);
 
         btnEnviar.setOnClickListener(v -> hacerLogin());
-        tvRegistroLink.setOnClickListener(v -> registroAlumno());
-    }
-
-    private void registroAlumno() {
-        Intent intent = new Intent(this, AlumnoCrearCuenta.class);
-        startActivity(intent);
     }
 
     private void hacerLogin() {
@@ -69,149 +54,53 @@ public class IniciarSesion extends AppCompatActivity {
             public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
 
                 if (response.code() == 401) {
-                    Toast.makeText(IniciarSesion.this, "Contraseña/Email Incorrectos", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IniciarSesion.this,
+                            "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (!response.isSuccessful() || response.body() == null) {
-                    Toast.makeText(IniciarSesion.this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IniciarSesion.this,
+                            "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 LoginResponseDTO loginResponse = response.body();
 
-                // Log para debugging
-                Log.d(TAG, "Login exitoso - Usuario: " + loginResponse.getNombre());
-                Log.d(TAG, "Rol: " + loginResponse.getRol());
+                // Mostrar mensaje
+                Toast.makeText(IniciarSesion.this,
+                        "Bienvenido " + loginResponse.getNombre(),
+                        Toast.LENGTH_LONG).show();
 
-                // Guardar sesión básica
-                guardarSesionBasica(loginResponse);
-
+                // Obtener rol
                 String rol = loginResponse.getRol();
 
-                // ============================================
-                // NAVEGACIÓN SEGÚN ROL
-                // ============================================
-
+                // --- RUTEO POR ROL ---
                 if ("estudiante".equalsIgnoreCase(rol)) {
-                    // ESTUDIANTE → Guardar datos adicionales y navegar a AlumnoMenuEmpresas
-                    guardarDatosEstudiante(loginResponse);
-                    navegarVistaAlumno(loginResponse);
 
-                } else if ("empresa".equalsIgnoreCase(rol)) {
-                    // EMPRESA → EmpresaVista
-                    navegarVistaEmpresa(loginResponse);
+                    Intent intent = new Intent(IniciarSesion.this, AlumnoMenuEmpresas.class);
+                    intent.putExtra("idUsuario", loginResponse.getIdUsuario());
+                    intent.putExtra("nombre", loginResponse.getNombre());
+                    intent.putExtra("correo", loginResponse.getCorreo());
+                    intent.putExtra("rol", loginResponse.getRol());
+                    intent.putExtra("tipoUsuario", loginResponse.getTipoUsuario());
 
-                } else if ("supervisor".equalsIgnoreCase(rol)) {
-                    // SUPERVISOR → MenuSupervisorActivity
-                    navegarVistaSupervisor(loginResponse);
-
-                } else if ("administrador".equalsIgnoreCase(rol)) {
-                    // ADMINISTRADOR (opcional, si tienes esta vista)
-                    Toast.makeText(IniciarSesion.this, "Panel de administrador próximamente", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Toast.makeText(IniciarSesion.this, "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();
+                    startActivity(intent);
+                    finish();
+                    return;
                 }
+
+                // Otros roles aquí en el futuro
+                Toast.makeText(IniciarSesion.this,
+                        "Rol no permitido en esta app", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
-                Log.e(TAG, "Error de red: " + t.getMessage());
-                Toast.makeText(IniciarSesion.this, "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(IniciarSesion.this,
+                        "Error de red: " + t.getMessage(),
+                        Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    /**
-     * Guarda los datos básicos de sesión del usuario
-     */
-    private void guardarSesionBasica(LoginResponseDTO loginResponse) {
-        SharedPreferences preferences = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("idUsuario", loginResponse.getIdUsuario());
-        editor.putString("rol", loginResponse.getRol());
-        editor.putString("nombre", loginResponse.getNombre());
-        editor.putString("correo", loginResponse.getCorreo());
-        editor.apply();
-
-        Log.d(TAG, "Sesión básica guardada");
-    }
-
-    /**
-     * Guarda los datos específicos del estudiante en SharedPreferences
-     * Esto es importante para que AlumnoVistaCuenta pueda recuperarlos
-     */
-    private void guardarDatosEstudiante(LoginResponseDTO loginResponse) {
-        SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        // Guardar datos del estudiante
-        String boleta = loginResponse.getBoleta() != null ?
-                loginResponse.getBoleta().toString() : "N/A";
-
-        editor.putString("boleta", boleta);
-        editor.putString("nombre", loginResponse.getNombre());
-        editor.putString("correo", loginResponse.getCorreo());
-        editor.putString("carrera", loginResponse.getCarrera() != null ?
-                loginResponse.getCarrera() : "N/A");
-        editor.putString("escuela", loginResponse.getEscuela() != null ?
-                loginResponse.getEscuela() : "N/A");
-        editor.putString("telefono", loginResponse.getTelefono() != null ?
-                loginResponse.getTelefono() : "N/A");
-        editor.apply();
-
-        Log.d(TAG, "Datos del estudiante guardados - Boleta: " + boleta);
-    }
-
-    /**
-     * ✅ CORREGIDO - Navega a AlumnoMenuEmpresas (menú principal)
-     */
-    private void navegarVistaAlumno(LoginResponseDTO loginResponse) {
-        Intent intent = new Intent(IniciarSesion.this, AlumnoMenuEmpresas.class);
-
-        // Enviar datos básicos necesarios para el menú
-        intent.putExtra("idUsuario", loginResponse.getIdUsuario());
-        intent.putExtra("nombre", loginResponse.getNombre());
-        intent.putExtra("correo", loginResponse.getCorreo());
-        intent.putExtra("rol", loginResponse.getRol());
-
-        Log.d(TAG, "Navegando a AlumnoMenuEmpresas");
-        startActivity(intent);
-        finish();
-    }
-
-    /**
-     * Navega a la vista de empresa
-     */
-    private void navegarVistaEmpresa(LoginResponseDTO loginResponse) {
-        Intent intent = new Intent(IniciarSesion.this, EmpresaVista.class);
-
-        Integer idEmpresaReal = loginResponse.getIdEmpresa();
-        if (idEmpresaReal == null || idEmpresaReal == 0) {
-            idEmpresaReal = 1;
-        }
-
-        intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresaReal);
-        intent.putExtra("nombre", loginResponse.getNombre());
-
-        Log.d(TAG, "Navegando a EmpresaVista");
-        startActivity(intent);
-        finish();
-    }
-
-    /**
-     * Navega a la vista de supervisor
-     */
-    private void navegarVistaSupervisor(LoginResponseDTO loginResponse) {
-        Intent intent = new Intent(IniciarSesion.this, MenuSupervisorActivity.class);
-        intent.putExtra("idUsuario", loginResponse.getIdUsuario());
-        intent.putExtra("nombre", loginResponse.getNombre());
-        intent.putExtra("correo", loginResponse.getCorreo());
-        intent.putExtra("rol", loginResponse.getRol());
-
-        Log.d(TAG, "Navegando a MenuSupervisorActivity");
-        startActivity(intent);
-        finish();
     }
 }

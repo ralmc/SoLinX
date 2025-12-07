@@ -12,7 +12,6 @@ import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.DTO.RegistroEmpresaDTO;
 import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
-import com.example.solinx.UTIL.ThemeUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
@@ -28,11 +27,10 @@ public class EmpresaCrear extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa_crear);
 
+        // Referencias a los campos
         etNombreEmpresa = findViewById(R.id.et_nombre_empresa);
         etCorreo = findViewById(R.id.et_email_empresa);
         etConfirmarCorreo = findViewById(R.id.et_confirm_email);
@@ -48,6 +46,7 @@ public class EmpresaCrear extends AppCompatActivity {
     }
 
     private void registrarEmpresa() {
+        // Obtener valores
         String nombreEmpresa = etNombreEmpresa.getText().toString().trim();
         String correo = etCorreo.getText().toString().trim();
         String confirmarCorreo = etConfirmarCorreo.getText().toString().trim();
@@ -55,6 +54,7 @@ public class EmpresaCrear extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
         String confirmarPassword = etConfirmarPassword.getText().toString().trim();
 
+        // Validaciones
         if (nombreEmpresa.isEmpty() || correo.isEmpty() || telefono.isEmpty() ||
                 password.isEmpty() || confirmarCorreo.isEmpty() || confirmarPassword.isEmpty()) {
             Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
@@ -76,8 +76,10 @@ public class EmpresaCrear extends AppCompatActivity {
             return;
         }
 
+        // Crear DTO
         RegistroEmpresaDTO dto = new RegistroEmpresaDTO(nombreEmpresa, correo, telefono, password);
 
+        // Llamada a la API
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         Call<RegistroEmpresaResponseDTO> call = apiService.registrarEmpresa(dto);
 
@@ -97,11 +99,13 @@ public class EmpresaCrear extends AppCompatActivity {
                     return;
                 }
 
+                // Registro exitoso
                 RegistroEmpresaResponseDTO resultado = response.body();
 
                 Toast.makeText(EmpresaCrear.this,
                         "¡Empresa registrada exitosamente!", Toast.LENGTH_LONG).show();
 
+                // Redirigir al login
                 irALogin();
             }
 

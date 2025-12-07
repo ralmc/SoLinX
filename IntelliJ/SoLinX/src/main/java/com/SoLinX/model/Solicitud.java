@@ -1,18 +1,14 @@
 package com.SoLinX.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.util.Date;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Solicitud")
+@Table(name = "solicitud")
 public class Solicitud {
 
     @Id
@@ -21,17 +17,14 @@ public class Solicitud {
     private Integer idSolicitud;
 
     @Column(name = "fechaSolicitud")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaSolicitud;
+    private java.sql.Timestamp fechaSolicitud;
 
     @Column(name = "estadoSolicitud")
     private String estadoSolicitud;
 
-    @ManyToOne
-    @JoinColumn(name = "boleta")
-    private Estudiante estudiante;
+    @Column(name = "boleta")
+    private Integer boleta;
 
-    @ManyToOne
-    @JoinColumn(name = "idProyecto")
-    private Proyecto proyecto;
+    @Column(name = "idProyecto")
+    private Integer idProyecto;
 }

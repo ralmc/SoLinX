@@ -1,166 +1,41 @@
 package com.example.solinx;
-
+// LANDA CABALLERO ANGEL
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.solinx.API.ApiClient;
-import com.example.solinx.API.ApiService;
-import com.example.solinx.RESPONSE.SolicitudResponse;
-import com.example.solinx.UTIL.ThemeUtils;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class EmpresaNotificaciones extends AppCompatActivity implements View.OnClickListener {
-
-    LinearLayout contenedorNotificaciones;
-    TextView btnMenu, btnNoti, tvMensajeVacio;
-    ImageView logoEmpresa, btnCerrarSesion;
-
-    private int idEmpresaSesion;
+    TextView btnMenu, ad1, ad2, ad3, ne1, ne2, ne3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_empresa_notificaciones);
 
-        idEmpresaSesion = obtenerIdEmpresaActual();
-
-        inicializarVistas();
-
-        if (idEmpresaSesion != -1) {
-            cargarSolicitudes();
-        } else {
-            Toast.makeText(this, "Sesión no válida. Vuelve a iniciar.", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private int obtenerIdEmpresaActual() {
-        SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-        return prefs.getInt("id_empresa_activa", -1);
-    }
-
-    private void inicializarVistas() {
-        contenedorNotificaciones = findViewById(R.id.contenedorNotificaciones);
-        tvMensajeVacio = findViewById(R.id.tvMensajeVacio);
-
+        //Declarar los textViews
         btnMenu = findViewById(R.id.btnMenu);
-        btnNoti = findViewById(R.id.btnNoti);
-        logoEmpresa = findViewById(R.id.logoEmpresa);
-        btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
 
+        //Declarar los setOnClickListener
         btnMenu.setOnClickListener(this);
-        logoEmpresa.setOnClickListener(this);
-        btnCerrarSesion.setOnClickListener(this);
-    }
 
-    private void cargarSolicitudes() {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        apiService.obtenerSolicitudesPorEmpresa(idEmpresaSesion).enqueue(new Callback<List<SolicitudResponse>>() {
-            @Override
-            public void onResponse(Call<List<SolicitudResponse>> call, Response<List<SolicitudResponse>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    renderizarSolicitudes(response.body());
-                } else {
-                    renderizarSolicitudes(java.util.Collections.emptyList());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<SolicitudResponse>> call, Throwable t) {
-                Toast.makeText(EmpresaNotificaciones.this, "Error de conexión", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void renderizarSolicitudes(List<SolicitudResponse> lista) {
-        contenedorNotificaciones.removeAllViews();
-
-        if (lista.isEmpty()) {
-            tvMensajeVacio.setVisibility(View.VISIBLE);
-            return;
-        }
-        tvMensajeVacio.setVisibility(View.GONE);
-
-        int contadorVisual = 1;
-
-        for (SolicitudResponse solicitud : lista) {
-
-            View tarjeta = LayoutInflater.from(this).inflate(R.layout.activity_item_solicitud, contenedorNotificaciones, false);
-
-            TextView tvNum = tarjeta.findViewById(R.id.tvNumeroSolicitud);
-            TextView tvProyecto = tarjeta.findViewById(R.id.tvNombreProyecto);
-            TextView tvBoleta = tarjeta.findViewById(R.id.tvBoleta);
-            TextView tvCarrera = tarjeta.findViewById(R.id.tvCarreraAlumno);
-            TextView tvEstado = tarjeta.findViewById(R.id.tvEstadoSolicitud);
-            TextView btnAdmitir = tarjeta.findViewById(R.id.btnAdmitir);
-            TextView btnRechazar = tarjeta.findViewById(R.id.btnRechazar);
-            LinearLayout layoutBotones = tarjeta.findViewById(R.id.layoutBotonesAccion);
-
-            tvNum.setText("Solicitud #" + contadorVisual);
-            contadorVisual++;
-
-            tvProyecto.setText("Proyecto: " + solicitud.getNombreProyecto());
-            tvBoleta.setText("Boleta: " + solicitud.getBoletaAlumno());
-            tvCarrera.setText("Carrera: " + solicitud.getCarreraAlumno());
-            tvEstado.setText("Estado: " + solicitud.getEstadoSolicitud());
-
-            if ("enviada".equalsIgnoreCase(solicitud.getEstadoSolicitud())) {
-
-                tvEstado.setTextColor(Color.parseColor("#FF9800")); // Naranja
-                layoutBotones.setVisibility(View.VISIBLE);
-
-                btnAdmitir.setOnClickListener(v -> actualizarEstado(solicitud.getIdSolicitud(), "aceptada"));
-                btnRechazar.setOnClickListener(v -> actualizarEstado(solicitud.getIdSolicitud(), "rechazada"));
-
-            } else {
-                layoutBotones.setVisibility(View.GONE);
-
-                if ("aceptada".equalsIgnoreCase(solicitud.getEstadoSolicitud())) {
-                    tvEstado.setTextColor(Color.parseColor("#4CAF50"));
-                } else {
-                    tvEstado.setTextColor(Color.parseColor("#F44336"));
-                }
-            }
-            contenedorNotificaciones.addView(tarjeta);
-        }
-    }
-
-    private void actualizarEstado(int idSolicitud, String nuevoEstado) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        apiService.actualizarEstadoSolicitud(idSolicitud, nuevoEstado).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(EmpresaNotificaciones.this, "Solicitud " + nuevoEstado, Toast.LENGTH_SHORT).show();
-                    cargarSolicitudes();
-                } else {
-                    Toast.makeText(EmpresaNotificaciones.this, "Error al actualizar", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(EmpresaNotificaciones.this, "Fallo de conexión", Toast.LENGTH_SHORT).show();
-            }
-        });
+        ad1 = findViewById(R.id.admitir);
+        ad1.setOnClickListener(this);
+        ad2 = findViewById(R.id.admitir2);
+        ad2.setOnClickListener(this);
+        ad3 = findViewById(R.id.admitir3);
+        ad3.setOnClickListener(this);
+        ne1 = findViewById(R.id.rechazar);
+        ne1.setOnClickListener(this);
+        ne2 = findViewById(R.id.rechazar2);
+        ne2.setOnClickListener(this);
+        ne3 = findViewById(R.id.rechazar3);
+        ne3.setOnClickListener(this);
     }
 
     @Override
@@ -168,20 +43,45 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
         int id = v.getId();
 
         if (id == R.id.btnMenu) {
-            finish();
-
-        } else if (id == R.id.logoEmpresa) {
-            Toast.makeText(this, "Actualizando...", Toast.LENGTH_SHORT).show();
-            cargarSolicitudes();
-
-        } else if (id == R.id.btnCerrarSesion) {
-            SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-            prefs.edit().clear().apply();
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Intent intent = new Intent(this, EmpresaVista.class);
             startActivity(intent);
-            finish();
+        } else if (id == R.id.admitir || id == R.id.admitir2 || id == R.id.admitir3) {
+            String numeroSolicitud = "";
+            if (id == R.id.admitir) numeroSolicitud = "#001";
+            else if (id == R.id.admitir2) numeroSolicitud = "#002";
+            else if (id == R.id.admitir3) numeroSolicitud = "#003";
+
+            Toast.makeText(this, "Solicitud " + numeroSolicitud + " - Usuario Admitido ✅", Toast.LENGTH_SHORT).show();
+
+            ((TextView)v).setTextColor(0xFF4CAF50);
+            deshabilitarBotonesDeTarjeta(v);
+        } else if (id == R.id.rechazar || id == R.id.rechazar2 || id == R.id.rechazar3) {
+            String numeroSolicitud = "";
+            if (id == R.id.rechazar) numeroSolicitud = "#001";
+            else if (id == R.id.rechazar2) numeroSolicitud = "#002";
+            else if (id == R.id.rechazar3) numeroSolicitud = "#003";
+
+            Toast.makeText(this, "Solicitud " + numeroSolicitud + " - Usuario Rechazado ❌", Toast.LENGTH_SHORT).show();
+
+            ((TextView)v).setTextColor(0xFFD32F2F);
+            deshabilitarBotonesDeTarjeta(v);
+        }
+    }
+
+    // Método opcional para deshabilitar los botones de una tarjeta después de tomar una decisión
+    private void deshabilitarBotonesDeTarjeta(View botonPresionado) {
+        View parent = (View) botonPresionado.getParent();
+
+        if (parent != null && parent instanceof View) {
+            // Deshabilitar todos los botones en el mismo LinearLayout
+            for (int i = 0; i < ((android.view.ViewGroup) parent).getChildCount(); i++) {
+                View child = ((android.view.ViewGroup) parent).getChildAt(i);
+                if (child instanceof TextView) {
+                    child.setClickable(false);
+                    child.setFocusable(false);
+                    ((TextView) child).setTextColor(0xFF9E9E9E);
+                }
+            }
         }
     }
 }

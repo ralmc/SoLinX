@@ -6,12 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "Empresa")
+@Table(name = "empresa")
 public class Empresa {
 
     @Id
@@ -21,4 +22,5 @@ public class Empresa {
 
     @Column(name = "nombreEmpresa")
     private String nombreEmpresa;
+
 }

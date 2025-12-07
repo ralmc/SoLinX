@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/backgroundColor"
+    android:background="@color/white"
     android:gravity="center_horizontal"
     tools:context=".MainActivity">
 
@@ -24,10 +24,9 @@
             android:paddingRight="40dp"
             android:text="SoLinX"
             android:textAlignment="center"
-            android:textColor="@color/primary"
+            android:textColor="#1497B9"
             android:textSize="70sp"
             android:textStyle="bold"/>
-
         <ImageView
             android:id="@+id/imgLogoAve"
             android:layout_width="100dp"
@@ -45,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Iniciar Sesión"
-        android:textColor="@color/textColorPrimary"
+        android:textColor="#000000"
         android:textSize="50sp"
         android:stateListAnimator="@null"
         android:textStyle="bold"
@@ -56,7 +55,7 @@
     <View
         android:layout_width="300dp"
         android:layout_height="5dp"
-        android:background="@color/textColorPrimary"
+        android:background="#000000"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="18dp" />
 
@@ -65,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Crear Cuenta"
-        android:textColor="@color/textColorSecondary"
+        android:textColor="#808080"
         android:stateListAnimator="@null"
         android:textSize="45sp"
         android:textStyle="normal"
@@ -90,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Alumno"
-            android:textColor="@color/textColorPrimary"
+            android:textColor="#000000"
             android:textStyle="bold"
             android:textSize="14sp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -102,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="  |  "
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#808080"
             android:textSize="14sp" />
 
         <TextView
@@ -110,18 +109,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Empresa"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#808080"
             android:textSize="14sp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
             android:fontFamily="@font/molgan"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="  |  "
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#808080"
             android:textSize="14sp" />
 
         <TextView
@@ -129,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Supervisor"
-            android:textColor="@color/textColorSecondary"
+            android:textColor="#808080"
             android:textSize="14sp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"

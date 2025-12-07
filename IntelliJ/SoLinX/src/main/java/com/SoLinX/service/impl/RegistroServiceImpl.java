@@ -21,43 +21,30 @@ public class RegistroServiceImpl implements RegistroService {
 
     public String registrar(RegistroDto dto) {
 
-        // Validar que los correos coincidan
         if (!dto.getCorreo().equals(dto.getConfirmarCorreo())) {
             return "Los correos no coinciden.";
         }
 
-        // Validar que las contraseñas coincidan
         if (!dto.getContraseña().equals(dto.getConfirmarContraseña())) {
             return "Las contraseñas no coinciden.";
         }
 
-        // Validar que el correo no esté registrado
         if (usuarioRepository.findByCorreo(dto.getCorreo()) != null) {
             return "El correo ya está registrado.";
         }
 
-        // NUEVA VALIDACIÓN: Verificar si la boleta ya está registrada
-        Estudiante estudianteExistente = estudianteRepository.findById(dto.getBoleta()).orElse(null);
-        if (estudianteExistente != null) {
-            // Verificar si ya tiene un usuario asociado
-            UsuarioEstudiante usuarioEstudianteExistente = usuarioEstudianteRepository.findByBoleta(dto.getBoleta());
-            if (usuarioEstudianteExistente != null) {
-                return "La boleta ya está registrada.";
-            }
-        }
+        Estudiante est = estudianteRepository.findById(dto.getBoleta()).orElse(null);
 
-        // Crear o actualizar estudiante
-        Estudiante est = estudianteExistente;
         if (est == null) {
             est = Estudiante.builder()
                     .boleta(dto.getBoleta())
                     .carrera(dto.getCarrera())
                     .escuela(dto.getEscuela())
                     .build();
+
             estudianteRepository.save(est);
         }
 
-        // Crear usuario
         Usuario u = Usuario.builder()
                 .nombre(dto.getNombreUsuario())
                 .correo(dto.getCorreo())
@@ -68,9 +55,9 @@ public class RegistroServiceImpl implements RegistroService {
 
         usuarioRepository.save(u);
 
-        // Crear relación usuario-estudiante
+        // Código CORRECTO
         UsuarioEstudiante ue = UsuarioEstudiante.builder()
-                .idUsuario(u.getIdUsuario())
+                .idUsuario(u.getIdUsuario()) // <-- Cambia 'usuario' por 'idUsuario'
                 .boleta(est.getBoleta())
                 .build();
 

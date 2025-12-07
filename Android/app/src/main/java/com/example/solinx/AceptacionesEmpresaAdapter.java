@@ -1,4 +1,4 @@
-package com.example.solinx.ADAPTER;
+package com.example.solinx;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,11 +10,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.solinx.R;
-import com.example.solinx.Solicitud;
-
 import java.util.List;
 
+//VELAZQUEZ REYNOSO ADRIAN
 public class AceptacionesEmpresaAdapter extends RecyclerView.Adapter<AceptacionesEmpresaAdapter.AceptacionViewHolder> {
 
     private List<Solicitud> listaSolicitudes;
@@ -28,6 +26,7 @@ public class AceptacionesEmpresaAdapter extends RecyclerView.Adapter<Aceptacione
     @NonNull
     @Override
     public AceptacionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Infla el layout de la tarjeta de empresa
         View view = LayoutInflater.from(context).inflate(R.layout.activity_card_aceptacion_empresa, parent, false);
         return new AceptacionViewHolder(view);
     }
@@ -36,10 +35,12 @@ public class AceptacionesEmpresaAdapter extends RecyclerView.Adapter<Aceptacione
     public void onBindViewHolder(@NonNull AceptacionViewHolder holder, int position) {
         Solicitud solicitud = listaSolicitudes.get(position);
 
+        // Pone los datos en los IDs de la tarjeta de empresa
         holder.tvAceptacionId.setText("Aceptación #" + solicitud.getId());
         holder.tvNombreAlumno.setText("Alumno: " + solicitud.getNombreAlumno());
         holder.tvNombreEmpresa.setText("Empresa: " + solicitud.getNombreEmpresa());
 
+        // Asumiendo que quieres mostrar la fecha/horario
         holder.tvFechaAceptacion.setText("Fecha Aceptación: " + solicitud.getHorario());
     }
 
