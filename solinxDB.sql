@@ -148,8 +148,8 @@ INSERT INTO Empresa (nombreEmpresa) VALUES
 ('AeroDynamics MX'), -- ID 2
 ('SoftSolutions'),   -- ID 3
 ('ElectroCorp'),     -- ID 4
-('Aa'),              -- ID 5  <-- AGREGADA
-('Ooo');             -- ID 6  <-- AGREGADA
+('Aa'),              -- ID 5
+('Ooo');             -- ID 6
 
 -- 3. SUPERVISORES
 INSERT INTO Supervisor (area, idEmpresa) VALUES
@@ -158,29 +158,27 @@ INSERT INTO Supervisor (area, idEmpresa) VALUES
 ('Proyectos Aeronáuticos', 2),
 ('Sistemas', 3);
 
--- 4. USUARIOS (Aquí creamos las cuentas para Login)
+-- 4. USUARIOS (Sin administrador)
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
 ('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante'), -- ID 1
 ('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa'), -- ID 2 (TechNova)
 ('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor'), -- ID 3
-('Admin Master', 'admin@solinx.com', '5500112233', 'admin123', 'administrador'), -- ID 4
-('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante'), -- ID 5
--- CUENTAS DE PRUEBA SOLICITADAS EMPRESA ADRIAN:
-('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa'), -- ID 6 (Para empresa Aa)
-('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'); -- ID 7 (Para empresa Ooo)
+('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante'), -- ID 4
+('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa'), -- ID 5 (Para empresa Aa)
+('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'); -- ID 6 (Para empresa Ooo)
 
 -- 5. VINCULAR USUARIOS CON ROLES
 
 -- Estudiantes
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
 (1, 20230001),
-(5, 20230005);
+(4, 20230005);
 
--- Empresas (Aquí es donde vinculamos el Login con la Empresa real)
+-- Empresas
 INSERT INTO UsuarioEmpresa (idUsuario, idEmpresa) VALUES
 (2, 1), -- Laura -> TechNova
-(6, 5), -- aa@gmail.com -> Empresa Aa (ID 5)
-(7, 6); -- oo@gmail.com -> Empresa Ooo (ID 6)
+(5, 5), -- aa@gmail.com -> Empresa Aa (ID 5)
+(6, 6); -- oo@gmail.com -> Empresa Ooo (ID 6)
 
 -- Supervisores
 INSERT INTO UsuarioSupervisor (idUsuario, idSupervisor) VALUES
@@ -195,11 +193,8 @@ INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubica
 
 -- 7. PERFILES
 INSERT INTO Perfil (tema, idUsuario) VALUES
-('claro', 1), ('oscuro', 2), ('claro', 3), ('oscuro', 4), ('claro', 5), ('claro', 6), ('claro', 7);
+('claro', 1), ('oscuro', 2), ('claro', 3), ('claro', 4), ('claro', 5), ('claro', 6);
 
--- ============================================
--- PRUEBAS PARA EMPRESA MENU/NOTIFICACIONES
--- ============================================
 -- ============================================
 -- DATOS DE PRUEBA: PROYECTOS Y SOLICITUDES PARA Aa Y Ooo
 -- ============================================
@@ -234,9 +229,6 @@ VALUES (NOW(), 'enviada', 20250003, (SELECT idProyecto FROM Proyecto WHERE idEmp
 -- Confirmación final
 SELECT * FROM Usuario WHERE correo IN ('aa@gmail.com', 'oo@gmail.com');
 SELECT * FROM Solicitud;
-select * from Proyecto;
-select * from usuario;
-select * from Estudiante;
--- ============================================
--- PRUEBAS PARA EMPRESA MENU/NOTIFICACIONES
--- ============================================
+SELECT * FROM Proyecto;
+SELECT * FROM usuario;
+SELECT * FROM Estudiante;

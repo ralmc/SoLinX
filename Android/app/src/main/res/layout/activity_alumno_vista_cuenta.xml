@@ -102,7 +102,8 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:layout_marginTop="36dp"
-                android:paddingHorizontal="24dp">
+                android:paddingHorizontal="24dp"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tvModo"
