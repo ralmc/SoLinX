@@ -23,16 +23,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClickListener {
-
     TextInputEditText etNombreUsuario, etBoleta, etCorreo, etConfirmarCorreo,
             etContrasena, etConfirmarContrasena;
-
     AutoCompleteTextView spEscuela, spCarrera;
-
     Button btnEnviar;
-
     TextView tvLoginLink;
-
     private ApiService apiService;
 
     @Override
@@ -239,7 +234,8 @@ public class AlumnoCrearCuenta extends AppCompatActivity implements View.OnClick
                                 "¡Cuenta creada exitosamente!",
                                 Toast.LENGTH_LONG).show();
 
-                        Intent intent = new Intent(AlumnoCrearCuenta.this, MainActivity.class);
+                        Intent intent = new Intent(AlumnoCrearCuenta.this, HorarioActivity.class);
+                        intent.putExtra("boleta", boleta);
                         startActivity(intent);
                         finish();
                     } else {

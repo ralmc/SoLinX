@@ -1,4 +1,4 @@
-package com.SoLinX.controler;
+package com.SoLinX.controller;
 
 import com.SoLinX.dto.RegistroDto;
 import com.SoLinX.service.RegistroService;

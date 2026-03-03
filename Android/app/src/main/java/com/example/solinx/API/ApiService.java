@@ -5,6 +5,7 @@ import com.example.solinx.DTO.LoginResponseDTO;
 import com.example.solinx.DTO.RegistroAlumnoDTO;
 import com.example.solinx.DTO.RegistroEmpresaDTO;
 import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
+import com.example.solinx.DTO.HorarioDTO;
 
 // Importes de la versión upstream
 import com.example.solinx.DTO.SolicitudDTO;
@@ -43,6 +44,9 @@ public interface ApiService {
 
     @POST("registro")
     Call<String> registrarAlumno(@Body RegistroAlumnoDTO dto);
+
+    @POST("horario/{boleta}")
+    Call<HorarioDTO> crearHorario(@Path("boleta") int boleta, @Body HorarioDTO dto);
 
     // -------------------------
     // CRUD de Proyectos

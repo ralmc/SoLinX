@@ -1,17 +1,13 @@
-package com.SoLinX.controler;
+package com.SoLinX.controller;
 
-import com.SoLinX.dto.LoginDto;           // Nombre corregido
-import com.SoLinX.dto.LoginResponseDto;   // Nombre corregido
 import com.SoLinX.dto.UsuarioDto;
 import com.SoLinX.model.Usuario;
-import com.SoLinX.model.UsuarioEmpresa;
 import com.SoLinX.service.UsuarioEmpresaService; // Asegúrate de tener este service o repository
 import com.SoLinX.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,44 +18,6 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
     private final UsuarioEmpresaService usuarioEmpresaService;
-
-    /* <-- COMENTAR @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginDto loginDto) {
-
-        List<Usuario> usuarios = usuarioService.getAll();
-        Usuario usuarioEncontrado = usuarios.stream()
-                .filter(u -> u.getCorreo().equals(loginDto.getCorreo()) &&
-                        u.getUserPassword().equals(loginDto.getUserPassword()))
-                .findFirst()
-                .orElse(null);
-
-        if (usuarioEncontrado != null) {
-            LoginResponseDto.LoginResponseDtoBuilder responseBuilder = LoginResponseDto.builder()
-                    .idUsuario(usuarioEncontrado.getIdUsuario())
-                    .nombre(usuarioEncontrado.getNombre())
-                    .correo(usuarioEncontrado.getCorreo())
-                    .rol(usuarioEncontrado.getRol());
-
-            if ("empresa".equalsIgnoreCase(usuarioEncontrado.getRol())) {
-                List<UsuarioEmpresa> vinculos = usuarioEmpresaService.getAll();
-
-                UsuarioEmpresa vinculo = vinculos.stream()
-                        .filter(ue -> ue.getIdUsuario().equals(usuarioEncontrado.getIdUsuario()))
-                        .findFirst()
-                        .orElse(null);
-
-                if (vinculo != null) {
-                    responseBuilder.idEmpresa(vinculo.getIdEmpresa());
-                } else {
-                    responseBuilder.idEmpresa(0); // No tiene empresa asignada
-                }
-            }
-
-            return ResponseEntity.ok(responseBuilder.build());
-        }
-
-        return ResponseEntity.status(401).build();
-    } */
 
     @RequestMapping("/usuario")
     public ResponseEntity<List<UsuarioDto>> lista(@RequestParam (name = "nombre", defaultValue = "", required = false) String nombre) {

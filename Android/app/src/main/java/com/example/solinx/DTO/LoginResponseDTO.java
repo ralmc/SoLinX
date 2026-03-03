@@ -17,7 +17,7 @@ public class LoginResponseDTO {
     private String telefono;
 
     // ============================================
-    // GETTERS Y SETTERS BÁSICOS
+    // GETTERS Y SETTERS BASICOS
     // ============================================
 
     public Integer getIdUsuario() { return idUsuario; }
@@ -39,7 +39,7 @@ public class LoginResponseDTO {
     public void setIdEmpresa(Integer idEmpresa) { this.idEmpresa = idEmpresa; }
 
     // ============================================
-    // GETTERS Y SETTERS SUPERVISOR ✅ NUEVO
+    // GETTERS Y SETTERS SUPERVISOR
     // ============================================
 
     public Integer getIdSupervisor() { return idSupervisor; }

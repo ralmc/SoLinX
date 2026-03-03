@@ -1,5 +1,5 @@
 -- ============================================
--- BASE DE DATOS SOLINX - VERSIÓN FINAL
+-- BASE DE DATOS SOLINX
 -- ============================================
 DROP DATABASE IF EXISTS solinx;
 CREATE DATABASE IF NOT EXISTS solinx;
@@ -33,7 +33,25 @@ CREATE TABLE Usuario (
     rol ENUM('estudiante', 'empresa', 'supervisor', 'administrador') NOT NULL
 );
 
--- 2. TABLAS DE RELACIÓN (Usuario - Rol)
+CREATE TABLE Horario(
+	idHorario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    lunInicio TIME NULL,
+    lunFinal TIME NULL,
+    marInicio TIME NULL,
+    marFinal TIME NULL,
+    mierInicio TIME NULL,
+    mierFinal TIME NULL,
+    jueInicio TIME NULL,
+    jueFinal TIME NULL,
+    vieInicio TIME NULL,
+    vieFinal TIME NULL,
+    sabInicio TIME NULL,
+    sabFinal TIME NULL,
+    domInicio TIME NULL,
+    domFinal TIME NULL
+);
+
+-- 2. TABLAS DE RELACIÓN (Usuario - Rol) y horario
 CREATE TABLE UsuarioEstudiante (
     idUsuario INT NOT NULL,
     boleta INT NOT NULL,
@@ -56,6 +74,14 @@ CREATE TABLE UsuarioSupervisor (
     PRIMARY KEY (idUsuario),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (idSupervisor) REFERENCES Supervisor(idSupervisor) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE HorarioEstudiante (
+    boleta INT NOT NULL,
+    idHorario INT NOT NULL,
+    PRIMARY KEY (boleta),
+    FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (idHorario) REFERENCES Horario(idHorario) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- 3. TABLAS DE NEGOCIO (Proyectos, Solicitudes)
@@ -92,46 +118,7 @@ CREATE TABLE Perfil (
 );
 
 -- ============================================
--- SISTEMA DE AUDITORÍA
--- ============================================
-CREATE TABLE CAMBIOS (
-    ID_aud INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    Fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Usuario_BD VARCHAR(50),
-    ROL VARCHAR(25),
-    Accion ENUM('INSERT','UPDATE','DELETE') NOT NULL,
-    ID_afectado SMALLINT,
-    Usuario_nombre VARCHAR(100)
-);
-
-DELIMITER $$
-DROP TRIGGER IF EXISTS usuario_insert $$
-CREATE TRIGGER usuario_insert
-AFTER INSERT ON Usuario FOR EACH ROW
-BEGIN
-    INSERT INTO CAMBIOS (Usuario_BD, ROL, Accion, ID_afectado, Usuario_nombre)
-    VALUES (SUBSTRING_INDEX(USER(), '@', 1), NEW.rol, 'INSERT', NEW.idUsuario, NEW.nombre);
-END $$
-
-DROP TRIGGER IF EXISTS usuario_update $$
-CREATE TRIGGER usuario_update
-AFTER UPDATE ON Usuario FOR EACH ROW
-BEGIN
-    INSERT INTO CAMBIOS (Usuario_BD, ROL, Accion, ID_afectado, Usuario_nombre)
-    VALUES (SUBSTRING_INDEX(USER(), '@', 1), NEW.rol, 'UPDATE', NEW.idUsuario, NEW.nombre);
-END $$
-
-DROP TRIGGER IF EXISTS usuario_delete $$
-CREATE TRIGGER usuario_delete
-AFTER DELETE ON Usuario FOR EACH ROW
-BEGIN
-    INSERT INTO CAMBIOS (Usuario_BD, ROL, Accion, ID_afectado, Usuario_nombre)
-    VALUES (SUBSTRING_INDEX(USER(), '@', 1), OLD.rol, 'DELETE', OLD.idUsuario, OLD.nombre);
-END $$
-DELIMITER ;
-
--- ============================================
--- INSERCIÓN DE DATOS (POBLADO)
+-- INSERCIÓN DE DATOS
 -- ============================================
 
 -- 1. ESTUDIANTES
@@ -142,7 +129,7 @@ INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
 (20230004, 'Ingeniería Informática', 'UPIICSA'),
 (20230005, 'Ingeniería Aeronáutica', 'ESIA Ticomán');
 
--- 2. EMPRESAS (Aquí agregamos a Aa y Ooo)
+-- 2. EMPRESAS
 INSERT INTO Empresa (nombreEmpresa) VALUES
 ('TechNova'),        -- ID 1
 ('AeroDynamics MX'), -- ID 2
@@ -168,7 +155,6 @@ INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
 ('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'); -- ID 6 (Para empresa Ooo)
 
 -- 5. VINCULAR USUARIOS CON ROLES
-
 -- Estudiantes
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
 (1, 20230001),
@@ -195,6 +181,46 @@ INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubica
 INSERT INTO Perfil (tema, idUsuario) VALUES
 ('claro', 1), ('oscuro', 2), ('claro', 3), ('claro', 4), ('claro', 5), ('claro', 6);
 
+-- 8. HORARIOS
+-- Horario 1: Mañana (08:00 - 12:00)
+INSERT INTO Horario ( 
+	lunInicio, lunFinal,
+	marInicio, marFinal,
+	mierInicio, mierFinal,
+	jueInicio, jueFinal,
+	vieInicio, vieFinal
+) VALUES (
+  '08:00:00','12:00:00',
+  '08:00:00','12:00:00',
+  '08:00:00','12:00:00',
+  '08:00:00','12:00:00',
+  '08:00:00','12:00:00'
+);
+
+-- Horario 2: Tarde (14:00 - 18:00)
+INSERT INTO Horario (
+	lunInicio, lunFinal,
+	marInicio, marFinal,
+	mierInicio, mierFinal,
+	jueInicio, jueFinal,
+	vieInicio, vieFinal
+) VALUES (
+  '14:00:00','18:00:00',
+  '14:00:00','18:00:00',
+  '14:00:00','18:00:00',
+  '14:00:00','18:00:00',
+  '14:00:00','18:00:00'
+);
+
+-- 9. HORARIOS-ALUMNOS
+-- Estudiante 1 → Horario Mañana
+INSERT INTO HorarioEstudiante (boleta, idHorario)
+VALUES (20230001, 1);
+
+-- Estudiante 2 → Horario Tarde
+INSERT INTO HorarioEstudiante (boleta, idHorario)
+VALUES (20230005, 2);
+
 -- ============================================
 -- DATOS DE PRUEBA: PROYECTOS Y SOLICITUDES PARA Aa Y Ooo
 -- ============================================
@@ -213,8 +239,6 @@ VALUES ('Desarrollo Backend', 'Sistema de Pagos Aa', 'Crear API segura', 2, 'Rem
 INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, idEmpresa, imagenRef) 
 VALUES ('Inteligencia Artificial', 'Chatbot Ooo V2', 'Asistente virtual', 3, 'CDMX', 6, 'img_default_proyecto');
 
--- SOLICITUDES (Para que aparezcan en notificaciones)
-
 -- Solicitud para Aa (Empresa 5)
 INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
 VALUES (NOW(), 'enviada', 20250001, (SELECT idProyecto FROM Proyecto WHERE idEmpresa = 5 LIMIT 1));
@@ -226,9 +250,10 @@ VALUES (NOW(), 'enviada', 20250002, (SELECT idProyecto FROM Proyecto WHERE idEmp
 INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
 VALUES (NOW(), 'enviada', 20250003, (SELECT idProyecto FROM Proyecto WHERE idEmpresa = 6 LIMIT 1));
 
--- Confirmación final
 SELECT * FROM Usuario WHERE correo IN ('aa@gmail.com', 'oo@gmail.com');
 SELECT * FROM Solicitud;
 SELECT * FROM Proyecto;
-SELECT * FROM usuario;
 SELECT * FROM Estudiante;
+SELECT * FROM HorarioEstudiante;
+SELECT * FROM Horario;
+SELECT * FROM usuario;

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="24dp"
+    android:layout_marginBottom="16dp"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvNombreDia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lunes"
+        android:textColor="#1497B9"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/molgan"
+        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inicio"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                android:fontFamily="@font/molgan"/>
+            <Spinner
+                android:id="@+id/spInicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#1497B9"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  —  "
+            android:textColor="#808080"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Final"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                android:fontFamily="@font/molgan"/>
+            <Spinner
+                android:id="@+id/spFinal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#1497B9"/>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/cbSinClase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Libre"
+            android:textColor="#808080"
+            android:textSize="12sp"
+            android:fontFamily="@font/molgan"
+            android:buttonTint="#1497B9"/>
+    </LinearLayout>
+</LinearLayout>

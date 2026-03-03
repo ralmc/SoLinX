@@ -1,4 +1,4 @@
-package com.SoLinX.controler;
+package com.SoLinX.controller;
 
 import com.SoLinX.dto.SolicitudDto;
 import com.SoLinX.model.Estudiante;
