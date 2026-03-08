@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="?android:attr/windowBackground"
+    android:fitsSystemWindows="true"
     tools:context=".EmpresaVista">
 
     <LinearLayout
@@ -63,6 +64,7 @@
                 android:clickable="true"
                 android:focusable="true"/>
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
@@ -75,7 +77,7 @@
             android:layout_height="wrap_content"
             android:text="Proyectos Publicados"
             android:textSize="24sp"
-            android:textColor="#0E0F0F"
+            android:textColor="?attr/colorOnBackground"
             android:textStyle="bold"
             android:fontFamily="@font/fonts"
             android:layout_marginTop="2dp"
@@ -104,9 +106,10 @@
             android:text="Añadir Proyecto"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="#2D99A6"
+            android:textColor="?attr/colorPrimary"
             android:paddingTop="12dp"
             android:clickable="true"
             android:focusable="true" />
+
     </LinearLayout>
 </ScrollView>

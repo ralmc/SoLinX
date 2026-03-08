@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Enfocado -->
+    <item android:state_focused="true" android:color="?attr/colorPrimary"/>
+    <!-- Error -->
+    <item android:state_activated="true" android:color="?attr/colorError"/>
+    <!-- Default (sin foco) -->
+    <item android:color="?attr/colorOnSurface"/>
+</selector>
