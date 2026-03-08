@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="4dp"
     app:cardElevation="2dp"
+    android:fitsSystemWindows="true"
     android:layout_marginBottom="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="Aceptación #001"
             android:textSize="18sp"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -39,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Alumno: Nombre Apellido Alumno"
-                android:textColor="#333333"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 android:layout_marginBottom="4dp"/>
 
@@ -48,7 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Empresa: Nombre de la Empresa"
-                android:textColor="#333333"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp"
                 android:layout_marginBottom="4dp"/>
 
@@ -57,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Fecha Aceptación: 14/11/2025"
-                android:textColor="#666666"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -79,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:text="Rechazar"
                 android:textSize="16sp"
-                android:textColor="#E53935"
+                android:textColor="@color/color_rechazar"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"
@@ -93,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:text="Aprobar"
                 android:textSize="16sp"
-                android:textColor="#43A047"
+                android:textColor="@color/color_aprobar"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"

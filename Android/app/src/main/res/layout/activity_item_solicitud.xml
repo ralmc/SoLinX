@@ -7,8 +7,9 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
-    android:backgroundTint="#FFFFFF"
+    android:backgroundTint="?attr/colorSurface"
     app:cardCornerRadius="12dp"
+    android:fitsSystemWindows="true"
     app:cardElevation="4dp">
 
     <LinearLayout
@@ -38,7 +39,7 @@
                 android:layout_height="wrap_content"
                 tools:text="Solicitud #1"
                 android:text="Cargando..."
-                android:textColor="#000000"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginBottom="4dp"
@@ -49,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Proyecto: Sistema"
-                android:textColor="#2b859f"
+                android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -58,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Boleta: 123"
-                android:textColor="#666666"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp" />
 
             <TextView
@@ -66,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Carrera: Sistemas"
-                android:textColor="#666666"
+                android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp" />
 
             <TextView
@@ -74,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="Estado: Enviada"
-                android:textColor="#FF9800"
+                android:textColor="@color/color_estado_pendiente"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginTop="4dp" />
@@ -91,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Admitir"
-                    android:textColor="#7ed957"
+                    android:textColor="@color/color_admitir"
                     android:textStyle="bold"
                     android:padding="8dp"/>
 
@@ -106,9 +107,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rechazar"
-                    android:textColor="#ff5757"
+                    android:textColor="@color/color_rechazar_soft"
                     android:textStyle="bold"
                     android:padding="8dp"/>
+
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

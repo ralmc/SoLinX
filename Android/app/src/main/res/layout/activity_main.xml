@@ -1,11 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_inicio"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="?android:attr/windowBackground"
     android:gravity="center_horizontal"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -24,9 +26,10 @@
             android:paddingRight="40dp"
             android:text="SoLinX"
             android:textAlignment="center"
-            android:textColor="#1497B9"
+            android:textColor="?attr/colorPrimary"
             android:textSize="70sp"
             android:textStyle="bold"/>
+
         <ImageView
             android:id="@+id/imgLogoAve"
             android:layout_width="100dp"
@@ -39,12 +42,13 @@
         android:layout_width="match_parent"
         android:layout_height="140dp" />
 
+    <!-- Botón principal -->
     <Button
         android:id="@+id/btnIniciarSesion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Iniciar Sesión"
-        android:textColor="#000000"
+        android:textColor="?attr/colorOnBackground"
         android:textSize="50sp"
         android:stateListAnimator="@null"
         android:textStyle="bold"
@@ -55,7 +59,7 @@
     <View
         android:layout_width="300dp"
         android:layout_height="5dp"
-        android:background="#000000"
+        android:background="?attr/colorOnBackground"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="18dp" />
 
@@ -64,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Crear Cuenta"
-        android:textColor="#808080"
+        android:textColor="?android:attr/textColorSecondary"
         android:stateListAnimator="@null"
         android:textSize="45sp"
         android:textStyle="normal"
@@ -76,6 +80,7 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- Footer: selector de tipo de usuario -->
     <LinearLayout
         android:id="@+id/layoutInferior"
         android:layout_width="wrap_content"
@@ -89,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Alumno"
-            android:textColor="#000000"
+            android:textColor="?attr/colorOnBackground"
             android:textStyle="bold"
             android:textSize="14sp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -101,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="  |  "
-            android:textColor="#808080"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 
         <TextView
@@ -109,17 +114,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Empresa"
-            android:textColor="#808080"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
             android:fontFamily="@font/molgan"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="  |  "
-            android:textColor="#808080"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp" />
 
         <TextView
@@ -127,7 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Supervisor"
-            android:textColor="#808080"
+            android:textColor="?android:attr/textColorSecondary"
             android:textSize="14sp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"

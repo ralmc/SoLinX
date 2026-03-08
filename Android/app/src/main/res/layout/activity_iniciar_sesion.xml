@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="?android:attr/windowBackground"
     android:fillViewport="true"
+    android:fitsSystemWindows="true"
     tools:context=".IniciarSesion">
 
     <LinearLayout
@@ -19,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="40dp" />
 
-
         <TextView
             android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
             android:text="Iniciar Sesión"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="?attr/colorOnBackground"
             android:layout_marginBottom="40dp" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -36,8 +36,10 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="#333333"
-            app:hintTextColor="#333333">
+            app:boxStrokeColor="@color/input_stroke"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorOnSurface">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etUsuario"
@@ -45,11 +47,10 @@
                 android:layout_height="wrap_content"
                 android:hint="Correo electrónico"
                 android:inputType="textPersonName"
-                android:textColor="#333333"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_contrasena"
@@ -57,10 +58,12 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="40dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="#333333"
-            app:hintTextColor="#333333"
+            app:boxStrokeColor="@color/input_stroke"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorOnSurface"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="#333333">
+            app:passwordToggleTint="?attr/colorOnSurface">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etContrasena"
@@ -68,12 +71,11 @@
                 android:layout_height="wrap_content"
                 android:hint="Contraseña"
                 android:inputType="textPassword"
-                android:textColor="#333333"
+                android:textColor="?attr/colorOnSurface"
                 android:textSize="16sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Layout inferior con logo y botón -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,19 +101,18 @@
                 android:textAllCaps="false"
                 android:textSize="18sp"
                 android:padding="14dp"
-                android:backgroundTint="#00BCD4"
-                android:textColor="@android:color/white"
+                android:backgroundTint="?attr/colorSecondary"
+                android:textColor="?attr/colorOnSecondary"
                 app:cornerRadius="8dp" />
 
         </LinearLayout>
-
 
         <TextView
             android:id="@+id/tvRegistroLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="¿No tienes cuenta? Regístrate aquí."
-            android:textColor="#00BCD4"
+            android:textColor="?attr/colorSecondary"
             android:padding="8dp"
             android:textSize="16sp" />
 
