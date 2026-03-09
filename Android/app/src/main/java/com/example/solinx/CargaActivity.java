@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.solinx.UTIL.ThemeUtils;
 
-//INICAR PROYECTO EN: CargaActivity
 public class CargaActivity extends AppCompatActivity {
 
     private static final int SPLASH_DURATION = 3000;

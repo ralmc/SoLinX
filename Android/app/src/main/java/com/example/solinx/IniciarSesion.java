@@ -1,61 +1,68 @@
 package com.example.solinx;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.CONEXION.InicioHelper;
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
-import com.example.solinx.UTIL.ThemeUtils;
 import com.google.android.material.textfield.TextInputEditText;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class IniciarSesion extends AppCompatActivity {
+import static android.content.Context.MODE_PRIVATE;
+
+public class IniciarSesion extends Fragment {
 
     private static final String TAG = "IniciarSesion";
 
-    TextInputEditText etUsuario, etContrasena;
-    TextView tvRegistroLink;
-    Button btnEnviar;
+    private TextInputEditText etUsuario, etContrasena;
+    private TextView tvRegistroLink;
+    private Button btnEnviar;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_iniciar_sesion, container, false);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        ThemeUtils.applyTheme(this);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_iniciar_sesion);
-
-        tvRegistroLink = findViewById(R.id.tvRegistroLink);
-        etUsuario = findViewById(R.id.etUsuario);
-        etContrasena = findViewById(R.id.etContrasena);
-        btnEnviar = findViewById(R.id.btnEnviar);
+        tvRegistroLink = view.findViewById(R.id.tvRegistroLink);
+        etUsuario      = view.findViewById(R.id.etUsuario);
+        etContrasena   = view.findViewById(R.id.etContrasena);
+        btnEnviar      = view.findViewById(R.id.btnEnviar);
 
         btnEnviar.setOnClickListener(v -> hacerLogin());
-        tvRegistroLink.setOnClickListener(v -> registroAlumno());
+        tvRegistroLink.setOnClickListener(v ->
+                ((InicioHelper)requireActivity()).Crear());
     }
-
-    private void registroAlumno() {
-        Intent intent = new Intent(this, AlumnoCrearCuenta.class);
-        startActivity(intent);
-    }
-
     private void hacerLogin() {
-        String correo = etUsuario.getText().toString().trim();
+        String correo   = etUsuario.getText().toString().trim();
         String password = etContrasena.getText().toString().trim();
 
         if (correo.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Completa ambos campos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Completa ambos campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -66,170 +73,124 @@ public class IniciarSesion extends AppCompatActivity {
 
         call.enqueue(new Callback<LoginResponseDTO>() {
             @Override
-            public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
+            public void onResponse(@NonNull Call<LoginResponseDTO> call,
+                                   @NonNull Response<LoginResponseDTO> response) {
 
                 if (response.code() == 401) {
-                    Toast.makeText(IniciarSesion.this, "Contraseña/Email Incorrectos", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Contraseña/Email Incorrectos", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (!response.isSuccessful() || response.body() == null) {
-                    Toast.makeText(IniciarSesion.this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 LoginResponseDTO loginResponse = response.body();
-
-                // Log para debugging
                 Log.d(TAG, "Login exitoso - Usuario: " + loginResponse.getNombre());
                 Log.d(TAG, "Rol: " + loginResponse.getRol());
 
-                // Guardar sesión básica
                 guardarSesionBasica(loginResponse);
 
                 String rol = loginResponse.getRol();
 
-                // ============================================
-                // NAVEGACIÓN SEGÚN ROL
-                // ============================================
-
                 if ("estudiante".equalsIgnoreCase(rol)) {
-                    // ESTUDIANTE → Guardar datos adicionales y navegar a AlumnoMenuEmpresas
                     guardarDatosEstudiante(loginResponse);
                     navegarVistaAlumno(loginResponse);
-
                 } else if ("empresa".equalsIgnoreCase(rol)) {
-                    // EMPRESA → EmpresaVista
                     navegarVistaEmpresa(loginResponse);
-
                 } else if ("supervisor".equalsIgnoreCase(rol)) {
-                    // SUPERVISOR → MenuSupervisorActivity
                     navegarVistaSupervisor(loginResponse);
-
-                } else if ("administrador".equalsIgnoreCase(rol)) {
-                    // ADMINISTRADOR → Mostrar mensaje temporal
-                    Toast.makeText(IniciarSesion.this, "Panel de administrador próximamente", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(IniciarSesion.this, "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
+            public void onFailure(@NonNull Call<LoginResponseDTO> call, @NonNull Throwable t) {
                 Log.e(TAG, "Error de red: " + t.getMessage());
-                Toast.makeText(IniciarSesion.this, "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void guardarSesionBasica(LoginResponseDTO loginResponse) {
-        SharedPreferences preferences = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt("idUsuario", loginResponse.getIdUsuario());
-        editor.putString("rol", loginResponse.getRol());
-        editor.putString("nombre", loginResponse.getNombre());
-        editor.putString("correo", loginResponse.getCorreo());
-        editor.apply();
-
+        SharedPreferences preferences = requireActivity().getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+        preferences.edit()
+                .putInt("idUsuario", loginResponse.getIdUsuario())
+                .putString("rol", loginResponse.getRol())
+                .putString("nombre", loginResponse.getNombre())
+                .putString("correo", loginResponse.getCorreo())
+                .apply();
         Log.d(TAG, "Sesión básica guardada");
     }
 
     private void guardarDatosEstudiante(LoginResponseDTO loginResponse) {
-        SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        // Guardar datos del estudiante
+        SharedPreferences prefs = requireActivity().getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
         String boleta = loginResponse.getBoleta() != null ?
                 loginResponse.getBoleta().toString() : "N/A";
-
-        editor.putString("boleta", boleta);
-        editor.putString("nombre", loginResponse.getNombre());
-        editor.putString("correo", loginResponse.getCorreo());
-        editor.putString("carrera", loginResponse.getCarrera() != null ?
-                loginResponse.getCarrera() : "N/A");
-        editor.putString("escuela", loginResponse.getEscuela() != null ?
-                loginResponse.getEscuela() : "N/A");
-        editor.putString("telefono", loginResponse.getTelefono() != null ?
-                loginResponse.getTelefono() : "N/A");
-        editor.apply();
-
+        prefs.edit()
+                .putString("boleta", boleta)
+                .putString("nombre", loginResponse.getNombre())
+                .putString("correo", loginResponse.getCorreo())
+                .putString("carrera", loginResponse.getCarrera() != null ? loginResponse.getCarrera() : "N/A")
+                .putString("escuela", loginResponse.getEscuela() != null ? loginResponse.getEscuela() : "N/A")
+                .putString("telefono", loginResponse.getTelefono() != null ? loginResponse.getTelefono() : "N/A")
+                .apply();
         Log.d(TAG, "Datos del estudiante guardados - Boleta: " + boleta);
     }
 
     private void navegarVistaAlumno(LoginResponseDTO loginResponse) {
-        Intent intent = new Intent(IniciarSesion.this, AlumnoMenuEmpresas.class);
-
-        // Enviar datos básicos necesarios para el menú
+        Intent intent = new Intent(requireContext(), AlumnoMenuEmpresas.class);
         intent.putExtra("idUsuario", loginResponse.getIdUsuario());
         intent.putExtra("nombre", loginResponse.getNombre());
         intent.putExtra("correo", loginResponse.getCorreo());
         intent.putExtra("rol", loginResponse.getRol());
-
         Log.d(TAG, "Navegando a AlumnoMenuEmpresas");
         startActivity(intent);
-        finish();
+        requireActivity().finish();
     }
 
     private void navegarVistaEmpresa(LoginResponseDTO loginResponse) {
         Integer idEmpresa = loginResponse.getIdEmpresa();
 
         if (idEmpresa == null || idEmpresa == 0) {
-            Log.e(TAG, "❌ ERROR: idEmpresa es null o 0");
-            Toast.makeText(this, "Error crítico: ID Empresa no encontrado. Contacta soporte.", Toast.LENGTH_LONG).show();
+            Log.e(TAG, "ERROR: idEmpresa es null o 0");
+            Toast.makeText(requireContext(), "Error crítico: ID Empresa no encontrado.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-        boolean guardado = prefs.edit()
+        requireActivity().getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                .edit()
                 .putInt("id_empresa_activa", idEmpresa)
-                .commit();
+                .apply();
 
-        if (guardado) {
-            Log.d(TAG, "ID Empresa guardado exitosamente en SharedPreferences: " + idEmpresa);
-        } else {
-            Log.e(TAG, "ERROR al guardar idEmpresa en SharedPreferences");
-        }
-
-        Intent intent = new Intent(IniciarSesion.this, EmpresaVista.class);
+        Intent intent = new Intent(requireContext(), EmpresaVista.class);
         intent.putExtra("ID_EMPRESA_ACTUAL", idEmpresa);
         intent.putExtra("nombre", loginResponse.getNombre());
-
         Log.d(TAG, "Navegando a EmpresaVista con idEmpresa: " + idEmpresa);
         startActivity(intent);
-        finish();
+        requireActivity().finish();
     }
 
     private void navegarVistaSupervisor(LoginResponseDTO loginResponse) {
         Integer idSupervisor = loginResponse.getIdSupervisor();
-        Integer idEmpresa = loginResponse.getIdEmpresa();
-
-        Log.d(TAG, "============================================");
-        Log.d(TAG, "NAVEGANDO A SUPERVISOR VISTA");
-        Log.d(TAG, "idSupervisor: " + idSupervisor);
-        Log.d(TAG, "idEmpresa: " + idEmpresa);
-        Log.d(TAG, "Area: " + loginResponse.getArea());
-        Log.d(TAG, "============================================");
+        Integer idEmpresa    = loginResponse.getIdEmpresa();
 
         if (idSupervisor == null || idSupervisor == 0) {
             Log.e(TAG, "ERROR: idSupervisor es null o 0");
-            Toast.makeText(this, "Error: Datos de supervisor no encontrados. Contacta soporte.", Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "Error: Datos de supervisor no encontrados.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-        boolean guardado = prefs.edit()
+        requireActivity().getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                .edit()
                 .putInt("idSupervisor", idSupervisor)
                 .putInt("idEmpresa", idEmpresa != null ? idEmpresa : -1)
                 .putString("area", loginResponse.getArea())
-                .commit();
+                .apply();
 
-        if (guardado) {
-            Log.d(TAG, "✅ Sesión de supervisor guardada");
-        } else {
-            Log.e(TAG, "❌ ERROR al guardar sesión de supervisor");
-        }
-
-        Intent intent = new Intent(IniciarSesion.this, MenuSupervisorActivity.class);
+        Intent intent = new Intent(requireContext(), MenuSupervisorActivity.class);
         intent.putExtra("idUsuario", loginResponse.getIdUsuario());
         intent.putExtra("idSupervisor", idSupervisor);
         intent.putExtra("idEmpresa", idEmpresa);
@@ -237,9 +198,8 @@ public class IniciarSesion extends AppCompatActivity {
         intent.putExtra("correo", loginResponse.getCorreo());
         intent.putExtra("area", loginResponse.getArea());
         intent.putExtra("rol", loginResponse.getRol());
-
         Log.d(TAG, "Navegando a MenuSupervisorActivity");
         startActivity(intent);
-        finish();
+        requireActivity().finish();
     }
 }

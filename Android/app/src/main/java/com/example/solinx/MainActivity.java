@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.solinx.CONEXION.InicioHelper;
 import com.example.solinx.UTIL.ThemeUtils;
 
 public class MainActivity extends Activity implements View.OnClickListener {
@@ -47,18 +48,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (v.getId() == R.id.btnIniciarSesion) {
             iniciarSesion();
         } else if (v.getId() == R.id.btnCrearCuenta) {
-            Intent intento = new Intent(this, AlumnoCrearCuenta.class);
-            startActivity(intento);
+            Intent intent = new Intent(this, InicioHelper.class);
+            intent.putExtra("CREAR","CREAR");
+            startActivity(intent);
         } else if (v.getId() == R.id.tvSupervisor) {
             iniciarSesion();
         } else if (v.getId() == R.id.tvEmpresa) {
-            Intent intent = new Intent(this, EmpresaCrear.class);
+            Intent intent = new Intent(this, InicioHelper.class);
+            intent.putExtra("CREARe","CREARe");
             startActivity(intent);
         }
     }
 
     public void iniciarSesion() {
-        Intent intento = new Intent(this, IniciarSesion.class);
-        startActivity(intento);
+        Intent intent = new Intent(this, InicioHelper.class);
+        intent.putExtra("INICIAR","INICIAR");
+        startActivity(intent);
     }
 }
