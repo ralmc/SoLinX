@@ -18,10 +18,10 @@
         android:roundIcon="@mipmap/ic_solinx_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SoLinX"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="true">
         tools:targetApi="31">
         <activity
-            android:name=".HorarioActivity"
+            android:name=".CONEXION.InicioHelper"
             android:exported="false" />
         <activity
             android:name=".CargaActivity"
@@ -29,6 +29,7 @@
             android:theme="@style/Theme.SoLinX">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -79,4 +80,5 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
     </application>
+
 </manifest>

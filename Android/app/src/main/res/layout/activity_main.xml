@@ -42,7 +42,6 @@
         android:layout_width="match_parent"
         android:layout_height="140dp" />
 
-    <!-- Botón principal -->
     <Button
         android:id="@+id/btnIniciarSesion"
         android:layout_width="match_parent"
@@ -80,7 +79,6 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Footer: selector de tipo de usuario -->
     <LinearLayout
         android:id="@+id/layoutInferior"
         android:layout_width="wrap_content"

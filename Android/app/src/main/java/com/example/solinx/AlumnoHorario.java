@@ -149,7 +149,7 @@ public class AlumnoHorario extends Fragment {
     private String getHora(Spinner sp, CheckBox cb) {
         if (cb.isChecked()) return null;
         String val = sp.getSelectedItem().toString();
-        return val.equals("--") ? null : val;
+        return val.equals("--") ? null : val + ":00";
     }
 
     private void enviarHorario() {
@@ -183,9 +183,12 @@ public class AlumnoHorario extends Fragment {
         totalMinutos += calcularMinutosDia(dto.getSabInicio(), dto.getSabFinal());
         totalMinutos += calcularMinutosDia(dto.getDomInicio(), dto.getDomFinal());
 
-        if (totalMinutos != 1200) {
+        if (totalMinutos < 1200) {
             Toast.makeText(requireContext(),
                     "Debes registrar al menos 20 horas semanales",
+                    Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(),
+                    "Tienes: " + totalMinutos/60 + "h " + totalMinutos%60 + "min",
                     Toast.LENGTH_LONG).show();
             return;
         }
