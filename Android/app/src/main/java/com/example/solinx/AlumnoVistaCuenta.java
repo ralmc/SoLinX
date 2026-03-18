@@ -21,6 +21,7 @@ import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -28,6 +29,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.HorarioDTO;
 import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
 
@@ -57,6 +59,10 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private View viewModoOscuro;
     private Button btnCerrarSesion;
 
+    // Horario
+    private TextView tvHorarioLunes, tvHorarioMartes, tvHorarioMiercoles;
+    private TextView tvHorarioJueves, tvHorarioViernes, tvHorarioSabado, tvHorarioDomingo;
+
     private String boleta;
     private String nombre;
     private String carrera;
@@ -81,6 +87,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         setupImagePicker();
         cargarFotoPerfil();
         cargarSolicitudes(boleta);
+        cargarHorario(boleta);
     }
 
     private void initViews() {
@@ -95,6 +102,15 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         viewModoClaro = findViewById(R.id.viewModoClaro);
         viewModoOscuro = findViewById(R.id.viewModoOscuro);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+
+        // Horario
+        tvHorarioLunes     = findViewById(R.id.tvHorarioLunes);
+        tvHorarioMartes    = findViewById(R.id.tvHorarioMartes);
+        tvHorarioMiercoles = findViewById(R.id.tvHorarioMiercoles);
+        tvHorarioJueves    = findViewById(R.id.tvHorarioJueves);
+        tvHorarioViernes   = findViewById(R.id.tvHorarioViernes);
+        tvHorarioSabado    = findViewById(R.id.tvHorarioSabado);
+        tvHorarioDomingo   = findViewById(R.id.tvHorarioDomingo);
     }
 
     private void setupImagePicker() {
@@ -237,6 +253,57 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
             Log.d(TAG, "TextView actualizado");
         });
     }
+
+    // ─────────────────────────────────────────
+    // HORARIO
+    // ─────────────────────────────────────────
+
+    private void cargarHorario(String boleta) {
+        if (boleta == null || boleta.equals("N/A")) return;
+
+        try {
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            Call<HorarioDTO> call = apiService.obtenerHorario(Integer.parseInt(boleta));
+
+            call.enqueue(new Callback<HorarioDTO>() {
+                @Override
+                public void onResponse(@NonNull Call<HorarioDTO> call,
+                                       @NonNull Response<HorarioDTO> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        HorarioDTO h = response.body();
+                        runOnUiThread(() -> {
+                            tvHorarioLunes.setText(formatearHorario(h.getLunInicio(), h.getLunFinal()));
+                            tvHorarioMartes.setText(formatearHorario(h.getMarInicio(), h.getMarFinal()));
+                            tvHorarioMiercoles.setText(formatearHorario(h.getMierInicio(), h.getMierFinal()));
+                            tvHorarioJueves.setText(formatearHorario(h.getJueInicio(), h.getJueFinal()));
+                            tvHorarioViernes.setText(formatearHorario(h.getVieInicio(), h.getVieFinal()));
+                            tvHorarioSabado.setText(formatearHorario(h.getSabInicio(), h.getSabFinal()));
+                            tvHorarioDomingo.setText(formatearHorario(h.getDomInicio(), h.getDomFinal()));
+                        });
+                    } else {
+                        Log.w(TAG, "Sin horario registrado: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<HorarioDTO> call, @NonNull Throwable t) {
+                    Log.e(TAG, "Error al cargar horario: " + t.getMessage());
+                }
+            });
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Boleta inválida al cargar horario: " + boleta);
+        }
+    }
+
+    private String formatearHorario(String inicio, String fin) {
+        if (inicio == null || fin == null) return "Sin clase";
+        // Recorta segundos si vienen como "08:00:00" → "08:00"
+        String i = inicio.length() > 5 ? inicio.substring(0, 5) : inicio;
+        String f = fin.length() > 5 ? fin.substring(0, 5) : fin;
+        return i + " – " + f;
+    }
+
+    // ─────────────────────────────────────────
 
     private void setupListeners() {
         btnRegresar.setOnClickListener(v -> finish());

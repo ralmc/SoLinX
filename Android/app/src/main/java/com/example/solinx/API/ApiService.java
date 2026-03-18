@@ -111,4 +111,7 @@ public interface ApiService {
     // Enviar solicitud
     @POST("solicitud")
     Call<SolicitudDTO> enviarSolicitud(@Body SolicitudDTO solicitudDTO);
+    // Obtener horario
+    @GET("horario/{boleta}")
+    Call<HorarioDTO> obtenerHorario(@Path("boleta") int boleta);
 }
