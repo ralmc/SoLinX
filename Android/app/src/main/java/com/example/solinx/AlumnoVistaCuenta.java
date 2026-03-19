@@ -248,7 +248,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                 texto.append("\n");
             }
 
-            Log.d(TAG, "Texto generado: " + texto.toString());
+            Log.d(TAG, "Texto generado: " + texto);
             tvPuntosStatus.setText(texto.toString());
             Log.d(TAG, "TextView actualizado");
         });

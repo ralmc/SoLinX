@@ -15,8 +15,8 @@ import java.util.List;
 //VELAZQUEZ REYNOSO ADRIAN
 public class AceptacionesEmpresaAdapter extends RecyclerView.Adapter<AceptacionesEmpresaAdapter.AceptacionViewHolder> {
 
-    private List<Solicitud> listaSolicitudes;
-    private Context context;
+    private final List<Solicitud> listaSolicitudes;
+    private final Context context;
 
     public AceptacionesEmpresaAdapter(Context context, List<Solicitud> listaSolicitudes) {
         this.context = context;

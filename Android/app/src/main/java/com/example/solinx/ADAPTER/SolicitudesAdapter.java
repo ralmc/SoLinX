@@ -16,15 +16,15 @@ import java.util.List;
 
 public class SolicitudesAdapter extends RecyclerView.Adapter<SolicitudesAdapter.SolicitudViewHolder> {
 
-    private List<Solicitudes> solicitudes;  // ← CAMBIO AQUÍ
-    private OnSolicitudClickListener listener;
+    private final List<Solicitudes> solicitudes;
+    private final OnSolicitudClickListener listener;
 
     public interface OnSolicitudClickListener {
-        void onAprobar(Solicitudes solicitud);  // ← CAMBIO AQUÍ
-        void onRechazar(Solicitudes solicitud);  // ← CAMBIO AQUÍ
+        void onAprobar(Solicitudes solicitud);
+        void onRechazar(Solicitudes solicitud);
     }
 
-    public SolicitudesAdapter(List<Solicitudes> solicitudes, OnSolicitudClickListener listener) {  // ← CAMBIO AQUÍ
+    public SolicitudesAdapter(List<Solicitudes> solicitudes, OnSolicitudClickListener listener) {
         this.solicitudes = solicitudes;
         this.listener = listener;
     }
@@ -39,7 +39,7 @@ public class SolicitudesAdapter extends RecyclerView.Adapter<SolicitudesAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull SolicitudViewHolder holder, int position) {
-        Solicitudes solicitud = solicitudes.get(position);  // ← CAMBIO AQUÍ
+        Solicitudes solicitud = solicitudes.get(position);
 
         holder.tvNombreEstudiante.setText(solicitud.getNombreEstudiante());
         holder.tvBoleta.setText("Boleta: " + solicitud.getBoleta());

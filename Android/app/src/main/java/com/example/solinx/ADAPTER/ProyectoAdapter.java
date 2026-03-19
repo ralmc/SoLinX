@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ProyectoAdapter extends RecyclerView.Adapter<ProyectoAdapter.ProyectoViewHolder> {
 
-    private Context context;
+    private final Context context;
     private List<ProyectoResponse> listaProyectos;
 
     public ProyectoAdapter(Context context) {

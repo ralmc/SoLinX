@@ -1,8 +1,8 @@
 package com.example.solinx.DTO;
 
 public class LoginDTO {
-    private String correo;
-    private String userPassword;
+    private final String correo;
+    private final String userPassword;
 
     public LoginDTO(String correo, String userPassword) {
         this.correo = correo;
