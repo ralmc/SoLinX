@@ -2,7 +2,10 @@ package com.example.solinx;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,7 +42,6 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     ProyectoAdapter proyectoAdapter;
     ApiService apiService;
 
-    // Recibir datos del IniciarSesion
     private Integer idUsuario;
     private String nombreUsuario;
     private String correoUsuario;
@@ -68,8 +70,25 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
             tvboleta.setText("Hola, " + nombreUsuario);
         }
 
+        cargarFotoPerfil(); // ← carga la foto al iniciar
+
         configurarRecyclerView();
         cargarProyectosDesdeAPI();
+    }
+
+    // ← NUEVO: carga la foto desde SoLinXFotos usando la boleta
+    private void cargarFotoPerfil() {
+        SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
+        String boleta = prefs.getString("boleta", "N/A");
+
+        String b64 = getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
+                .getString("foto_perfil_" + boleta, null);
+
+        if (b64 != null) {
+            byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            fotoperfil.setImageBitmap(bitmap);
+        }
     }
 
     private void configurarRecyclerView() {
@@ -145,26 +164,18 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         int id = v.getId();
         if (id == fotoperfil.getId()) {
-            // 🆕 NAVEGACIÓN MEJORADA A AlumnoVistaCuenta
             navegarAVistaCuenta();
         }
     }
 
-    /**
-     * 🆕 Método mejorado para navegar a la vista de cuenta del alumno
-     * Recupera todos los datos de SharedPreferences y los envía al Intent
-     */
     private void navegarAVistaCuenta() {
         Intent intent = new Intent(this, AlumnoVistaCuenta.class);
 
-        // Obtener datos de SharedPreferences (guardados durante el login)
         SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
 
-        // Enviar datos básicos del usuario
         intent.putExtra("nombre", nombreUsuario);
         intent.putExtra("correo", correoUsuario);
 
-        // 🆕 Enviar datos específicos del estudiante desde SharedPreferences
         String boleta = prefs.getString("boleta", "N/A");
         String carrera = prefs.getString("carrera", "N/A");
         String escuela = prefs.getString("escuela", "N/A");
@@ -175,7 +186,6 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         intent.putExtra("escuela", escuela);
         intent.putExtra("telefono", telefono);
 
-        // Log para debugging
         Log.d(TAG, "Navegando a AlumnoVistaCuenta con datos:");
         Log.d(TAG, "  Boleta: " + boleta);
         Log.d(TAG, "  Nombre: " + nombreUsuario);
@@ -191,6 +201,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     protected void onResume() {
         super.onResume();
         cargarProyectosDesdeAPI();
+        cargarFotoPerfil(); // ← se actualiza al regresar de AlumnoVistaCuenta
     }
 
     private void recibirDatosDelUsuario() {
@@ -201,10 +212,8 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
             correoUsuario = intent.getStringExtra("correo");
             rolUsuario = intent.getStringExtra("rol");
 
-            // Log para verificar que llegaron los datos
             Log.d(TAG, "Usuario logueado: " + nombreUsuario + " (" + correoUsuario + ")");
 
-            // Guardar en SharedPreferences para no perderlos
             guardarEnSharedPreferences();
         }
     }

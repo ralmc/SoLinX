@@ -12,12 +12,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -47,30 +47,24 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final String TAG = "AlumnoVistaCuenta";
 
+    // Views
     private ImageButton btnRegresar;
-    private TextView tvBoleta;
-    private TextView tvNombre;
-    private TextView tvCorreo;
-    private TextView tvEscuela;
-    private TextView tvCarrera;
-    private TextView tvPuntosStatus;
+    private TextView tvBoleta, tvNombre, tvCorreo, tvEscuela, tvCarrera, tvPuntosStatus;
     private ImageView imgPerfil;
-    private View viewModoClaro;
-    private View viewModoOscuro;
+    private View viewModoClaro, viewModoOscuro;
     private Button btnCerrarSesion;
 
     // Horario
     private TextView tvHorarioLunes, tvHorarioMartes, tvHorarioMiercoles;
     private TextView tvHorarioJueves, tvHorarioViernes, tvHorarioSabado, tvHorarioDomingo;
 
-    private String boleta;
-    private String nombre;
-    private String carrera;
-    private String escuela;
-    private String correo;
+    // Datos
+    private String boleta, nombre, carrera, escuela, correo;
 
     private SharedPreferences preferences;
     private ActivityResultLauncher<Intent> pickImageLauncher;
+
+    // ─── Lifecycle ────────────────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,29 +75,30 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         preferences = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
 
         initViews();
+        setupImagePicker();
         cargarDatosUsuario();
         setupListeners();
         actualizarIndicadoresTema();
-        setupImagePicker();
         cargarFotoPerfil();
-        cargarSolicitudes(boleta);
-        cargarHorario(boleta);
+        cargarSolicitudes();
+        cargarHorario();
     }
 
+    // ─── Init ─────────────────────────────────────────────────────────────────
+
     private void initViews() {
-        btnRegresar = findViewById(R.id.regresar);
-        tvBoleta = findViewById(R.id.tvBoleta);
-        tvNombre = findViewById(R.id.tvNombre);
-        tvCorreo = findViewById(R.id.tvCorreo);
-        tvEscuela = findViewById(R.id.tvEscuela);
-        tvCarrera = findViewById(R.id.tvCarrera);
-        tvPuntosStatus = findViewById(R.id.tvPuntosStatus);
-        imgPerfil = findViewById(R.id.imgPerfil);
-        viewModoClaro = findViewById(R.id.viewModoClaro);
-        viewModoOscuro = findViewById(R.id.viewModoOscuro);
+        btnRegresar     = findViewById(R.id.regresar);
+        tvBoleta        = findViewById(R.id.tvBoleta);
+        tvNombre        = findViewById(R.id.tvNombre);
+        tvCorreo        = findViewById(R.id.tvCorreo);
+        tvEscuela       = findViewById(R.id.tvEscuela);
+        tvCarrera       = findViewById(R.id.tvCarrera);
+        tvPuntosStatus  = findViewById(R.id.tvPuntosStatus);
+        imgPerfil       = findViewById(R.id.imgPerfil);
+        viewModoClaro   = findViewById(R.id.viewModoClaro);
+        viewModoOscuro  = findViewById(R.id.viewModoOscuro);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
 
-        // Horario
         tvHorarioLunes     = findViewById(R.id.tvHorarioLunes);
         tvHorarioMartes    = findViewById(R.id.tvHorarioMartes);
         tvHorarioMiercoles = findViewById(R.id.tvHorarioMiercoles);
@@ -117,48 +112,26 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         pickImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                        Uri imageUri = result.getData().getData();
-                        if (imageUri != null) {
-                            procesarImagen(imageUri);
-                        }
+                    if (result.getResultCode() == RESULT_OK
+                            && result.getData() != null
+                            && result.getData().getData() != null) {
+                        procesarImagen(result.getData().getData());
                     }
                 }
         );
     }
 
+    // ─── Datos de usuario ─────────────────────────────────────────────────────
+
     private void cargarDatosUsuario() {
         Intent intent = getIntent();
 
-        boleta = intent.getStringExtra("boleta");
-        if (boleta == null) {
-            boleta = preferences.getString("boleta", "N/A");
-        }
+        boleta  = obtenerDato(intent, "boleta",  "boleta",  "N/A");
+        nombre  = obtenerDato(intent, "nombre",  "nombre",  "Usuario");
+        carrera = obtenerDato(intent, "carrera", "carrera", "N/A");
+        escuela = obtenerDato(intent, "escuela", "escuela", "N/A");
+        correo  = obtenerDato(intent, "correo",  "correo",  "N/A");
 
-        nombre = intent.getStringExtra("nombre");
-        if (nombre == null) {
-            nombre = preferences.getString("nombre", "Usuario");
-        }
-
-        carrera = intent.getStringExtra("carrera");
-        if (carrera == null) {
-            carrera = preferences.getString("carrera", "N/A");
-        }
-
-        escuela = intent.getStringExtra("escuela");
-        if (escuela == null) {
-            escuela = preferences.getString("escuela", "N/A");
-        }
-
-        correo = intent.getStringExtra("correo");
-        if (correo == null) {
-            correo = preferences.getString("correo", "N/A");
-        }
-
-        mostrarDatos();
-    }
-
-    private void mostrarDatos() {
         tvBoleta.setText(boleta);
         tvNombre.setText(nombre);
         tvCorreo.setText(correo);
@@ -167,143 +140,128 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         tvPuntosStatus.setText("Cargando solicitudes...");
     }
 
-    private void cargarSolicitudes(String boleta) {
-        Log.d(TAG, "Cargando solicitudes - Boleta: " + boleta);
+    private String obtenerDato(Intent intent, String intentKey,
+                               String prefKey, String defVal) {
+        String val = intent.getStringExtra(intentKey);
+        return val != null ? val : preferences.getString(prefKey, defVal);
+    }
 
+    // ─── Solicitudes ──────────────────────────────────────────────────────────
+
+    private void cargarSolicitudes() {
         if (boleta == null || boleta.equals("N/A")) {
-            Log.e(TAG, "Boleta inválida");
             tvPuntosStatus.setText("No se pudo cargar la información de solicitudes.");
             return;
         }
 
         try {
-            ApiService apiService = ApiClient.getClient().create(ApiService.class);
-            Call<List<SolicitudDTO>> call = apiService.obtenerSolicitudesEstudiante(Integer.parseInt(boleta));
+            int boletaInt = Integer.parseInt(boleta);
+            ApiService api = ApiClient.getClient().create(ApiService.class);
+            api.obtenerSolicitudesEstudiante(boletaInt).enqueue(new Callback<List<SolicitudDTO>>() {
 
-            call.enqueue(new Callback<List<SolicitudDTO>>() {
                 @Override
-                public void onResponse(Call<List<SolicitudDTO>> call, Response<List<SolicitudDTO>> response) {
-                    Log.d(TAG, "Response code: " + response.code());
-
+                public void onResponse(@NonNull Call<List<SolicitudDTO>> call,
+                                       @NonNull Response<List<SolicitudDTO>> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        List<SolicitudDTO> solicitudes = response.body();
-                        Log.d(TAG, "Solicitudes cargadas: " + solicitudes.size());
-
-                        for (int i = 0; i < solicitudes.size(); i++) {
-                            SolicitudDTO s = solicitudes.get(i);
-                            Log.d(TAG, "[" + i + "] Proyecto: " + s.getNombreProyecto() +
-                                    " | Empresa: " + s.getNombreEmpresa() +
-                                    " | Estado: " + s.getEstadoSolicitud());
-                        }
-
-                        mostrarSolicitudes(solicitudes);
+                        mostrarSolicitudes(response.body());
                     } else {
-                        Log.e(TAG, "Error al cargar solicitudes: " + response.code());
-                        runOnUiThread(() -> tvPuntosStatus.setText("Error al cargar solicitudes."));
+                        Log.e(TAG, "Error solicitudes: " + response.code());
+                        runOnUiThread(() ->
+                                tvPuntosStatus.setText("Error al cargar solicitudes."));
                     }
                 }
 
                 @Override
-                public void onFailure(Call<List<SolicitudDTO>> call, Throwable t) {
-                    Log.e(TAG, "Error de red: " + t.getMessage());
-                    t.printStackTrace();
-                    runOnUiThread(() -> tvPuntosStatus.setText("Error de conexión al cargar solicitudes."));
+                public void onFailure(@NonNull Call<List<SolicitudDTO>> call,
+                                      @NonNull Throwable t) {
+                    Log.e(TAG, "Fallo red solicitudes: " + t.getMessage());
+                    runOnUiThread(() ->
+                            tvPuntosStatus.setText("Error de conexión."));
                 }
             });
+
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Boleta inválida al parsear: " + boleta);
+            Log.e(TAG, "Boleta inválida: " + boleta);
             tvPuntosStatus.setText("Boleta inválida.");
         }
     }
 
-    private void mostrarSolicitudes(List<SolicitudDTO> solicitudes) {
-        Log.d(TAG, "Mostrando solicitudes: " + solicitudes.size());
-
+    private void mostrarSolicitudes(List<SolicitudDTO> lista) {
         runOnUiThread(() -> {
-            if (solicitudes.isEmpty()) {
+            if (lista.isEmpty()) {
                 tvPuntosStatus.setText("No tienes solicitudes enviadas.");
-                Log.d(TAG, "Lista vacía");
                 return;
             }
 
-            StringBuilder texto = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
+            for (SolicitudDTO s : lista) {
+                sb.append("Empresa: ").append(s.getNombreEmpresa()).append("\n");
+                sb.append("Proyecto: ").append(s.getNombreProyecto()).append("\n");
 
-            for (SolicitudDTO solicitud : solicitudes) {
-                texto.append("Empresa: ").append(solicitud.getNombreEmpresa()).append("\n");
-                texto.append("Proyecto: ").append(solicitud.getNombreProyecto()).append("\n");
-
-                String estado = solicitud.getEstadoSolicitud();
-                if (estado != null) {
-                    if (estado.equalsIgnoreCase("aceptada")) {
-                        texto.append("Estado: Admitido\n");
-                    } else if (estado.equalsIgnoreCase("rechazada")) {
-                        texto.append("Estado: Rechazado\n");
-                    } else {
-                        texto.append("Estado: Pendiente\n");
-                    }
+                String estado = s.getEstadoSolicitud();
+                if (estado == null) {
+                    sb.append("Estado: Desconocido");
+                } else if (estado.equalsIgnoreCase("aceptada")) {
+                    sb.append("Estado: Admitido");
+                } else if (estado.equalsIgnoreCase("rechazada")) {
+                    sb.append("Estado: Rechazado");
                 } else {
-                    texto.append("Estado: Desconocido\n");
+                    sb.append("Estado: Pendiente");
                 }
-
-                texto.append("\n");
+                sb.append("\n\n");
             }
-
-            Log.d(TAG, "Texto generado: " + texto);
-            tvPuntosStatus.setText(texto.toString());
-            Log.d(TAG, "TextView actualizado");
+            tvPuntosStatus.setText(sb.toString().trim());
         });
     }
 
-    // ─────────────────────────────────────────
-    // HORARIO
-    // ─────────────────────────────────────────
+    // ─── Horario ──────────────────────────────────────────────────────────────
 
-    private void cargarHorario(String boleta) {
+    private void cargarHorario() {
         if (boleta == null || boleta.equals("N/A")) return;
 
         try {
-            ApiService apiService = ApiClient.getClient().create(ApiService.class);
-            Call<HorarioDTO> call = apiService.obtenerHorario(Integer.parseInt(boleta));
+            int boletaInt = Integer.parseInt(boleta);
+            ApiService api = ApiClient.getClient().create(ApiService.class);
+            api.obtenerHorario(boletaInt).enqueue(new Callback<HorarioDTO>() {
 
-            call.enqueue(new Callback<HorarioDTO>() {
                 @Override
                 public void onResponse(@NonNull Call<HorarioDTO> call,
                                        @NonNull Response<HorarioDTO> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         HorarioDTO h = response.body();
                         runOnUiThread(() -> {
-                            tvHorarioLunes.setText(formatearHorario(h.getLunInicio(), h.getLunFinal()));
-                            tvHorarioMartes.setText(formatearHorario(h.getMarInicio(), h.getMarFinal()));
-                            tvHorarioMiercoles.setText(formatearHorario(h.getMierInicio(), h.getMierFinal()));
-                            tvHorarioJueves.setText(formatearHorario(h.getJueInicio(), h.getJueFinal()));
-                            tvHorarioViernes.setText(formatearHorario(h.getVieInicio(), h.getVieFinal()));
-                            tvHorarioSabado.setText(formatearHorario(h.getSabInicio(), h.getSabFinal()));
-                            tvHorarioDomingo.setText(formatearHorario(h.getDomInicio(), h.getDomFinal()));
+                            tvHorarioLunes.setText(fmt(h.getLunInicio(), h.getLunFinal()));
+                            tvHorarioMartes.setText(fmt(h.getMarInicio(), h.getMarFinal()));
+                            tvHorarioMiercoles.setText(fmt(h.getMierInicio(), h.getMierFinal()));
+                            tvHorarioJueves.setText(fmt(h.getJueInicio(), h.getJueFinal()));
+                            tvHorarioViernes.setText(fmt(h.getVieInicio(), h.getVieFinal()));
+                            tvHorarioSabado.setText(fmt(h.getSabInicio(), h.getSabFinal()));
+                            tvHorarioDomingo.setText(fmt(h.getDomInicio(), h.getDomFinal()));
                         });
                     } else {
-                        Log.w(TAG, "Sin horario registrado: " + response.code());
+                        Log.w(TAG, "Sin horario: " + response.code());
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<HorarioDTO> call, @NonNull Throwable t) {
-                    Log.e(TAG, "Error al cargar horario: " + t.getMessage());
+                    Log.e(TAG, "Fallo red horario: " + t.getMessage());
                 }
             });
+
         } catch (NumberFormatException e) {
             Log.e(TAG, "Boleta inválida al cargar horario: " + boleta);
         }
     }
 
-    private String formatearHorario(String inicio, String fin) {
+    private String fmt(String inicio, String fin) {
         if (inicio == null || fin == null) return "Sin clase";
-        // Recorta segundos si vienen como "08:00:00" → "08:00"
         String i = inicio.length() > 5 ? inicio.substring(0, 5) : inicio;
-        String f = fin.length() > 5 ? fin.substring(0, 5) : fin;
+        String f = fin.length()   > 5 ? fin.substring(0, 5)   : fin;
         return i + " – " + f;
     }
 
-    // ─────────────────────────────────────────
+    // ─── Listeners ────────────────────────────────────────────────────────────
 
     private void setupListeners() {
         btnRegresar.setOnClickListener(v -> finish());
@@ -327,149 +285,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         btnCerrarSesion.setOnClickListener(v -> cerrarSesion());
     }
 
-    private void mostrarOpcionesFoto() {
-        String[] opciones = {"Seleccionar de galería", "Eliminar foto"};
-
-        new AlertDialog.Builder(this)
-                .setTitle("Foto de perfil")
-                .setItems(opciones, (dialog, which) -> {
-                    if (which == 0) {
-                        verificarPermisos();
-                    } else {
-                        eliminarFotoPerfil();
-                    }
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
-
-    private void verificarPermisos() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_MEDIA_IMAGES},
-                        PERMISSION_REQUEST_CODE);
-            } else {
-                abrirGaleria();
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        PERMISSION_REQUEST_CODE);
-            } else {
-                abrirGaleria();
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                abrirGaleria();
-            } else {
-                Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void abrirGaleria() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        pickImageLauncher.launch(intent);
-    }
-
-    private void procesarImagen(Uri imageUri) {
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-
-            Bitmap bitmapRedimensionado = redimensionarBitmap(bitmap, 500, 500);
-
-            imgPerfil.setImageBitmap(bitmapRedimensionado);
-
-            guardarFotoPerfil(bitmapRedimensionado);
-
-            Toast.makeText(this, "Foto actualizada", Toast.LENGTH_SHORT).show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private Bitmap redimensionarBitmap(Bitmap bitmap, int maxWidth, int maxHeight) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        float ratioBitmap = (float) width / (float) height;
-        float ratioMax = (float) maxWidth / (float) maxHeight;
-
-        int finalWidth = maxWidth;
-        int finalHeight = maxHeight;
-
-        if (ratioMax > ratioBitmap) {
-            finalWidth = (int) ((float) maxHeight * ratioBitmap);
-        } else {
-            finalHeight = (int) ((float) maxWidth / ratioBitmap);
-        }
-
-        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true);
-    }
-
-    private void guardarFotoPerfil(Bitmap bitmap) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-            byte[] imageBytes = baos.toByteArray();
-            String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("foto_perfil_" + boleta, imageString);
-            editor.apply();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error al guardar la foto", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void cargarFotoPerfil() {
-        try {
-            String imageString = preferences.getString("foto_perfil_" + boleta, null);
-
-            if (imageString != null) {
-                byte[] imageBytes = Base64.decode(imageString, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                imgPerfil.setImageBitmap(bitmap);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void eliminarFotoPerfil() {
-        new AlertDialog.Builder(this)
-                .setTitle("Confirmar")
-                .setMessage("¿Eliminar foto de perfil?")
-                .setPositiveButton("Sí", (dialog, which) -> {
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.remove("foto_perfil_" + boleta);
-                    editor.apply();
-
-                    imgPerfil.setImageResource(R.drawable.imagen_prederterminada);
-
-                    Toast.makeText(this, "Foto eliminada", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
-
     private void actualizarIndicadoresTema() {
         if (ThemeUtils.isDarkMode(this)) {
             viewModoClaro.setAlpha(0.5f);
@@ -480,16 +295,129 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         }
     }
 
+    // ─── Foto de perfil ───────────────────────────────────────────────────────
+
+    private void mostrarOpcionesFoto() {
+        new AlertDialog.Builder(this)
+                .setTitle("Foto de perfil")
+                .setItems(new String[]{"Seleccionar de galería", "Eliminar foto"},
+                        (dialog, which) -> {
+                            if (which == 0) verificarPermisos();
+                            else           eliminarFotoPerfil();
+                        })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void verificarPermisos() {
+        String permiso = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                ? Manifest.permission.READ_MEDIA_IMAGES
+                : Manifest.permission.READ_EXTERNAL_STORAGE;
+
+        if (ContextCompat.checkSelfPermission(this, permiso)
+                == PackageManager.PERMISSION_GRANTED) {
+            abrirGaleria();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{permiso}, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            abrirGaleria();
+        } else {
+            Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void abrirGaleria() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        pickImageLauncher.launch(intent);
+    }
+
+    private void procesarImagen(Uri uri) {
+        try {
+            InputStream stream = getContentResolver().openInputStream(uri);
+            Bitmap original = BitmapFactory.decodeStream(stream);
+            Bitmap escalado = redimensionar(original, 500, 500);
+
+            imgPerfil.setImageBitmap(escalado);
+            guardarFoto(escalado);
+            Toast.makeText(this, "Foto actualizada ✓", Toast.LENGTH_SHORT).show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Bitmap redimensionar(Bitmap bmp, int maxW, int maxH) {
+        float ratio = (float) bmp.getWidth() / bmp.getHeight();
+        int w = maxW, h = maxH;
+        if ((float) maxW / maxH > ratio) w = (int) (maxH * ratio);
+        else                              h = (int) (maxW / ratio);
+        return Bitmap.createScaledBitmap(bmp, w, h, true);
+    }
+
+    // ← CAMBIO: SharedPreferences separado "SoLinXFotos" para que no se borre al cerrar sesión
+    private void guardarFoto(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        String b64 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
+                .edit().putString("foto_perfil_" + boleta, b64).apply();
+    }
+
+    // ← CAMBIO: lee de "SoLinXFotos"
+    private void cargarFotoPerfil() {
+        String b64 = getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
+                .getString("foto_perfil_" + boleta, null);
+        if (b64 != null) {
+            byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
+            imgPerfil.setImageBitmap(
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        }
+    }
+
+    // ← CAMBIO: elimina de "SoLinXFotos"
+    private void eliminarFotoPerfil() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar")
+                .setMessage("¿Eliminar foto de perfil?")
+                .setPositiveButton("Sí", (d, w) -> {
+                    getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
+                            .edit().remove("foto_perfil_" + boleta).apply();
+                    imgPerfil.setImageResource(R.drawable.imagen_prederterminada);
+                    Toast.makeText(this, "Foto eliminada", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    // ─── Cerrar sesión ────────────────────────────────────────────────────────
+
+    // ← CAMBIO: solo limpia "SoLinXPrefs", las fotos en "SoLinXFotos" quedan intactas
     private void cerrarSesion() {
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.apply();
-
-        Toast.makeText(this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(AlumnoVistaCuenta.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+        new AlertDialog.Builder(this)
+                .setTitle("Cerrar sesión")
+                .setMessage("¿Seguro que quieres salir?")
+                .setPositiveButton("Sí", (d, w) -> {
+                    preferences.edit().clear().apply();
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 }

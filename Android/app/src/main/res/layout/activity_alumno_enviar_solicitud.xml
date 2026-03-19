@@ -65,7 +65,9 @@
                     android:padding="12dp"
                     android:background="?attr/selectableItemBackground" />
 
+                <!-- ← CAMBIO: agregado android:id="@+id/fotoPerfilHeader" -->
                 <ImageView
+                    android:id="@+id/fotoPerfilHeader"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:scaleType="centerCrop"
@@ -109,7 +111,6 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp" />
 
-                <!-- Textos principales (bold) -->
                 <TextView
                     android:id="@+id/txtNombreEmpresa"
                     android:layout_width="wrap_content"
@@ -130,7 +131,6 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
-                <!-- Textos secundarios -->
                 <TextView
                     android:id="@+id/fechini"
                     android:layout_width="wrap_content"
