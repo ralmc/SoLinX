@@ -41,40 +41,27 @@ public class SolicitudController {
     }
 
     @GetMapping("/solicitud/empresa/{idEmpresa}")
-    public ResponseEntity<List<SolicitudDto>> listarPorEmpresa(@PathVariable Integer idEmpresa) {
-
+    public ResponseEntity<List<SolicitudDto>> listarPorEmpresa(@PathVariable("idEmpresa") Integer idEmpresa) {
         List<Solicitud> solicitudes = solicitudService.obtenerPorEmpresa(idEmpresa);
-
-        if (solicitudes.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-
+        if (solicitudes.isEmpty()) return ResponseEntity.noContent().build();
         List<SolicitudDto> dtos = solicitudes.stream()
                 .map(s -> SolicitudDto.builder()
                         .idSolicitud(s.getIdSolicitud())
                         .fechaSolicitud(formatDate(s.getFechaSolicitud()))
                         .estadoSolicitud(s.getEstadoSolicitud())
-
-                        // Llenamos los datos visuales
                         .nombreProyecto(s.getProyecto() != null ? s.getProyecto().getNombreProyecto() : "Sin Nombre")
                         .carreraAlumno(s.getEstudiante() != null ? s.getEstudiante().getCarrera() : "Sin Carrera")
-
-                        // Llenamos los IDs
                         .boletaAlumno(s.getEstudiante() != null ? s.getEstudiante().getBoleta() : 0)
                         .idProyecto(s.getProyecto() != null ? s.getProyecto().getIdProyecto() : 0)
-
                         .build())
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/solicitud")
     public ResponseEntity<List<SolicitudDto>> lista() {
         List<Solicitud> solicitudes = solicitudService.getAll();
-        if(solicitudes == null || solicitudes.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        if (solicitudes == null || solicitudes.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(solicitudes.stream().map(s -> SolicitudDto.builder()
                 .idSolicitud(s.getIdSolicitud())
                 .fechaSolicitud(formatDate(s.getFechaSolicitud()))
@@ -85,10 +72,9 @@ public class SolicitudController {
     }
 
     @GetMapping("/solicitud/{id}")
-    public ResponseEntity<SolicitudDto> getById(@PathVariable Integer id) {
+    public ResponseEntity<SolicitudDto> getById(@PathVariable("id") Integer id) {
         Solicitud s = solicitudService.getById(id);
-        if(s == null ) return ResponseEntity.notFound().build();
-
+        if (s == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(SolicitudDto.builder()
                 .idSolicitud(s.getIdSolicitud())
                 .fechaSolicitud(formatDate(s.getFechaSolicitud()))
@@ -100,48 +86,35 @@ public class SolicitudController {
 
     @PostMapping("/solicitud")
     public ResponseEntity<SolicitudDto> save(@RequestBody SolicitudDto dto) {
-
         Estudiante est = new Estudiante();
         est.setBoleta(dto.getBoletaAlumno());
-
         Proyecto pro = new Proyecto();
         pro.setIdProyecto(dto.getIdProyecto());
-
-        // 🆕 Si la fecha es null, usar la fecha actual
-        Date fechaSolicitud = dto.getFechaSolicitud() != null
-                ? parseString(dto.getFechaSolicitud())
-                : new Date();  // ✅ USAR FECHA ACTUAL
-
+        Date fechaSolicitud = dto.getFechaSolicitud() != null ? parseString(dto.getFechaSolicitud()) : new Date();
         Solicitud s = Solicitud.builder()
                 .fechaSolicitud(fechaSolicitud)
                 .estadoSolicitud(dto.getEstadoSolicitud())
                 .estudiante(est)
                 .proyecto(pro)
                 .build();
-
         solicitudService.save(s);
-
         dto.setIdSolicitud(s.getIdSolicitud());
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/solicitud/{id}")
-    public ResponseEntity<SolicitudDto> update(@PathVariable Integer id, @RequestBody SolicitudDto dto) {
+    public ResponseEntity<SolicitudDto> update(@PathVariable("id") Integer id, @RequestBody SolicitudDto dto) {
         Estudiante est = new Estudiante();
         est.setBoleta(dto.getBoletaAlumno());
-
         Proyecto pro = new Proyecto();
         pro.setIdProyecto(dto.getIdProyecto());
-
         Solicitud aux = solicitudService.update(id, Solicitud.builder()
                 .fechaSolicitud(parseString(dto.getFechaSolicitud()))
                 .estadoSolicitud(dto.getEstadoSolicitud())
                 .estudiante(est)
                 .proyecto(pro)
                 .build());
-
         if (aux == null) return ResponseEntity.notFound().build();
-
         return ResponseEntity.ok(SolicitudDto.builder()
                 .idSolicitud(aux.getIdSolicitud())
                 .fechaSolicitud(formatDate(aux.getFechaSolicitud()))
@@ -152,13 +125,14 @@ public class SolicitudController {
     }
 
     @DeleteMapping("/solicitud/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         solicitudService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/solicitud/{id}/estado")
-    public ResponseEntity<Void> cambiarEstado(@PathVariable Integer id, @RequestParam String nuevoEstado) {
+    public ResponseEntity<Void> cambiarEstado(@PathVariable("id") Integer id,
+                                              @RequestParam("nuevoEstado") String nuevoEstado) {
         Solicitud s = solicitudService.getById(id);
         if (s != null) {
             s.setEstadoSolicitud(nuevoEstado);
@@ -173,23 +147,12 @@ public class SolicitudController {
         try {
             System.out.println("============================================");
             System.out.println("Endpoint: /solicitudes/estudiante/" + boleta);
-            System.out.println("Buscando solicitudes para boleta: " + boleta);
-
             List<SolicitudDto> solicitudes = solicitudService.obtenerSolicitudesPorBoleta(boleta);
-
             System.out.println("Solicitudes encontradas: " + solicitudes.size());
-
-            for (SolicitudDto s : solicitudes) {
-                System.out.println("- " + s.getNombreProyecto() + " | " + s.getNombreEmpresa() + " | " + s.getEstadoSolicitud());
-            }
-
             System.out.println("============================================");
-
             return ResponseEntity.ok(solicitudes);
-
         } catch (Exception e) {
             System.err.println("❌ ERROR al obtener solicitudes: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(500).build();
         }
     }

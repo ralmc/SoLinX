@@ -34,7 +34,7 @@ CREATE TABLE Usuario (
 );
 
 CREATE TABLE Horario(
-	idHorario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    idHorario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     lunInicio TIME NULL,
     lunFinal TIME NULL,
     marInicio TIME NULL,
@@ -87,14 +87,14 @@ CREATE TABLE HorarioEstudiante (
 -- 3. TABLAS DE NEGOCIO (Proyectos, Solicitudes)
 CREATE TABLE Proyecto (
     idProyecto INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    carreraEnfocada VARCHAR(150) NOT NULL DEFAULT '', 
+    carreraEnfocada VARCHAR(150) NOT NULL DEFAULT '',
     objetivo TEXT NOT NULL,
     fechaInicio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     vacantes INT NOT NULL DEFAULT 1,
     ubicacion VARCHAR(100) NOT NULL DEFAULT '',
-    nombreProyecto VARCHAR(255) NOT NULL DEFAULT '',      
+    nombreProyecto VARCHAR(255) NOT NULL DEFAULT '',
     fechaTermino TIMESTAMP NULL DEFAULT NULL,
-    imagenRef VARCHAR(100) DEFAULT 'img_default_proyecto',      
+    imagenRef VARCHAR(100) DEFAULT 'img_default_proyecto',
     idEmpresa INT NOT NULL,
     FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -145,115 +145,124 @@ INSERT INTO Supervisor (area, idEmpresa) VALUES
 ('Proyectos Aeronáuticos', 2),
 ('Sistemas', 3);
 
--- 4. USUARIOS (Sin administrador)
+-- 4. USUARIOS
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
-('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante'), -- ID 1
-('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa'), -- ID 2 (TechNova)
-('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor'), -- ID 3
-('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante'), -- ID 4
-('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa'), -- ID 5 (Para empresa Aa)
-('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'); -- ID 6 (Para empresa Ooo)
+('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante'),       -- ID 1
+('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa'),       -- ID 2
+('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor'),-- ID 3
+('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante'),       -- ID 4
+('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa'),                    -- ID 5
+('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'),                   -- ID 6
+('Luis Herrera', 'luis@correo.com', '5533334444', 'pass123', 'estudiante'),        -- ID 7
+('Ana Martínez', 'ana@correo.com', '5555556666', 'pass123', 'estudiante'),         -- ID 8
+('Pedro Jiménez', 'pedro@correo.com', '5577778888', 'pass123', 'estudiante');      -- ID 9
 
 -- 5. VINCULAR USUARIOS CON ROLES
 -- Estudiantes
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
 (1, 20230001),
-(4, 20230005);
+(4, 20230005),
+(7, 20230002),
+(8, 20230003),
+(9, 20230004);
 
 -- Empresas
 INSERT INTO UsuarioEmpresa (idUsuario, idEmpresa) VALUES
-(2, 1), -- Laura -> TechNova
-(5, 5), -- aa@gmail.com -> Empresa Aa (ID 5)
-(6, 6); -- oo@gmail.com -> Empresa Ooo (ID 6)
+(2, 1),
+(5, 5),
+(6, 6);
 
 -- Supervisores
 INSERT INTO UsuarioSupervisor (idUsuario, idSupervisor) VALUES
 (3, 1);
 
--- 6. PROYECTOS (Datos iniciales)
+-- 6. PROYECTOS
 INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, imagenRef, idEmpresa) VALUES
 ('Ingeniería en Software', 'Sistema de Gestión Escolar v2.0', 'Crear un sistema web.', 3, 'CDMX', 'img_gestion', 1),
 ('Ingeniería Aeronáutica', 'Proyecto Icarus', 'Desarrollo de un dron.', 2, 'Querétaro', 'img_dron', 2),
 ('Logística Industrial', 'App Inventarios FastTrack', 'App móvil para inventarios.', 4, 'CDMX', 'img_inventario', 3),
-('Ingeniería Eléctrica', 'EcoMonitor Inteligente', 'Monitoreo de consumo.', 2, 'Edomex', 'img_energia', 4);
+('Ingeniería Eléctrica', 'EcoMonitor Inteligente', 'Monitoreo de consumo.', 2, 'Edomex', 'img_energia', 4),
+('Desarrollo Backend', 'Sistema de Pagos Aa', 'Crear API segura', 2, 'Remoto', 'img_default_proyecto', 5),
+('Inteligencia Artificial', 'Chatbot Ooo V2', 'Asistente virtual', 3, 'CDMX', 'img_default_proyecto', 6);
 
 -- 7. PERFILES
 INSERT INTO Perfil (tema, idUsuario) VALUES
-('claro', 1), ('oscuro', 2), ('claro', 3), ('claro', 4), ('claro', 5), ('claro', 6);
+('claro', 1), ('oscuro', 2), ('claro', 3), ('claro', 4),
+('claro', 5), ('claro', 6), ('claro', 7), ('claro', 8), ('claro', 9);
 
 -- 8. HORARIOS
--- Horario 1: Mañana (08:00 - 12:00)
-INSERT INTO Horario ( 
-	lunInicio, lunFinal,
-	marInicio, marFinal,
-	mierInicio, mierFinal,
-	jueInicio, jueFinal,
-	vieInicio, vieFinal
+-- Horario 1: Mañana (08:00 - 14:00)
+INSERT INTO Horario (
+    lunInicio, lunFinal,
+    marInicio, marFinal,
+    mierInicio, mierFinal,
+    jueInicio, jueFinal,
+    vieInicio, vieFinal
 ) VALUES (
-  '08:00:00','12:00:00',
-  '08:00:00','12:00:00',
-  '08:00:00','12:00:00',
-  '08:00:00','12:00:00',
-  '08:00:00','12:00:00'
+    '08:00:00', '14:00:00',
+    '08:00:00', '14:00:00',
+    '08:00:00', '14:00:00',
+    '08:00:00', '14:00:00',
+    '08:00:00', '14:00:00'
 );
 
--- Horario 2: Tarde (14:00 - 18:00)
+-- Horario 2: Tarde (14:00 - 20:00)
 INSERT INTO Horario (
-	lunInicio, lunFinal,
-	marInicio, marFinal,
-	mierInicio, mierFinal,
-	jueInicio, jueFinal,
-	vieInicio, vieFinal
+    lunInicio, lunFinal,
+    marInicio, marFinal,
+    mierInicio, mierFinal,
+    jueInicio, jueFinal,
+    vieInicio, vieFinal
 ) VALUES (
-  '14:00:00','18:00:00',
-  '14:00:00','18:00:00',
-  '14:00:00','18:00:00',
-  '14:00:00','18:00:00',
-  '14:00:00','18:00:00'
+    '14:00:00', '20:00:00',
+    '14:00:00', '20:00:00',
+    '14:00:00', '20:00:00',
+    '14:00:00', '20:00:00',
+    '14:00:00', '20:00:00'
+);
+
+-- Horario 3: Mixto (09:00 - 13:00 y sábado)
+INSERT INTO Horario (
+    lunInicio, lunFinal,
+    marInicio, marFinal,
+    mierInicio, mierFinal,
+    jueInicio, jueFinal,
+    vieInicio, vieFinal,
+    sabInicio, sabFinal
+) VALUES (
+    '09:00:00', '13:00:00',
+    '09:00:00', '13:00:00',
+    '09:00:00', '13:00:00',
+    '09:00:00', '13:00:00',
+    '09:00:00', '13:00:00',
+    '09:00:00', '13:00:00'
 );
 
 -- 9. HORARIOS-ALUMNOS
--- Estudiante 1 → Horario Mañana
-INSERT INTO HorarioEstudiante (boleta, idHorario)
-VALUES (20230001, 1);
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230001, 1); 
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230002, 2); 
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230003, 3); 
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230004, 1); 
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230005, 2); 
 
--- Estudiante 2 → Horario Tarde
-INSERT INTO HorarioEstudiante (boleta, idHorario)
-VALUES (20230005, 2);
+-- 10. SOLICITUDES
+INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
+VALUES (NOW(), 'enviada', 20230001, 1);
+
+INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
+VALUES (NOW(), 'enviada', 20230002, 3);
+
+INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
+VALUES (NOW(), 'enviada', 20230003, 5);
+
+INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
+VALUES (NOW(), 'enviada', 20230004, 6);
+
+INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
+VALUES (NOW(), 'enviada', 20230005, 2);
 
 -- ============================================
--- DATOS DE PRUEBA: PROYECTOS Y SOLICITUDES PARA Aa Y Ooo
+-- VERIFICACIÓN
 -- ============================================
-
--- Estudiantes Extra para pruebas
-INSERT IGNORE INTO Estudiante (boleta, carrera, escuela) VALUES 
-(20250001, 'Ingeniería en Sistemas', 'ESCOM'),
-(20250002, 'Ingeniería Mecatrónica', 'UPIITA'),
-(20250003, 'Licenciatura en Datos', 'ESFM');
-
--- Proyecto para Empresa 5 (Aa)
-INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, idEmpresa, imagenRef) 
-VALUES ('Desarrollo Backend', 'Sistema de Pagos Aa', 'Crear API segura', 2, 'Remoto', 5, 'img_default_proyecto');
-
--- Proyecto para Empresa 6 (Ooo)
-INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, idEmpresa, imagenRef) 
-VALUES ('Inteligencia Artificial', 'Chatbot Ooo V2', 'Asistente virtual', 3, 'CDMX', 6, 'img_default_proyecto');
-
--- Solicitud para Aa (Empresa 5)
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20250001, (SELECT idProyecto FROM Proyecto WHERE idEmpresa = 5 LIMIT 1));
-
--- Solicitudes para Ooo (Empresa 6) - Dos solicitudes
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20250002, (SELECT idProyecto FROM Proyecto WHERE idEmpresa = 6 LIMIT 1));
-
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20250003, (SELECT idProyecto FROM Proyecto WHERE idEmpresa = 6 LIMIT 1));
-
-SELECT * FROM Usuario WHERE correo IN ('aa@gmail.com', 'oo@gmail.com');
-SELECT * FROM Solicitud;
 SELECT * FROM Proyecto;
-SELECT * FROM Estudiante;
-SELECT * FROM HorarioEstudiante;
-SELECT * FROM Horario;
-SELECT * FROM usuario;
+SELECT * FROM Usuario;

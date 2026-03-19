@@ -26,62 +26,42 @@ public class EmpresaController {
 
     @PostMapping("/empresa")
     public ResponseEntity<EmpresaDto> save(@RequestBody EmpresaDto dto) {
-
         Empresa empresa = Empresa.builder()
                 .nombreEmpresa(dto.getNombreEmpresa())
                 .build();
-
         Empresa empresaGuardada = empresaRepository.save(empresa);
-
         return ResponseEntity.ok(convertirEntidadADto(empresaGuardada));
     }
 
     @GetMapping("/empresa")
     public ResponseEntity<List<EmpresaDto>> lista() {
         List<Empresa> empresas = empresaRepository.findAll();
-
         List<EmpresaDto> dtos = empresas.stream()
                 .map(this::convertirEntidadADto)
                 .collect(Collectors.toList());
-
-        if (dtos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
+        if (dtos.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/empresa/{id}")
-    public ResponseEntity<EmpresaDto> getById(@PathVariable Integer id) {
+    public ResponseEntity<EmpresaDto> getById(@PathVariable("id") Integer id) {
         Empresa empresa = empresaRepository.findById(id).orElse(null);
-
-        if (empresa == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (empresa == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(convertirEntidadADto(empresa));
     }
 
     @PutMapping("/empresa/{id}")
-    public ResponseEntity<EmpresaDto> update(@PathVariable Integer id, @RequestBody EmpresaDto dto) {
-
+    public ResponseEntity<EmpresaDto> update(@PathVariable("id") Integer id, @RequestBody EmpresaDto dto) {
         Empresa empresaExistente = empresaRepository.findById(id).orElse(null);
-
-        if (empresaExistente == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+        if (empresaExistente == null) return ResponseEntity.notFound().build();
         empresaExistente.setNombreEmpresa(dto.getNombreEmpresa());
-
         Empresa actualizada = empresaRepository.save(empresaExistente);
-
         return ResponseEntity.ok(convertirEntidadADto(actualizada));
     }
 
     @DeleteMapping("/empresa/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        if (!empresaRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+        if (!empresaRepository.existsById(id)) return ResponseEntity.notFound().build();
         empresaRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

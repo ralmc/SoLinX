@@ -18,11 +18,10 @@ public class UsuarioEmpresaController {
     private final UsuarioEmpresaService usuarioEmpresaService;
 
     @GetMapping("/usuarioEmpresa")
-    public ResponseEntity<List<UsuarioEmpresaDto>> lista(@RequestParam(name = "idUsuario", required = false) Integer idUsuario) {
+    public ResponseEntity<List<UsuarioEmpresaDto>> lista(
+            @RequestParam(name = "idUsuario", required = false) Integer idUsuario) {
         List<UsuarioEmpresa> usuarios = usuarioEmpresaService.getAll();
-        if (usuarios == null || usuarios.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        if (usuarios == null || usuarios.isEmpty()) return ResponseEntity.notFound().build();
         if (idUsuario != null) {
             return ResponseEntity.ok(
                     usuarios.stream()
@@ -45,7 +44,7 @@ public class UsuarioEmpresaController {
     }
 
     @GetMapping("/usuarioEmpresa/{id}")
-    public ResponseEntity<UsuarioEmpresaDto> getById(@PathVariable Integer id) {
+    public ResponseEntity<UsuarioEmpresaDto> getById(@PathVariable("id") Integer id) {
         UsuarioEmpresa u = usuarioEmpresaService.getById(id);
         if (u == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(UsuarioEmpresaDto.builder()
@@ -68,13 +67,14 @@ public class UsuarioEmpresaController {
     }
 
     @DeleteMapping("/usuarioEmpresa/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         usuarioEmpresaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/usuarioEmpresa/{id}")
-    public ResponseEntity<UsuarioEmpresaDto> update(@PathVariable Integer id, @RequestBody UsuarioEmpresaDto dto) {
+    public ResponseEntity<UsuarioEmpresaDto> update(@PathVariable("id") Integer id,
+                                                    @RequestBody UsuarioEmpresaDto dto) {
         UsuarioEmpresa u = usuarioEmpresaService.update(id, UsuarioEmpresa.builder()
                 .idUsuario(dto.getIdUsuario())
                 .idEmpresa(dto.getIdEmpresa())
