@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoLinX — Aprobar Solicitudes</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <div class="top-bar">
+            <a href="supervisor_menu.html"><img src="assets/img/solinx_logo.png" alt="SoLinX" class="logo"></a>
+            <span class="spacer"></span>
+            <span class="page-title font-display" style="margin:0;font-size:1.4rem;">Solicitudes Alumnos</span>
+        </div>
+        <div class="bar-divider-thin"></div>
+
+        <div class="page-content">
+            <div class="container">
+                <div id="listContainer"></div>
+                <div id="emptyState" class="empty-state" style="display:none;">
+                    <div class="empty-icon">✅</div>
+                    <p>No hay solicitudes pendientes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        requireSession('supervisor');
+
+        // Demo — TODO: GET /api/supervisor/solicitudes-alumnos
+        var solicitudes = [
+            { id:1, estudiante:'Carlos Ramírez López', boleta:'2023630001', carrera:'Ing. en Sistemas Computacionales', proyecto:'Sistema IoT Industrial' },
+            { id:2, estudiante:'Ana Torres García', boleta:'2023630045', carrera:'Ing. en Software', proyecto:'App de Inventarios' },
+            { id:3, estudiante:'Miguel Ángel Díaz', boleta:'2023630078', carrera:'Ciencia de Datos', proyecto:'Plataforma Big Data' },
+        ];
+
+        function render() {
+            var container = document.getElementById('listContainer');
+            var empty = document.getElementById('emptyState');
+            if (solicitudes.length === 0) { empty.style.display = 'block'; container.innerHTML = ''; return; }
+            empty.style.display = 'none';
+
+            var html = '';
+            solicitudes.forEach(function(s) {
+                html += '<div class="card" style="margin-bottom:14px;">' +
+                    '<div class="card-body">' +
+                    '<div style="font-weight:700;font-size:1.1rem;color:var(--color-on-surface);margin-bottom:4px;">' + s.estudiante + '</div>' +
+                    '<div style="font-size:0.9rem;color:var(--color-text-secondary);margin-bottom:2px;">Boleta: ' + s.boleta + '</div>' +
+                    '<div style="font-size:0.9rem;color:var(--color-text-secondary);margin-bottom:2px;">' + s.carrera + '</div>' +
+                    '<div style="font-size:0.9rem;color:var(--color-secondary);font-weight:700;margin-bottom:12px;">Proyecto: ' + s.proyecto + '</div>' +
+                    '<div style="border-top:1px solid var(--color-divider);padding-top:12px;display:flex;justify-content:flex-end;gap:8px;">' +
+                    '<button class="btn btn-danger" style="padding:8px 20px;font-size:0.9rem;" onclick="rechazar(' + s.id + ')">Rechazar</button>' +
+                    '<button class="btn btn-success" style="padding:8px 20px;font-size:0.9rem;" onclick="aprobar(' + s.id + ')">Aprobar</button>' +
+                    '</div></div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function aprobar(id) {
+            // TODO: PUT /api/supervisor/solicitudes/{id}/aprobar
+            solicitudes = solicitudes.filter(function(s) { return s.id !== id; });
+            render();
+            showToast('Solicitud aprobada.', 'success');
+        }
+        function rechazar(id) {
+            // TODO: PUT /api/supervisor/solicitudes/{id}/rechazar
+            solicitudes = solicitudes.filter(function(s) { return s.id !== id; });
+            render();
+            showToast('Solicitud rechazada.', 'info');
+        }
+
+        render();
+    </script>
+</body>
+</html>

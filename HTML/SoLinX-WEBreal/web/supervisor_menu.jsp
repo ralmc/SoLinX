@@ -1,0 +1,50 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoLinX — Menú Supervisor</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <img src="assets/img/solinx_logo.png" alt="SoLinX" class="logo">
+            <span id="tvNombreSupervisor" style="font-weight:700;font-size:1rem;flex:1;">Nombre Supervisor</span>
+            <img src="assets/img/imagen_prederterminada.png" alt="Perfil" class="avatar" style="cursor:pointer;" onclick="clearSession()" title="Cerrar Sesión">
+        </div>
+        <div class="bar-divider-thin"></div>
+
+        <!-- Content -->
+        <div class="page-content">
+            <div class="container" style="max-width:600px;">
+                <h2 class="page-title font-display">Menú Supervisor</h2>
+
+                <a href="aprobar_solicitudes_alumnos.jsp" style="text-decoration:none;">
+                    <div class="menu-card">
+                        <span class="menu-card-icon">📋</span>
+                        <span class="menu-card-title">Aprobar Solicitudes de Alumnos</span>
+                    </div>
+                </a>
+
+                <a href="aprobar_aceptaciones_empresa.jsp" style="text-decoration:none;">
+                    <div class="menu-card">
+                        <span class="menu-card-icon">🏢</span>
+                        <span class="menu-card-title">Aprobar Aceptaciones de Empresas</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        var session = requireSession('supervisor');
+        if (session) {
+            document.getElementById('tvNombreSupervisor').textContent = session.nombre || 'Supervisor';
+        }
+    </script>
+</body>
+</html>
