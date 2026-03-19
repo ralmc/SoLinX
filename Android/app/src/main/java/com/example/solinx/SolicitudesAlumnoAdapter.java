@@ -17,8 +17,8 @@ import java.util.List;
 //VELAZQUEZ REYNOSO ADRIAN
 public class SolicitudesAlumnoAdapter extends RecyclerView.Adapter<SolicitudesAlumnoAdapter.SolicitudViewHolder> {
 
-    private List<Solicitud> listaSolicitudes;
-    private Context context;
+    private final List<Solicitud> listaSolicitudes;
+    private final Context context;
 
     public SolicitudesAlumnoAdapter(Context context, List<Solicitud> listaSolicitudes) {
         this.context = context;

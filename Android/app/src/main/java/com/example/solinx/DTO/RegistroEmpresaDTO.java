@@ -1,10 +1,10 @@
 package com.example.solinx.DTO;
 
 public class RegistroEmpresaDTO {
-    private String nombreEmpresa;
-    private String correo;
-    private String telefono;
-    private String userPassword;
+    private final String nombreEmpresa;
+    private final String correo;
+    private final String telefono;
+    private final String userPassword;
 
     public RegistroEmpresaDTO(String nombreEmpresa, String correo, String telefono, String userPassword) {
         this.nombreEmpresa = nombreEmpresa;
