@@ -1,0 +1,210 @@
+CONFIGURACIÓN OFICIAL DEL PROYECTO SOLINX (OBLIGATORIO)
+
+LEE TODO ANTES DE EMPEZAR.
+SI NO SIGUES ESTO EXACTAMENTE, EL PROYECTO PUEDE NO FUNCIONAR.
+
+---
+
+## CONFIGURACIÓN BASE (TODOS IGUAL)
+
+JDK: 11 (Eclipse Temurin)
+Servidor: Apache Tomcat 9
+Java EE Version: Jakarta EE 8 Web
+IDE: Apache NetBeans
+
+---
+
+## PARTE 1: INSTALAR JDK 11
+
+Paso 1:
+Busca en Google:
+Temurin JDK 11 download
+
+Paso 2:
+Descarga:
+Windows x64
+
+Paso 3:
+Instala normal (siguiente, siguiente)
+
+Paso 4:
+Verifica:
+
+Abre CMD y escribe:
+java -version
+
+Debe decir:
+openjdk version "11..."
+
+SI NO → NO SIGAS
+
+---
+
+## PARTE 2: CONFIGURAR JAVA_HOME (OBLIGATORIO)
+
+Esto hace que TODA la computadora reconozca Java.
+
+Paso 1:
+Ubica tu JDK, ejemplo:
+C:\Program Files\Eclipse Adoptium\jdk-11
+
+Paso 2:
+Presiona:
+Win + S
+
+Escribe:
+Variables de entorno
+
+Selecciona:
+"Editar las variables de entorno del sistema"
+
+Paso 3:
+Click en:
+Variables de entorno
+
+Paso 4:
+En "Variables del sistema" → Nueva
+
+Nombre:
+JAVA_HOME
+
+Valor:
+(Ruta de tu JDK)
+Ejemplo:
+C:\Program Files\Eclipse Adoptium\jdk-11
+
+Paso 5:
+Busca la variable "Path" → Editar
+
+Agrega:
+%JAVA_HOME%\bin
+
+Paso 6:
+Aceptar todo
+
+Paso 7:
+Cierra y abre CMD otra vez
+
+Escribe:
+java -version
+
+SI FUNCIONA → LISTO
+
+---
+
+## PARTE 3: CONFIGURAR JDK EN NETBEANS
+
+Abrir Apache NetBeans
+
+Ir a:
+Tools → Java Platforms
+
+Click:
+Add Platform
+
+Seleccionar carpeta del JDK 11
+
+Verifica que diga:
+JDK 11
+
+---
+
+## PARTE 4: INSTALAR TOMCAT 9
+
+Paso 1:
+Busca en Google:
+Apache Tomcat 9 download
+
+Paso 2:
+Descarga:
+.zip (NO instalador)
+
+Paso 3:
+Descomprime en:
+C:\Tomcat9\
+
+IMPORTANTE:
+No cambiar nombre
+
+---
+
+## PARTE 5: AGREGAR TOMCAT EN NETBEANS
+
+Ir a:
+Tools → Servers
+
+Click:
+Add Server
+
+Seleccionar:
+Apache Tomcat or TomEE
+
+Seleccionar carpeta:
+C:\Tomcat9\
+
+Terminar
+
+---
+
+## PARTE 6: CONFIGURAR EL PROYECTO SOLINX
+
+Abrir el proyecto
+
+Click derecho → Properties
+
+En "Run":
+Server → Apache Tomcat
+
+En "Libraries":
+Java Platform → JDK 11
+
+Verificar:
+Java EE Version → Jakarta EE 8 Web
+
+---
+
+## PARTE 7: EJECUTAR
+
+Click derecho → Run
+o presionar F6
+
+Debe abrir:
+http://localhost:8080/
+
+---
+
+## ERRORES COMUNES
+
+NO HAY SERVIDOR:
+→ No agregaste Tomcat
+
+NO CORRE:
+→ No estás usando JDK 11
+
+NO RECONOCE JAVA:
+→ No configuraste JAVA_HOME
+
+PUERTO OCUPADO:
+→ Cambiar puerto o cerrar programa
+
+---
+
+## REGLAS DEL EQUIPO
+
+1. NO cambiar versiones
+2. TODOS deben usar JDK 11
+3. TODOS deben usar Tomcat 9
+4. NO modificar configuración sin avisar
+5. SI FALLA → AVISAR
+
+---
+
+## RESUMEN FINAL
+
+JDK 11 + Tomcat 9 + Jakarta EE 8 = FUNCIONA
+
+Cualquier cambio = ERRORES
+
+---
+
+## FIN
