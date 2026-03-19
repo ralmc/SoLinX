@@ -41,43 +41,33 @@ public class ProyectoController {
     }
 
     @GetMapping("/proyecto/empresa/{idEmpresa}")
-    public ResponseEntity<List<ProyectoDto>> listarPorEmpresa(@PathVariable Integer idEmpresa) {
-
+    public ResponseEntity<List<ProyectoDto>> listarPorEmpresa(@PathVariable("idEmpresa") Integer idEmpresa) {
         List<Proyecto> proyectos = proyectoService.obtenerPorEmpresa(idEmpresa);
-
-        if (proyectos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
+        if (proyectos.isEmpty()) return ResponseEntity.noContent().build();
 
         List<ProyectoDto> dtos = proyectos.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/proyecto/{id}")
-    public ResponseEntity<ProyectoDto> getById(@PathVariable Integer id) {
+    public ResponseEntity<ProyectoDto> getById(@PathVariable("id") Integer id) {
         Proyecto proyecto = proyectoService.getById(id);
-        if (proyecto == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (proyecto == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(convertToDto(proyecto));
     }
 
     @PutMapping("/proyecto/{id}")
-    public ResponseEntity<ProyectoDto> update(@PathVariable Integer id, @RequestBody ProyectoDto dto) {
+    public ResponseEntity<ProyectoDto> update(@PathVariable("id") Integer id, @RequestBody ProyectoDto dto) {
         Proyecto proyecto = convertToEntity(dto);
         Proyecto actualizado = proyectoService.update(id, proyecto);
-
-        if (actualizado == null) {
-            return ResponseEntity.notFound().build();
-        }
+        if (actualizado == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(convertToDto(actualizado));
     }
 
     @DeleteMapping("/proyecto/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         proyectoService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -89,7 +79,6 @@ public class ProyectoController {
                 return usuario.getTelefono();
             }
         } catch (Exception e) {
-            // Log error si quieres
             System.err.println("Error obteniendo teléfono: " + e.getMessage());
         }
         return "No disponible";
@@ -110,7 +99,7 @@ public class ProyectoController {
                 .imagenRef(proyecto.getImagenRef())
                 .idEmpresa(idEmpresa)
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
-                .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible") // 🆕 NUEVO
+                .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible")
                 .build();
     }
 
@@ -118,12 +107,7 @@ public class ProyectoController {
         Empresa empresa = new Empresa();
         empresa.setIdEmpresa(dto.getIdEmpresa());
 
-        Date fechaRegistro;
-        if (dto.getFechaInicio() == null) {
-            fechaRegistro = new Date();
-        } else {
-            fechaRegistro = dto.getFechaInicio();
-        }
+        Date fechaRegistro = dto.getFechaInicio() == null ? new Date() : dto.getFechaInicio();
 
         String imagenFinal = dto.getImagenRef();
         if (imagenFinal == null || imagenFinal.trim().isEmpty()) {

@@ -16,7 +16,7 @@ public class SolicitudListController {
     private final SolicitudListService solicitudListService;
 
     @GetMapping("/solicitud/list/{idEmpresa}")
-    public ResponseEntity<List<SolicitudListDto>> listar(@PathVariable Integer idEmpresa) {
+    public ResponseEntity<List<SolicitudListDto>> listar(@PathVariable("idEmpresa") Integer idEmpresa) {
         List<SolicitudListDto> lista = solicitudListService.listarSolicitudesDeEmpresa(idEmpresa);
         return ResponseEntity.ok(lista);
     }

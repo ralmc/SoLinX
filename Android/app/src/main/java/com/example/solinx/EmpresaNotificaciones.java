@@ -123,7 +123,7 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
 
             if ("enviada".equalsIgnoreCase(solicitud.getEstadoSolicitud())) {
 
-                tvEstado.setTextColor(Color.parseColor("#FF9800")); // Naranja
+                tvEstado.setTextColor(Color.parseColor("#FF9800"));
                 layoutBotones.setVisibility(View.VISIBLE);
 
                 btnAdmitir.setOnClickListener(v -> actualizarEstado(solicitud.getIdSolicitud(), "aceptada"));

@@ -62,7 +62,6 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
         btnEnviar.setOnClickListener(this);
         btnRegresar.setOnClickListener(this);
 
-        // ← Primero obtenemos la boleta, luego cargamos foto y boleta en header
         obtenerBoletaEstudiante();
         cargarFotoYBoleta();
         recibirDatosDelProyecto();
@@ -94,12 +93,10 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
 
         Log.d(TAG, "Cargando foto y boleta para: " + boleta);
 
-        // Mostrar boleta en header
         if (btnboleta != null) {
             btnboleta.setText(boleta);
         }
 
-        // Cargar foto desde SoLinXFotos
         if (fotoPerfilHeader != null) {
             String b64 = getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
                     .getString("foto_perfil_" + boleta, null);

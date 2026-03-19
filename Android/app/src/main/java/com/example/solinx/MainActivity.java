@@ -1,6 +1,5 @@
 package com.example.solinx;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,10 +8,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.solinx.CONEXION.InicioHelper;
 import com.example.solinx.UTIL.ThemeUtils;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView solinx;
     private ImageView imgLogoAve;
