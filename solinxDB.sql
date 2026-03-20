@@ -117,6 +117,17 @@ CREATE TABLE Perfil (
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE Documento (
+    idDocumento INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    periodo INT NOT NULL CHECK (periodo BETWEEN 1 AND 8),
+    archivo LONGBLOB NOT NULL,
+    nombreArchivo VARCHAR(255) NOT NULL,
+    fechaSubida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    boleta INT NOT NULL,
+    FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE,
+    UNIQUE KEY unique_periodo_boleta (boleta, periodo)
+);
+
 -- ============================================
 -- INSERCIÓN DE DATOS
 -- ============================================
@@ -264,5 +275,6 @@ VALUES (NOW(), 'enviada', 20230005, 2);
 -- ============================================
 -- VERIFICACIÓN
 -- ============================================
+SELECT * FROM Documento;
 SELECT * FROM Proyecto;
 SELECT * FROM Usuario;
