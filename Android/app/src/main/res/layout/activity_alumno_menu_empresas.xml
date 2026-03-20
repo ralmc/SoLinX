@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -68,33 +67,78 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewProyectos"
+    <!-- Botones de sección -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        tools:listitem="@layout/card_proyecto" />
-
-    <TextView
-        android:id="@+id/txtNoProyectos"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="No hay proyectos disponibles"
-        android:textSize="16sp"
-        android:textColor="?android:attr/textColorSecondary"
-        android:gravity="center"
-        android:visibility="gone" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:visibility="gone" />
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp">
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/btnTabEmpresas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Empresas"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnBackground"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:fontFamily="@font/molgan"/>
+
+            <View
+                android:id="@+id/lineaTabEmpresas"
+                android:layout_width="80dp"
+                android:layout_height="3dp"
+                android:background="?attr/colorOnBackground"
+                android:visibility="visible"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/btnTabDocumentos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Documentos"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                android:textColor="?android:attr/textColorSecondary"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:fontFamily="@font/molgan"/>
+
+            <View
+                android:id="@+id/lineaTabDocumentos"
+                android:layout_width="80dp"
+                android:layout_height="3dp"
+                android:background="?attr/colorOnBackground"
+                android:visibility="invisible"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Contenedor de Fragments -->
+    <FrameLayout
+        android:id="@+id/frameAlumno"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 </LinearLayout>

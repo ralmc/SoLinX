@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/bg_card_horario">
+
+    <TextView
+        android:id="@+id/tvPeriodo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Periodo 1"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="?attr/colorOnBackground"
+        android:fontFamily="@font/molgan"/>
+
+    <TextView
+        android:id="@+id/tvEstado"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="documento.pdf"
+        android:textSize="13sp"
+        android:textColor="#1497B9"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/btnSubir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subir PDF"
+        android:textSize="13sp"
+        android:textAllCaps="false"
+        android:backgroundTint="?attr/colorSecondary"
+        android:textColor="?attr/colorOnSecondary"
+        android:visibility="gone"/>
+</LinearLayout>

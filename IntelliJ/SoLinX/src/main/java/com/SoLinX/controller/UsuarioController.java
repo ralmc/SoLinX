@@ -30,7 +30,7 @@ public class UsuarioController {
     }
 
     @RequestMapping("/usuario/{id}")
-    public ResponseEntity<UsuarioDto>getById(@PathVariable Integer id) {
+    public ResponseEntity<UsuarioDto>getById(@PathVariable("id") Integer id) {
         Usuario u = usuarioService.getById(id);
         if(u == null ) return  ResponseEntity.notFound().build();
         return ResponseEntity.ok(UsuarioDto.builder().idUsuario(u.getIdUsuario()).nombre(u.getNombre()).correo(u.getCorreo()).telefono(u.getTelefono()).userPassword(u.getUserPassword()).rol(u.getRol()).build());
@@ -44,13 +44,13 @@ public class UsuarioController {
     }
 
     @DeleteMapping( "/usuario/{id}")
-    public ResponseEntity<UsuarioDto> delete(@PathVariable Integer id) {
+    public ResponseEntity<UsuarioDto> delete(@PathVariable("id") Integer id) {
         usuarioService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping( "/usuario/{id}")
-    public ResponseEntity<UsuarioDto>update( @PathVariable Integer id, @RequestBody UsuarioDto usuarioDto) {
+    public ResponseEntity<UsuarioDto>update( @PathVariable("id") Integer id, @RequestBody UsuarioDto usuarioDto) {
         Usuario aux = usuarioService.update( id, Usuario.builder().idUsuario( usuarioDto.getIdUsuario()).nombre( usuarioDto.getNombre()).correo( usuarioDto.getCorreo()).telefono(usuarioDto.getTelefono()).userPassword(usuarioDto.getUserPassword()).rol(usuarioDto.getRol()).build());
         return ResponseEntity.ok(UsuarioDto.builder().idUsuario(aux.getIdUsuario()).nombre(aux.getNombre()).correo(aux.getCorreo()).telefono(aux.getTelefono()).userPassword(aux.getUserPassword()).rol(aux.getRol()).build());
     }

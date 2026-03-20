@@ -20,10 +20,8 @@ public class Estudiante {
     @Id
     @Column(name = "boleta")
     private Integer boleta;
-
     @Column(name = "carrera")
     private String carrera;
-
     @Column(name = "escuela")
     private String escuela;
 }

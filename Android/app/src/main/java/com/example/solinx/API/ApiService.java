@@ -1,5 +1,6 @@
 package com.example.solinx.API;
 
+import com.example.solinx.DTO.DocumentoDTO;
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
 import com.example.solinx.DTO.RegistroAlumnoDTO;
@@ -19,12 +20,15 @@ import com.example.solinx.RESPONSE.SupervisorResponse;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Field;
@@ -114,4 +118,15 @@ public interface ApiService {
     // Obtener horario
     @GET("horario/{boleta}")
     Call<HorarioDTO> obtenerHorario(@Path("boleta") int boleta);
+    // Documentos
+    @GET("documento/{boleta}")
+    Call<List<DocumentoDTO>> getDocumentos(@Path("boleta") Integer boleta);
+
+    @Multipart
+    @POST("documento/{boleta}/{periodo}")
+    Call<DocumentoDTO> subirDocumento(
+            @Path("boleta") Integer boleta,
+            @Path("periodo") Integer periodo,
+            @Part MultipartBody.Part archivo
+    );
 }
