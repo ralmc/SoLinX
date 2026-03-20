@@ -11,12 +11,12 @@
         <!-- Top Bar -->
         <div class="top-bar">
             <a href="alumno_menu_empresas.html" title="Regresar" style="display:flex;align-items:center;">
-                <img src="assets/img/icono_salida.png" alt="Regresar" style="width:32px;height:32px;opacity:0.7;">
+                <img src="assets/img/flechaizq.png" alt="Regresar" style="width:28px;height:28px;opacity:0.7;">
             </a>
-            <img src="assets/img/solinx_logo.png" alt="SoLinX" class="logo">
+            <a href="index.html"><img src="assets/img/solinx_logo.png" alt="SoLinX" class="logo"></a>
             <span class="spacer"></span>
             <div class="user-info">
-                <span class="boleta" id="tvBoleta">2023XXXX</span>
+                <span class="boleta" id="tvBoleta">20230000</span>
                 <img src="assets/img/imagen_prederterminada.png" alt="Perfil" class="avatar" id="imgPerfil">
             </div>
         </div>
@@ -81,7 +81,7 @@
     <script>
         var session = requireSession('alumno');
         if (session) {
-            document.getElementById('tvBoleta').textContent = session.boleta || '2023XXXX';
+            document.getElementById('tvBoleta').textContent = session.boleta || '20230000';
         }
 
         // TODO: fetch from GET /api/alumnos/{boleta}
