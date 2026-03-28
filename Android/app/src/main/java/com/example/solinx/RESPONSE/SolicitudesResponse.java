@@ -16,6 +16,6 @@ public class SolicitudesResponse {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public List<Solicitudes> getSolicitudes() { return solicitudes; }  // ← CAMBIO AQUÍ
-    public void setSolicitudes(List<Solicitudes> solicitudes) { this.solicitudes = solicitudes; }  // ← CAMBIO AQUÍ
+    public List<Solicitudes> getSolicitudes() { return solicitudes; }
+    public void setSolicitudes(List<Solicitudes> solicitudes) { this.solicitudes = solicitudes; }
 }

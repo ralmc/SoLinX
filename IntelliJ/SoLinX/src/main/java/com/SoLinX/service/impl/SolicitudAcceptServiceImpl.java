@@ -8,6 +8,8 @@ import com.SoLinX.repository.SolicitudRepository;
 import com.SoLinX.service.SolicitudAcceptService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SolicitudAcceptServiceImpl implements SolicitudAcceptService {
     private final SolicitudRepository solicitudRepository;
@@ -32,11 +34,28 @@ public class SolicitudAcceptServiceImpl implements SolicitudAcceptService {
             proyectoRepository.save(proyecto);
             System.out.println("Vacantes después: " + proyecto.getVacantes());
             System.out.println("============================================");
+
             solicitud.setEstadoSolicitud("aceptada");
+            solicitudRepository.save(solicitud);
+
+            Integer boleta = solicitud.getEstudiante().getBoleta();
+            List<Solicitud> pendientes = solicitudRepository
+                    .findSolicitudesPendientesByBoletaExcluding(boleta, dto.getIdSolicitud());
+
+            System.out.println("============================================");
+            System.out.println("Solicitudes a rechazar automáticamente: " + pendientes.size());
+            for (Solicitud pendiente : pendientes) {
+                pendiente.setEstadoSolicitud("rechazada");
+                System.out.println("Rechazando solicitud ID: " + pendiente.getIdSolicitud());
+            }
+            solicitudRepository.saveAll(pendientes);
+            System.out.println("============================================");
+
         } else {
             solicitud.setEstadoSolicitud("rechazada");
+            solicitudRepository.save(solicitud);
         }
 
-        return solicitudRepository.save(solicitud);
+        return solicitud;
     }
 }

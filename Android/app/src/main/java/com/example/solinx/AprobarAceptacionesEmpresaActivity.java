@@ -44,7 +44,7 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
         ThemeUtils.applyTheme(this);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aprobar_aceptaciones_empresa);
+        setContentView(R.layout.activity_supervisor_aprobar_aceptaciones_empresa);
 
         // Obtener datos del Intent
         idEmpresa = getIntent().getIntExtra("idEmpresa", -1);

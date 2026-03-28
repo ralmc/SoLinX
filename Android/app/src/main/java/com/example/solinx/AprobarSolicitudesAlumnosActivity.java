@@ -44,7 +44,7 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
         ThemeUtils.applyTheme(this);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aprobar_solicitudes_alumnos);
+        setContentView(R.layout.activity_supervisor_aprobar_solicitudes_alumnos);
 
         // Obtener datos del Intent
         idSupervisor = getIntent().getIntExtra("idSupervisor", -1);

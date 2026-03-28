@@ -1,11 +1,13 @@
 package com.example.solinx.ADAPTER;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,10 +24,14 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
 
     private final List<DocumentoDTO> periodos;
     private final OnSubirClickListener listener;
+    private final int periodoDesbloqueado;
 
-    public PeriodoAdapter(List<DocumentoDTO> periodos, OnSubirClickListener listener) {
-        this.periodos = periodos;
-        this.listener = listener;
+    public PeriodoAdapter(List<DocumentoDTO> periodos,
+                          int periodoDesbloqueado,
+                          OnSubirClickListener listener) {
+        this.periodos             = periodos;
+        this.periodoDesbloqueado  = periodoDesbloqueado;
+        this.listener             = listener;
     }
 
     @NonNull
@@ -39,20 +45,41 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
     @Override
     public void onBindViewHolder(@NonNull PeriodoViewHolder holder, int position) {
         int numeroPeriodo = position + 1;
-        DocumentoDTO doc = periodos.get(position);
+        DocumentoDTO doc  = periodos.get(position);
 
         holder.tvPeriodo.setText("Periodo " + numeroPeriodo);
 
         if (doc != null) {
-            // Ya tiene documento
             holder.tvEstado.setText(doc.getNombreArchivo());
             holder.tvEstado.setVisibility(View.VISIBLE);
             holder.btnSubir.setVisibility(View.GONE);
-        } else {
-            // Sin documento
+
+            setCardEstado(holder, true);
+
+        } else if (numeroPeriodo == periodoDesbloqueado) {
             holder.tvEstado.setVisibility(View.GONE);
             holder.btnSubir.setVisibility(View.VISIBLE);
+            holder.btnSubir.setEnabled(true);
             holder.btnSubir.setOnClickListener(v -> listener.onSubir(numeroPeriodo));
+
+            setCardEstado(holder, true);
+
+        } else {
+            holder.tvEstado.setVisibility(View.GONE);
+            holder.btnSubir.setVisibility(View.VISIBLE);
+            holder.btnSubir.setEnabled(false);
+
+            setCardEstado(holder, false);
+        }
+    }
+
+    private void setCardEstado(PeriodoViewHolder holder, boolean activo) {
+        if (activo) {
+            holder.itemView.setAlpha(1.0f);
+            holder.btnSubir.setBackgroundTintList(ColorStateList.valueOf(0xFF1497B9));
+        } else {
+            holder.itemView.setAlpha(0.35f);
+            holder.btnSubir.setBackgroundTintList(ColorStateList.valueOf(0xFFAAAAAA));
         }
     }
 
@@ -63,7 +90,7 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
 
     static class PeriodoViewHolder extends RecyclerView.ViewHolder {
         TextView tvPeriodo, tvEstado;
-        Button btnSubir;
+        Button   btnSubir;
 
         PeriodoViewHolder(@NonNull View itemView) {
             super(itemView);

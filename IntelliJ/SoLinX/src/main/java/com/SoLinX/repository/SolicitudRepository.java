@@ -37,4 +37,12 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
             "JOIN FETCH s.estudiante est " +
             "WHERE est.boleta = :boleta")
     List<Solicitud> findByBoleta(@Param("boleta") Integer boleta);
+
+    @Query("SELECT s FROM Solicitud s WHERE s.estudiante.boleta = :boleta " +
+            "AND s.idSolicitud <> :idSolicitudAceptada " +
+            "AND s.estadoSolicitud = 'enviada'")
+    List<Solicitud> findSolicitudesPendientesByBoletaExcluding(
+            @Param("boleta") Integer boleta,
+            @Param("idSolicitudAceptada") Integer idSolicitudAceptada
+    );
 }
