@@ -405,7 +405,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
 
     // ─── Cerrar sesión ────────────────────────────────────────────────────────
 
-    // ← CAMBIO: solo limpia "SoLinXPrefs", las fotos en "SoLinXFotos" quedan intactas
     private void cerrarSesion() {
         new AlertDialog.Builder(this)
                 .setTitle("Cerrar sesión")

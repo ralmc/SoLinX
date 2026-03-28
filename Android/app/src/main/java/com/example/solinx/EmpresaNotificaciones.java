@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.SolicitudAcceptDTO;
 import com.example.solinx.RESPONSE.SolicitudResponse;
 import com.example.solinx.UTIL.ThemeUtils;
 
@@ -145,22 +146,49 @@ public class EmpresaNotificaciones extends AppCompatActivity implements View.OnC
     private void actualizarEstado(int idSolicitud, String nuevoEstado) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        apiService.actualizarEstadoSolicitud(idSolicitud, nuevoEstado).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(EmpresaNotificaciones.this, "Solicitud " + nuevoEstado, Toast.LENGTH_SHORT).show();
-                    cargarSolicitudes();
-                } else {
-                    Toast.makeText(EmpresaNotificaciones.this, "Error al actualizar", Toast.LENGTH_SHORT).show();
+        if ("aceptada".equalsIgnoreCase(nuevoEstado)) {
+            SolicitudAcceptDTO dto = new SolicitudAcceptDTO(idSolicitud, true);
+            apiService.aceptarSolicitud(dto).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(EmpresaNotificaciones.this,
+                                "Solicitud aceptada ✓", Toast.LENGTH_SHORT).show();
+                        cargarSolicitudes(); // recarga para reflejar los rechazos automáticos
+                    } else {
+                        Toast.makeText(EmpresaNotificaciones.this,
+                                "Error al aceptar", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(EmpresaNotificaciones.this, "Fallo de conexión", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(EmpresaNotificaciones.this,
+                            "Fallo de conexión", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            apiService.actualizarEstadoSolicitud(idSolicitud, nuevoEstado).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(EmpresaNotificaciones.this,
+                                "Solicitud rechazada", Toast.LENGTH_SHORT).show();
+                        cargarSolicitudes();
+                    } else {
+                        Toast.makeText(EmpresaNotificaciones.this,
+                                "Error al rechazar", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(EmpresaNotificaciones.this,
+                            "Fallo de conexión", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override

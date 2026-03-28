@@ -9,6 +9,7 @@ import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
 import com.example.solinx.DTO.HorarioDTO;
 
 // Importes de la versión upstream
+import com.example.solinx.DTO.SolicitudAcceptDTO;
 import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.RESPONSE.ProyectoResponse;
 import com.example.solinx.RESPONSE.SolicitudResponse;
@@ -115,6 +116,10 @@ public interface ApiService {
     // Enviar solicitud
     @POST("solicitud")
     Call<SolicitudDTO> enviarSolicitud(@Body SolicitudDTO solicitudDTO);
+
+    @POST("solicitud/accept")
+    Call<Void> aceptarSolicitud(@Body SolicitudAcceptDTO dto);
+
     // Obtener horario
     @GET("horario/{boleta}")
     Call<HorarioDTO> obtenerHorario(@Path("boleta") int boleta);

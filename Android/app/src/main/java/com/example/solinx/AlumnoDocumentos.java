@@ -92,20 +92,15 @@ public class AlumnoDocumentos extends Fragment {
             Log.e(TAG, "Boleta es null");
             return;
         }
-        Log.d(TAG, "Cargando documentos para boleta: " + boleta);
-        Log.d(TAG, "URL: " + ApiClient.getClient().baseUrl() + "SoLinX/api/documento/" + boleta);
 
         apiService.getDocumentos(boleta).enqueue(new Callback<List<DocumentoDTO>>() {
             @Override
             public void onResponse(@NonNull Call<List<DocumentoDTO>> call,
                                    @NonNull Response<List<DocumentoDTO>> response) {
-                Log.d(TAG, "Response code: " + response.code());
 
-                // Siempre crear los 8 periodos
                 List<DocumentoDTO> periodos = new ArrayList<>();
                 for (int i = 1; i <= 8; i++) periodos.add(null);
 
-                // Llenar con documentos existentes si los hay
                 if (response.isSuccessful() && response.body() != null) {
                     for (DocumentoDTO doc : response.body()) {
                         if (doc.getPeriodo() >= 1 && doc.getPeriodo() <= 8) {
@@ -114,11 +109,27 @@ public class AlumnoDocumentos extends Fragment {
                     }
                 }
 
-                // Siempre mostrar los 8 periodos
-                periodoAdapter = new PeriodoAdapter(periodos, periodo -> {
+                int primerPeriodoDisponible = 1;
+                for (int i = 0; i < 8; i++) {
+                    if (periodos.get(i) != null) {
+                        primerPeriodoDisponible = i + 2;
+                    } else {
+                        break;
+                    }
+                }
+                final int periodoDesbloqueado = primerPeriodoDisponible;
+
+                periodoAdapter = new PeriodoAdapter(periodos, periodoDesbloqueado, periodo -> {
+                    if (periodo < periodoDesbloqueado && periodos.get(periodo - 1) != null) {
+                        Toast.makeText(requireContext(),
+                                "El Periodo " + periodo + " ya fue subido",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     periodoSeleccionado = periodo;
                     pdfLauncher.launch("application/pdf");
                 });
+
                 recyclerPeriodos.setAdapter(periodoAdapter);
             }
 
@@ -126,16 +137,15 @@ public class AlumnoDocumentos extends Fragment {
             public void onFailure(@NonNull Call<List<DocumentoDTO>> call, @NonNull Throwable t) {
                 Log.e(TAG, "Error: " + t.getMessage());
 
-                // Aun con error mostrar los 8 periodos vacíos
                 List<DocumentoDTO> periodos = new ArrayList<>();
                 for (int i = 1; i <= 8; i++) periodos.add(null);
 
-                periodoAdapter = new PeriodoAdapter(periodos, periodo -> {
+                periodoAdapter = new PeriodoAdapter(periodos, 1, periodo -> {
                     periodoSeleccionado = periodo;
                     pdfLauncher.launch("application/pdf");
                 });
-                recyclerPeriodos.setAdapter(periodoAdapter);
 
+                recyclerPeriodos.setAdapter(periodoAdapter);
                 Toast.makeText(requireContext(),
                         "Error al cargar documentos: " + t.getMessage(),
                         Toast.LENGTH_SHORT).show();
@@ -147,6 +157,25 @@ public class AlumnoDocumentos extends Fragment {
         if (boleta == null) return;
 
         try {
+            long tamañoMaximo = 1_500_000L;
+            long tamañoArchivo = 0;
+
+            Cursor cursorSize = requireContext().getContentResolver()
+                    .query(uri, null, null, null, null);
+            if (cursorSize != null && cursorSize.moveToFirst()) {
+                int idx = cursorSize.getColumnIndex(OpenableColumns.SIZE);
+                if (idx != -1) tamañoArchivo = cursorSize.getLong(idx);
+                cursorSize.close();
+            }
+
+            if (tamañoArchivo > tamañoMaximo) {
+                Toast.makeText(requireContext(),
+                        "El PDF no puede superar 1.5 MB (tamaño actual: " +
+                                String.format("%.2f", tamañoArchivo / 1_000_000.0) + " MB)",
+                        Toast.LENGTH_LONG).show();
+                return;
+            }
+
             String nombreArchivo = obtenerNombreArchivo(uri);
 
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
@@ -190,6 +219,7 @@ public class AlumnoDocumentos extends Fragment {
                     });
 
         } catch (Exception e) {
+            Log.e(TAG, "Error al leer el archivo: " + e.getMessage());
             Toast.makeText(requireContext(),
                     "Error al leer el archivo: " + e.getMessage(),
                     Toast.LENGTH_SHORT).show();

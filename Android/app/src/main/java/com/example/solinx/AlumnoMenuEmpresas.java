@@ -11,12 +11,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.solinx.API.ApiClient;
+import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,7 +40,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     private String nombreUsuario;
     private String correoUsuario;
     private String rolUsuario;
-
+    private boolean alumnoAceptado = false;
     private AlumnoEmpresas empresasFragment;
     private AlumnoDocumentos documentosFragment;
 
@@ -60,14 +70,54 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
 
         cargarFotoPerfil();
         mostrarTabEmpresas();
+        verificarSiAlumnoAceptado();
     }
 
+    // ─── Verificar si el alumno tiene solicitud aceptada ─────────────────────
+    private void verificarSiAlumnoAceptado() {
+        SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
+        String boletaStr = prefs.getString("boleta", null);
+        if (boletaStr == null || boletaStr.equals("N/A")) return;
+
+        int boleta = Integer.parseInt(boletaStr);
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.obtenerSolicitudesEstudiante(boleta).enqueue(new Callback<List<SolicitudDTO>>() {
+            @Override
+            public void onResponse(Call<List<SolicitudDTO>> call,
+                                   Response<List<SolicitudDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    boolean aceptado = response.body().stream()
+                            .anyMatch(s -> "aceptada".equalsIgnoreCase(s.getEstadoSolicitud()));
+                    runOnUiThread(() -> actualizarEstadoTab(aceptado));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SolicitudDTO>> call, Throwable t) {
+                Log.e(TAG, "Error al verificar aceptación: " + t.getMessage());
+            }
+        });
+    }
+
+    private void actualizarEstadoTab(boolean aceptado) {
+        alumnoAceptado = aceptado;
+
+        if (aceptado) {
+            btnTabDocumentos.setAlpha(1.0f);
+            btnTabDocumentos.setClickable(true);
+            btnTabDocumentos.setFocusable(true);
+        } else {
+            btnTabDocumentos.setAlpha(0.35f);
+            btnTabDocumentos.setClickable(false);
+            btnTabDocumentos.setFocusable(false);
+        }
+    }
+
+    // ─── Tabs ─────────────────────────────────────────────────────────────────
     private void mostrarTabEmpresas() {
-        // Líneas
         lineaTabEmpresas.setVisibility(View.VISIBLE);
         lineaTabDocumentos.setVisibility(View.INVISIBLE);
 
-        // Texto tabs
         btnTabEmpresas.setTypeface(null, Typeface.BOLD);
         btnTabEmpresas.setTextColor(getResources().getColorStateList(
                 android.R.color.tab_indicator_text, getTheme()));
@@ -80,11 +130,16 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     }
 
     private void mostrarTabDocumentos() {
-        // Líneas
+        if (!alumnoAceptado) {
+            Toast.makeText(this,
+                    "Debes ser aceptado en un proyecto primero",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         lineaTabEmpresas.setVisibility(View.INVISIBLE);
         lineaTabDocumentos.setVisibility(View.VISIBLE);
 
-        // Texto tabs
         btnTabDocumentos.setTypeface(null, Typeface.BOLD);
         btnTabDocumentos.setTextColor(getResources().getColorStateList(
                 android.R.color.tab_indicator_text, getTheme()));
@@ -103,6 +158,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
                 .commit();
     }
 
+    // ─── Foto de perfil ───────────────────────────────────────────────────────
     private void cargarFotoPerfil() {
         SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
         String boleta = prefs.getString("boleta", "N/A");
@@ -115,6 +171,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         }
     }
 
+    // ─── Click ────────────────────────────────────────────────────────────────
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -139,15 +196,18 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         startActivity(intent);
     }
 
+    // ─── Lifecycle ────────────────────────────────────────────────────────────
     @Override
     protected void onResume() {
         super.onResume();
         cargarFotoPerfil();
+        verificarSiAlumnoAceptado();
         if (empresasFragment != null && empresasFragment.isVisible()) {
             empresasFragment.cargarProyectos();
         }
     }
 
+    // ─── Sesión ───────────────────────────────────────────────────────────────
     private void recibirDatosDelUsuario() {
         Intent intent = getIntent();
         if (intent != null) {
