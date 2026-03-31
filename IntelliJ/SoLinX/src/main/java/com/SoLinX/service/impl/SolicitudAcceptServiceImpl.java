@@ -5,6 +5,7 @@ import com.SoLinX.model.Proyecto;
 import com.SoLinX.model.Solicitud;
 import com.SoLinX.repository.ProyectoRepository;
 import com.SoLinX.repository.SolicitudRepository;
+import com.SoLinX.service.NotificacionService;
 import com.SoLinX.service.SolicitudAcceptService;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,13 @@ import java.util.List;
 public class SolicitudAcceptServiceImpl implements SolicitudAcceptService {
     private final SolicitudRepository solicitudRepository;
     private final ProyectoRepository proyectoRepository;
+    private final NotificacionService notificacionService;
 
     public SolicitudAcceptServiceImpl(SolicitudRepository solicitudRepository,
-                                      ProyectoRepository proyectoRepository) {
+                                      ProyectoRepository proyectoRepository, NotificacionService notificacionService) {
         this.solicitudRepository = solicitudRepository;
         this.proyectoRepository  = proyectoRepository;
+        this.notificacionService  = notificacionService;
     }
 
     @Override
@@ -50,6 +53,14 @@ public class SolicitudAcceptServiceImpl implements SolicitudAcceptService {
             }
             solicitudRepository.saveAll(pendientes);
             System.out.println("============================================");
+
+            Integer idUsuario = solicitud.getEstudiante().getUsuarioEstudiante().getIdUsuario();
+            notificacionService.crear(
+                    idUsuario,
+                    "¡Felicidades! Solicitud aceptada 🎉",
+                    "Tu solicitud al proyecto \"" + solicitud.getProyecto().getNombreProyecto() +
+                            "\" ha sido aceptada."
+            );
 
         } else {
             solicitud.setEstadoSolicitud("rechazada");

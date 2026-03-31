@@ -56,7 +56,6 @@ public class AlumnoEmpresas extends Fragment {
         recyclerViewProyectos.setLayoutManager(new LinearLayoutManager(requireContext()));
         proyectoAdapter = new ProyectoAdapter(requireContext());
         recyclerViewProyectos.setAdapter(proyectoAdapter);
-
         cargarProyectos();
     }
 

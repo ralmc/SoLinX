@@ -3,6 +3,8 @@ package com.example.solinx.API;
 import com.example.solinx.DTO.DocumentoDTO;
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
+import com.example.solinx.DTO.NotificacionDTO;
+import com.example.solinx.DTO.PerfilDTO;
 import com.example.solinx.DTO.RegistroAlumnoDTO;
 import com.example.solinx.DTO.RegistroEmpresaDTO;
 import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
@@ -26,6 +28,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -134,4 +137,31 @@ public interface ApiService {
             @Path("periodo") Integer periodo,
             @Part MultipartBody.Part archivo
     );
+
+    // -------------------------
+    // Foto de Perdil
+    // -------------------------
+
+    @GET("perfil/usuario/{idUsuario}")
+    Call<PerfilDTO> obtenerPerfil(@Path("idUsuario") int idUsuario);
+
+    @PUT("perfil/usuario/{idUsuario}/foto")
+    @Headers("Content-Type: application/json")
+    Call<String> actualizarFoto(@Path("idUsuario") int idUsuario, @Body java.util.Map<String, String> body);
+
+    // -------------------------
+    // Notificaciones Alumno
+    // -------------------------
+
+    @GET("notificacion/usuario/{idUsuario}")
+    Call<List<NotificacionDTO>> obtenerNotificaciones(@Path("idUsuario") int idUsuario);
+
+    @GET("notificacion/usuario/{idUsuario}/no-leidas")
+    Call<Integer> contarNoLeidas(@Path("idUsuario") int idUsuario);
+
+    @PUT("notificacion/{idNotificacion}/leida")
+    Call<Void> marcarComoLeida(@Path("idNotificacion") int idNotificacion);
+
+    @PUT("notificacion/usuario/{idUsuario}/leidas")
+    Call<Void> marcarTodasComoLeidas(@Path("idUsuario") int idUsuario);
 }

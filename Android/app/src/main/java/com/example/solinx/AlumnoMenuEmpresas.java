@@ -15,14 +15,17 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.PerfilDTO;
 import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.List;
+import java.util.ResourceBundle;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,8 +36,8 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     private static final String TAG = "AlumnoMenuEmpresas";
 
     ImageView fotoperfil;
-    TextView tvBoleta, btnTabEmpresas, btnTabDocumentos;
-    View lineaTabEmpresas, lineaTabDocumentos;
+    TextView tvBoleta, btnTabEmpresas, btnTabDocumentos, btnTabNotificaciones;
+    View lineaTabEmpresas, lineaTabDocumentos, lineaTabNotificaciones;
 
     private Integer idUsuario;
     private String nombreUsuario;
@@ -43,9 +46,12 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     private boolean alumnoAceptado = false;
     private AlumnoEmpresas empresasFragment;
     private AlumnoDocumentos documentosFragment;
+    private AlumnoNotificaciones notificacionesFragment;
+    private Typeface molgan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        molgan = ResourcesCompat.getFont(this, R.font.molgan);
         ThemeUtils.applyTheme(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -57,12 +63,15 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         tvBoleta           = findViewById(R.id.tvBoleta);
         btnTabEmpresas     = findViewById(R.id.btnTabEmpresas);
         btnTabDocumentos   = findViewById(R.id.btnTabDocumentos);
+        btnTabNotificaciones = findViewById(R.id.btnTabNotificaciones);
         lineaTabEmpresas   = findViewById(R.id.lineaTabEmpresas);
         lineaTabDocumentos = findViewById(R.id.lineaTabDocumentos);
+        lineaTabNotificaciones = findViewById(R.id.lineaTabNotificaciones);
 
         fotoperfil.setOnClickListener(this);
         btnTabEmpresas.setOnClickListener(this);
         btnTabDocumentos.setOnClickListener(this);
+        btnTabNotificaciones.setOnClickListener(this);
 
         if (nombreUsuario != null) {
             tvBoleta.setText("Hola, " + nombreUsuario);
@@ -117,12 +126,16 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     private void mostrarTabEmpresas() {
         lineaTabEmpresas.setVisibility(View.VISIBLE);
         lineaTabDocumentos.setVisibility(View.INVISIBLE);
+        lineaTabNotificaciones.setVisibility(View.INVISIBLE);
 
-        btnTabEmpresas.setTypeface(null, Typeface.BOLD);
+        btnTabEmpresas.setTypeface(molgan, Typeface.BOLD);
         btnTabEmpresas.setTextColor(getResources().getColorStateList(
                 android.R.color.tab_indicator_text, getTheme()));
-        btnTabDocumentos.setTypeface(null, Typeface.NORMAL);
+        btnTabDocumentos.setTypeface(molgan, Typeface.NORMAL);
         btnTabDocumentos.setTextColor(
+                getResources().getColor(android.R.color.darker_gray, getTheme()));
+        btnTabNotificaciones.setTypeface(molgan, Typeface.NORMAL);
+        btnTabNotificaciones.setTextColor(
                 getResources().getColor(android.R.color.darker_gray, getTheme()));
 
         if (empresasFragment == null) empresasFragment = new AlumnoEmpresas();
@@ -139,16 +152,39 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
 
         lineaTabEmpresas.setVisibility(View.INVISIBLE);
         lineaTabDocumentos.setVisibility(View.VISIBLE);
+        lineaTabNotificaciones.setVisibility(View.INVISIBLE);
 
-        btnTabDocumentos.setTypeface(null, Typeface.BOLD);
+        btnTabDocumentos.setTypeface(molgan, Typeface.BOLD);
         btnTabDocumentos.setTextColor(getResources().getColorStateList(
                 android.R.color.tab_indicator_text, getTheme()));
-        btnTabEmpresas.setTypeface(null, Typeface.NORMAL);
+        btnTabEmpresas.setTypeface(molgan, Typeface.NORMAL);
         btnTabEmpresas.setTextColor(
+                getResources().getColor(android.R.color.darker_gray, getTheme()));
+        btnTabNotificaciones.setTypeface(molgan, Typeface.NORMAL);
+        btnTabNotificaciones.setTextColor(
                 getResources().getColor(android.R.color.darker_gray, getTheme()));
 
         if (documentosFragment == null) documentosFragment = new AlumnoDocumentos();
         cargarFragment(documentosFragment);
+    }
+
+    private void mostrarTabNotificaciones() {
+        lineaTabEmpresas.setVisibility(View.INVISIBLE);
+        lineaTabDocumentos.setVisibility(View.INVISIBLE);
+        lineaTabNotificaciones.setVisibility(View.VISIBLE);
+
+        btnTabNotificaciones.setTypeface(molgan, Typeface.BOLD);
+        btnTabNotificaciones.setTextColor(getResources().getColorStateList(
+                android.R.color.tab_indicator_text, getTheme()));
+        btnTabEmpresas.setTypeface(molgan, Typeface.NORMAL);
+        btnTabEmpresas.setTextColor(
+                getResources().getColor(android.R.color.darker_gray, getTheme()));
+        btnTabDocumentos.setTypeface(molgan, Typeface.NORMAL);
+        btnTabDocumentos.setTextColor(
+                getResources().getColor(android.R.color.darker_gray, getTheme()));
+
+        if (notificacionesFragment == null) notificacionesFragment = new AlumnoNotificaciones();
+        cargarFragment(notificacionesFragment);
     }
 
     private void cargarFragment(Fragment fragment) {
@@ -160,15 +196,29 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
 
     // ─── Foto de perfil ───────────────────────────────────────────────────────
     private void cargarFotoPerfil() {
-        SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
-        String boleta = prefs.getString("boleta", "N/A");
-        String b64 = getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
-                .getString("foto_perfil_" + boleta, null);
-        if (b64 != null) {
-            byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            fotoperfil.setImageBitmap(bitmap);
-        }
+        SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+        int idUsuario = prefs.getInt("idUsuario", -1);
+        if (idUsuario == -1) return;
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.obtenerPerfil(idUsuario).enqueue(new Callback<PerfilDTO>() {
+            @Override
+            public void onResponse(Call<PerfilDTO> call, Response<PerfilDTO> response) {
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getFoto() != null
+                        && !response.body().getFoto().isEmpty()) {
+                    String b64 = response.body().getFoto();
+                    byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    runOnUiThread(() -> fotoperfil.setImageBitmap(bmp));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PerfilDTO> call, Throwable t) {
+                Log.e(TAG, "Error al cargar foto: " + t.getMessage());
+            }
+        });
     }
 
     // ─── Click ────────────────────────────────────────────────────────────────
@@ -181,6 +231,8 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
             mostrarTabEmpresas();
         } else if (id == R.id.btnTabDocumentos) {
             mostrarTabDocumentos();
+        } else if (id == R.id.btnTabNotificaciones) {
+            mostrarTabNotificaciones();
         }
     }
 

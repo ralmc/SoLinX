@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.DTO.HorarioDTO;
+import com.example.solinx.DTO.PerfilDTO;
 import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
 
@@ -60,12 +61,12 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
 
     // Datos
     private String boleta, nombre, carrera, escuela, correo;
+    private Integer idUsuario;
 
     private SharedPreferences preferences;
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
     // ─── Lifecycle ────────────────────────────────────────────────────────────
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
@@ -85,7 +86,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     }
 
     // ─── Init ─────────────────────────────────────────────────────────────────
-
     private void initViews() {
         btnRegresar     = findViewById(R.id.regresar);
         tvBoleta        = findViewById(R.id.tvBoleta);
@@ -122,9 +122,11 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     }
 
     // ─── Datos de usuario ─────────────────────────────────────────────────────
-
     private void cargarDatosUsuario() {
         Intent intent = getIntent();
+
+        idUsuario = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                .getInt("idUsuario", -1);
 
         boleta  = obtenerDato(intent, "boleta",  "boleta",  "N/A");
         nombre  = obtenerDato(intent, "nombre",  "nombre",  "Usuario");
@@ -147,7 +149,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     }
 
     // ─── Solicitudes ──────────────────────────────────────────────────────────
-
     private void cargarSolicitudes() {
         if (boleta == null || boleta.equals("N/A")) {
             tvPuntosStatus.setText("No se pudo cargar la información de solicitudes.");
@@ -215,7 +216,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     }
 
     // ─── Horario ──────────────────────────────────────────────────────────────
-
     private void cargarHorario() {
         if (boleta == null || boleta.equals("N/A")) return;
 
@@ -262,7 +262,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     }
 
     // ─── Listeners ────────────────────────────────────────────────────────────
-
     private void setupListeners() {
         btnRegresar.setOnClickListener(v -> finish());
 
@@ -281,7 +280,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         });
 
         imgPerfil.setOnClickListener(v -> mostrarOpcionesFoto());
-
         btnCerrarSesion.setOnClickListener(v -> cerrarSesion());
     }
 
@@ -296,7 +294,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     }
 
     // ─── Foto de perfil ───────────────────────────────────────────────────────
-
     private void mostrarOpcionesFoto() {
         new AlertDialog.Builder(this)
                 .setTitle("Foto de perfil")
@@ -368,43 +365,95 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         return Bitmap.createScaledBitmap(bmp, w, h, true);
     }
 
-    // ← CAMBIO: SharedPreferences separado "SoLinXFotos" para que no se borre al cerrar sesión
     private void guardarFoto(Bitmap bmp) {
+        if (idUsuario == null || idUsuario == -1) return;
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 80, baos);
         String b64 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-        getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
-                .edit().putString("foto_perfil_" + boleta, b64).apply();
+
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("foto", b64);
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.actualizarFoto(idUsuario, body).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(@NonNull Call<String> call,
+                                   @NonNull Response<String> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "Foto guardada en BD ✓");
+                } else {
+                    Log.e(TAG, "Error al guardar foto: " + response.code());
+                    Toast.makeText(AlumnoVistaCuenta.this,
+                            "Error al guardar foto", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                Log.e(TAG, "Fallo red al guardar foto: " + t.getMessage());
+            }
+        });
     }
 
-    // ← CAMBIO: lee de "SoLinXFotos"
     private void cargarFotoPerfil() {
-        String b64 = getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
-                .getString("foto_perfil_" + boleta, null);
-        if (b64 != null) {
-            byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
-            imgPerfil.setImageBitmap(
-                    BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-        }
+        if (idUsuario == null || idUsuario == -1) return;
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.obtenerPerfil(idUsuario).enqueue(new Callback<PerfilDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<PerfilDTO> call,
+                                   @NonNull Response<PerfilDTO> response) {
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getFoto() != null
+                        && !response.body().getFoto().isEmpty()) {
+                    String b64 = response.body().getFoto();
+                    byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    runOnUiThread(() -> imgPerfil.setImageBitmap(bmp));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<PerfilDTO> call, @NonNull Throwable t) {
+                Log.e(TAG, "Error al cargar foto: " + t.getMessage());
+            }
+        });
     }
 
-    // ← CAMBIO: elimina de "SoLinXFotos"
     private void eliminarFotoPerfil() {
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar")
                 .setMessage("¿Eliminar foto de perfil?")
                 .setPositiveButton("Sí", (d, w) -> {
-                    getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
-                            .edit().remove("foto_perfil_" + boleta).apply();
-                    imgPerfil.setImageResource(R.drawable.imagen_prederterminada);
-                    Toast.makeText(this, "Foto eliminada", Toast.LENGTH_SHORT).show();
+                    if (idUsuario == null || idUsuario == -1) return;
+
+                    ApiService api = ApiClient.getClient().create(ApiService.class);
+                    java.util.Map<String, String> body = new java.util.HashMap<>();
+                    body.put("foto", "");
+                    api.actualizarFoto(idUsuario, body).enqueue(new Callback<String>() {
+                        @Override
+                        public void onResponse(@NonNull Call<String> call,
+                                               @NonNull Response<String> response) {
+                            runOnUiThread(() -> {
+                                imgPerfil.setImageResource(R.drawable.imagen_prederterminada);
+                                Toast.makeText(AlumnoVistaCuenta.this,
+                                        "Foto eliminada", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                            Toast.makeText(AlumnoVistaCuenta.this,
+                                    "Error de conexión", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 })
                 .setNegativeButton("No", null)
                 .show();
     }
 
     // ─── Cerrar sesión ────────────────────────────────────────────────────────
-
     private void cerrarSesion() {
         new AlertDialog.Builder(this)
                 .setTitle("Cerrar sesión")
