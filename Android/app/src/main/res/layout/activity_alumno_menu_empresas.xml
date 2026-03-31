@@ -133,6 +133,35 @@
                 android:visibility="invisible"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/btnTabNotificaciones"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Avisos"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                android:textColor="?android:attr/textColorSecondary"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:fontFamily="@font/molgan"/>
+
+            <View
+                android:id="@+id/lineaTabNotificaciones"
+                android:layout_width="80dp"
+                android:layout_height="3dp"
+                android:background="?attr/colorOnBackground"
+                android:visibility="invisible"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <!-- Contenedor de Fragments -->

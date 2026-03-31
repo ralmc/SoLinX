@@ -37,6 +37,11 @@ public class PerfilServiceImpl implements PerfilService {
     }
 
     @Override
+    public Perfil getByIdUsuario(Integer idUsuario) {
+        return perfilRepository.findByIdUsuario(idUsuario).orElse(null);
+    }
+
+    @Override
     public Perfil update(Integer id, Perfil bperfil) {
         Perfil aux = perfilRepository.getById(id);
         aux.setIdPerfil(bperfil.getIdPerfil());

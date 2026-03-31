@@ -51,7 +51,7 @@ public class PerfilController {
     }
 
     @RequestMapping("/perfil/{id}")
-    public ResponseEntity<PerfilDto>getById(@PathVariable Integer id) {
+    public ResponseEntity<PerfilDto>getById(@PathVariable("id") Integer id) {
         Perfil u = perfilService.getById(id);
 
         if(u == null ) {
@@ -82,13 +82,13 @@ public class PerfilController {
     }
 
     @DeleteMapping( "/perfil/{id}")
-    public ResponseEntity<PerfilDto> delete(@PathVariable Integer id) {
+    public ResponseEntity<PerfilDto> delete(@PathVariable("id") Integer id) {
         perfilService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping( "/perfil/{id}")
-    public ResponseEntity<PerfilDto>update( @PathVariable Integer id, @RequestBody PerfilDto PerfilDto) {
+    public ResponseEntity<PerfilDto>update( @PathVariable("id") Integer id, @RequestBody PerfilDto PerfilDto) {
         Perfil aux = perfilService.update( id, Perfil
                 .builder()
                 .foto(PerfilDto.getFoto())
@@ -100,5 +100,27 @@ public class PerfilController {
                 .tema(aux.getTema())
                 .idUsuario(aux.getIdUsuario())
                 .build());
+    }
+
+    @GetMapping("/perfil/usuario/{idUsuario}")
+    public ResponseEntity<PerfilDto> getByIdUsuario(@PathVariable("idUsuario") Integer idUsuario) {
+        Perfil p = perfilService.getByIdUsuario(idUsuario);
+        if (p == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(PerfilDto.builder()
+                .idPerfil(p.getIdPerfil())
+                .foto(p.getFoto())
+                .tema(p.getTema())
+                .idUsuario(p.getIdUsuario())
+                .build());
+    }
+
+    @PutMapping("/perfil/usuario/{idUsuario}/foto")
+    public ResponseEntity<String> actualizarFoto(@PathVariable("idUsuario") Integer idUsuario,
+                                                 @RequestBody java.util.Map<String, String> body) {
+        Perfil p = perfilService.getByIdUsuario(idUsuario);
+        if (p == null) return ResponseEntity.notFound().build();
+        p.setFoto(body.get("foto"));
+        perfilService.save(p);
+        return ResponseEntity.ok("Foto actualizada correctamente.");
     }
 }

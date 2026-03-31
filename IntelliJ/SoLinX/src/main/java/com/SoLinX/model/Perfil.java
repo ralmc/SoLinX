@@ -16,7 +16,7 @@ public class Perfil {
     @Column(name = "idPerfil")
     private Integer idPerfil;
 
-    @Column(name = "foto")
+    @Column(name = "foto", columnDefinition = "LONGTEXT")
     private String foto;
 
     @Column(name = "tema")

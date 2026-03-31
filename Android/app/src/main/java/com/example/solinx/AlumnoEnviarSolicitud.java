@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.PerfilDTO;
 import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
 
@@ -98,16 +99,29 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
         }
 
         if (fotoPerfilHeader != null) {
-            String b64 = getSharedPreferences("SoLinXFotos", MODE_PRIVATE)
-                    .getString("foto_perfil_" + boleta, null);
+            int idUsuario = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                    .getInt("idUsuario", -1);
+            if (idUsuario == -1) return;
 
-            Log.d(TAG, "Foto encontrada: " + (b64 != null ? "SÍ" : "NO"));
+            ApiService api = ApiClient.getClient().create(ApiService.class);
+            api.obtenerPerfil(idUsuario).enqueue(new Callback<PerfilDTO>() {
+                @Override
+                public void onResponse(Call<PerfilDTO> call, Response<PerfilDTO> response) {
+                    if (response.isSuccessful() && response.body() != null
+                            && response.body().getFoto() != null
+                            && !response.body().getFoto().isEmpty()) {
+                        String b64 = response.body().getFoto();
+                        byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
+                        Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        runOnUiThread(() -> fotoPerfilHeader.setImageBitmap(bmp));
+                    }
+                }
 
-            if (b64 != null) {
-                byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                fotoPerfilHeader.setImageBitmap(bitmap);
-            }
+                @Override
+                public void onFailure(Call<PerfilDTO> call, Throwable t) {
+                    Log.e(TAG, "Error al cargar foto: " + t.getMessage());
+                }
+            });
         }
     }
 

@@ -84,6 +84,14 @@ public class AlumnoDocumentos extends Fragment {
         recyclerPeriodos = view.findViewById(R.id.recyclerPeriodos);
         recyclerPeriodos.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        List<DocumentoDTO> periodosVacios = new ArrayList<>();
+        for (int i = 0; i < 8; i++) periodosVacios.add(null);
+        periodoAdapter = new PeriodoAdapter(periodosVacios, 1, periodo -> {
+            periodoSeleccionado = periodo;
+            pdfLauncher.launch("application/pdf");
+        });
+        recyclerPeriodos.setAdapter(periodoAdapter);
+
         cargarDocumentos();
     }
 

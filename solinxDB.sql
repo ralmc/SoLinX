@@ -84,6 +84,16 @@ CREATE TABLE HorarioEstudiante (
     FOREIGN KEY (idHorario) REFERENCES Horario(idHorario) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE Notificacion (
+    idNotificacion INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(100) NOT NULL,
+    mensaje TEXT NOT NULL,
+    fechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    leida BOOLEAN DEFAULT FALSE,
+    idUsuario INT NOT NULL,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 -- 3. TABLAS DE NEGOCIO (Proyectos, Solicitudes)
 CREATE TABLE Proyecto (
     idProyecto INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -111,7 +121,7 @@ CREATE TABLE Solicitud (
 
 CREATE TABLE Perfil (
     idPerfil INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    foto BLOB,
+    foto MEDIUMBLOB,
     tema ENUM('claro', 'oscuro') NOT NULL DEFAULT 'claro',
     idUsuario INT NOT NULL,
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
@@ -272,9 +282,20 @@ VALUES (NOW(), 'enviada', 20230004, 6);
 INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
 VALUES (NOW(), 'enviada', 20230005, 2);
 
+-- 11. NOTIFICACIONES
+INSERT INTO Notificacion (titulo, mensaje, fechaCreacion, leida, idUsuario)
+VALUES (
+    'Recordatorio: Documentos pendientes',
+    'Han pasado más de 5 días sin que subas tu documentación del periodo. Por favor ingresa a la plataforma y sube tus documentos.',
+    NOW(),
+    FALSE,
+    1
+);
 -- ============================================
 -- VERIFICACIÓN
 -- ============================================
 SELECT * FROM Documento;
 SELECT * FROM Proyecto;
+SELECT * FROM Perfil;
+SELECT * FROM Notificacion;
 SELECT * FROM Usuario;
