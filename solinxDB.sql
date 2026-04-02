@@ -1,6 +1,14 @@
 -- ============================================
 -- BASE DE DATOS SOLINX
 -- ============================================
+-- ============================================
+-- BASE DE DATOS SOLINX (ACTUALIZADA)
+-- Cambios:
+--   1. Empresa: agregado campo 'telefono'
+--   2. Perfil: foto como LONGTEXT (Base64) para almacenamiento en BD
+--   3. Proyecto: agregado campo 'imagenProyecto' LONGTEXT (Base64)
+--      (se conserva 'imagenRef' como nombre de referencia local)
+-- ============================================
 DROP DATABASE IF EXISTS solinx;
 CREATE DATABASE IF NOT EXISTS solinx;
 USE solinx;
@@ -14,7 +22,8 @@ CREATE TABLE Estudiante (
 
 CREATE TABLE Empresa (
     idEmpresa INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    nombreEmpresa VARCHAR(100) NOT NULL DEFAULT ''
+    nombreEmpresa VARCHAR(100) NOT NULL DEFAULT '',
+    telefono VARCHAR(20) DEFAULT NULL
 );
 
 CREATE TABLE Supervisor (
@@ -105,6 +114,7 @@ CREATE TABLE Proyecto (
     nombreProyecto VARCHAR(255) NOT NULL DEFAULT '',
     fechaTermino TIMESTAMP NULL DEFAULT NULL,
     imagenRef VARCHAR(100) DEFAULT 'img_default_proyecto',
+    imagenProyecto LONGTEXT DEFAULT NULL,
     idEmpresa INT NOT NULL,
     FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -121,7 +131,7 @@ CREATE TABLE Solicitud (
 
 CREATE TABLE Perfil (
     idPerfil INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    foto MEDIUMBLOB,
+    foto LONGTEXT DEFAULT NULL,
     tema ENUM('claro', 'oscuro') NOT NULL DEFAULT 'claro',
     idUsuario INT NOT NULL,
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
@@ -150,14 +160,14 @@ INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
 (20230004, 'Ingeniería Informática', 'UPIICSA'),
 (20230005, 'Ingeniería Aeronáutica', 'ESIA Ticomán');
 
--- 2. EMPRESAS
-INSERT INTO Empresa (nombreEmpresa) VALUES
-('TechNova'),        -- ID 1
-('AeroDynamics MX'), -- ID 2
-('SoftSolutions'),   -- ID 3
-('ElectroCorp'),     -- ID 4
-('Aa'),              -- ID 5
-('Ooo');             -- ID 6
+-- 2. EMPRESAS (ahora con telefono)
+INSERT INTO Empresa (nombreEmpresa, telefono) VALUES
+('TechNova', '5588991122'),
+('AeroDynamics MX', '5544556677'),
+('SoftSolutions', '5533445566'),
+('ElectroCorp', '5522334455'),
+('Aa', '5511111111'),
+('Ooo', '5522222222');
 
 -- 3. SUPERVISORES
 INSERT INTO Supervisor (area, idEmpresa) VALUES
@@ -168,18 +178,17 @@ INSERT INTO Supervisor (area, idEmpresa) VALUES
 
 -- 4. USUARIOS
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
-('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante'),       -- ID 1
-('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa'),       -- ID 2
-('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor'),-- ID 3
-('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante'),       -- ID 4
-('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa'),                    -- ID 5
-('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'),                   -- ID 6
-('Luis Herrera', 'luis@correo.com', '5533334444', 'pass123', 'estudiante'),        -- ID 7
-('Ana Martínez', 'ana@correo.com', '5555556666', 'pass123', 'estudiante'),         -- ID 8
-('Pedro Jiménez', 'pedro@correo.com', '5577778888', 'pass123', 'estudiante');      -- ID 9
+('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante'),
+('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa'),
+('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor'),
+('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante'),
+('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa'),
+('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'),
+('Luis Herrera', 'luis@correo.com', '5533334444', 'pass123', 'estudiante'),
+('Ana Martínez', 'ana@correo.com', '5555556666', 'pass123', 'estudiante'),
+('Pedro Jiménez', 'pedro@correo.com', '5577778888', 'pass123', 'estudiante');
 
 -- 5. VINCULAR USUARIOS CON ROLES
--- Estudiantes
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
 (1, 20230001),
 (4, 20230005),
@@ -187,17 +196,15 @@ INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
 (8, 20230003),
 (9, 20230004);
 
--- Empresas
 INSERT INTO UsuarioEmpresa (idUsuario, idEmpresa) VALUES
 (2, 1),
 (5, 5),
 (6, 6);
 
--- Supervisores
 INSERT INTO UsuarioSupervisor (idUsuario, idSupervisor) VALUES
 (3, 1);
 
--- 6. PROYECTOS
+-- 6. PROYECTOS (imagenProyecto queda NULL por defecto, se sube desde la app)
 INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, imagenRef, idEmpresa) VALUES
 ('Ingeniería en Software', 'Sistema de Gestión Escolar v2.0', 'Crear un sistema web.', 3, 'CDMX', 'img_gestion', 1),
 ('Ingeniería Aeronáutica', 'Proyecto Icarus', 'Desarrollo de un dron.', 2, 'Querétaro', 'img_dron', 2),
@@ -206,96 +213,61 @@ INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubica
 ('Desarrollo Backend', 'Sistema de Pagos Aa', 'Crear API segura', 2, 'Remoto', 'img_default_proyecto', 5),
 ('Inteligencia Artificial', 'Chatbot Ooo V2', 'Asistente virtual', 3, 'CDMX', 'img_default_proyecto', 6);
 
--- 7. PERFILES
+-- 7. PERFILES (foto queda NULL, se sube desde la app como Base64)
 INSERT INTO Perfil (tema, idUsuario) VALUES
 ('claro', 1), ('oscuro', 2), ('claro', 3), ('claro', 4),
 ('claro', 5), ('claro', 6), ('claro', 7), ('claro', 8), ('claro', 9);
 
 -- 8. HORARIOS
--- Horario 1: Mañana (08:00 - 14:00)
 INSERT INTO Horario (
-    lunInicio, lunFinal,
-    marInicio, marFinal,
-    mierInicio, mierFinal,
-    jueInicio, jueFinal,
-    vieInicio, vieFinal
+    lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierFinal,
+    jueInicio, jueFinal, vieInicio, vieFinal
 ) VALUES (
-    '08:00:00', '14:00:00',
-    '08:00:00', '14:00:00',
-    '08:00:00', '14:00:00',
-    '08:00:00', '14:00:00',
-    '08:00:00', '14:00:00'
+    '08:00:00', '14:00:00', '08:00:00', '14:00:00', '08:00:00', '14:00:00',
+    '08:00:00', '14:00:00', '08:00:00', '14:00:00'
 );
 
--- Horario 2: Tarde (14:00 - 20:00)
 INSERT INTO Horario (
-    lunInicio, lunFinal,
-    marInicio, marFinal,
-    mierInicio, mierFinal,
-    jueInicio, jueFinal,
-    vieInicio, vieFinal
+    lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierFinal,
+    jueInicio, jueFinal, vieInicio, vieFinal
 ) VALUES (
-    '14:00:00', '20:00:00',
-    '14:00:00', '20:00:00',
-    '14:00:00', '20:00:00',
-    '14:00:00', '20:00:00',
-    '14:00:00', '20:00:00'
+    '14:00:00', '20:00:00', '14:00:00', '20:00:00', '14:00:00', '20:00:00',
+    '14:00:00', '20:00:00', '14:00:00', '20:00:00'
 );
 
--- Horario 3: Mixto (09:00 - 13:00 y sábado)
 INSERT INTO Horario (
-    lunInicio, lunFinal,
-    marInicio, marFinal,
-    mierInicio, mierFinal,
-    jueInicio, jueFinal,
-    vieInicio, vieFinal,
-    sabInicio, sabFinal
+    lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierFinal,
+    jueInicio, jueFinal, vieInicio, vieFinal, sabInicio, sabFinal
 ) VALUES (
-    '09:00:00', '13:00:00',
-    '09:00:00', '13:00:00',
-    '09:00:00', '13:00:00',
-    '09:00:00', '13:00:00',
-    '09:00:00', '13:00:00',
-    '09:00:00', '13:00:00'
+    '09:00:00', '13:00:00', '09:00:00', '13:00:00', '09:00:00', '13:00:00',
+    '09:00:00', '13:00:00', '09:00:00', '13:00:00', '09:00:00', '13:00:00'
 );
 
 -- 9. HORARIOS-ALUMNOS
-INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230001, 1); 
-INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230002, 2); 
-INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230003, 3); 
-INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230004, 1); 
-INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230005, 2); 
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230001, 1);
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230002, 2);
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230003, 3);
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230004, 1);
+INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES (20230005, 2);
 
 -- 10. SOLICITUDES
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20230001, 1);
-
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20230002, 3);
-
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20230003, 5);
-
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20230004, 6);
-
-INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto)
-VALUES (NOW(), 'enviada', 20230005, 2);
+INSERT INTO Solicitud (fechaSolicitud, estadoSolicitud, boleta, idProyecto) VALUES
+(NOW(), 'enviada', 20230001, 1),
+(NOW(), 'enviada', 20230002, 3),
+(NOW(), 'enviada', 20230003, 5),
+(NOW(), 'enviada', 20230004, 6),
+(NOW(), 'enviada', 20230005, 2);
 
 -- 11. NOTIFICACIONES
-INSERT INTO Notificacion (titulo, mensaje, fechaCreacion, leida, idUsuario)
-VALUES (
-    'Recordatorio: Documentos pendientes',
-    'Han pasado más de 5 días sin que subas tu documentación del periodo. Por favor ingresa a la plataforma y sube tus documentos.',
-    NOW(),
-    FALSE,
-    1
-);
+INSERT INTO Notificacion (titulo, mensaje, fechaCreacion, leida, idUsuario) VALUES
+('Recordatorio: Documentos pendientes',
+ 'Han pasado más de 5 días sin que subas tu documentación del periodo. Por favor ingresa a la plataforma y sube tus documentos.',
+ NOW(), FALSE, 1);
+
 -- ============================================
 -- VERIFICACIÓN
 -- ============================================
-SELECT * FROM Documento;
+SELECT * FROM Empresa;
 SELECT * FROM Proyecto;
 SELECT * FROM Perfil;
-SELECT * FROM Notificacion;
 SELECT * FROM Usuario;

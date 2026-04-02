@@ -21,4 +21,7 @@ public class Empresa {
 
     @Column(name = "nombreEmpresa")
     private String nombreEmpresa;
+
+    @Column(name = "telefono")
+    private String telefono;
 }
