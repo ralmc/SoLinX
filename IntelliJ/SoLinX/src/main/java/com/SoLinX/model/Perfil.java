@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "perfil")
+@Table(name = "Perfil")
 public class Perfil {
 
     @Id
@@ -16,6 +16,7 @@ public class Perfil {
     @Column(name = "idPerfil")
     private Integer idPerfil;
 
+    @Lob
     @Column(name = "foto", columnDefinition = "LONGTEXT")
     private String foto;
 

@@ -21,6 +21,7 @@ public class EmpresaController {
         return EmpresaDto.builder()
                 .idEmpresa(emp.getIdEmpresa())
                 .nombreEmpresa(emp.getNombreEmpresa())
+                .telefono(emp.getTelefono())
                 .build();
     }
 
@@ -28,6 +29,7 @@ public class EmpresaController {
     public ResponseEntity<EmpresaDto> save(@RequestBody EmpresaDto dto) {
         Empresa empresa = Empresa.builder()
                 .nombreEmpresa(dto.getNombreEmpresa())
+                .telefono(dto.getTelefono())
                 .build();
         Empresa empresaGuardada = empresaRepository.save(empresa);
         return ResponseEntity.ok(convertirEntidadADto(empresaGuardada));
@@ -55,6 +57,7 @@ public class EmpresaController {
         Empresa empresaExistente = empresaRepository.findById(id).orElse(null);
         if (empresaExistente == null) return ResponseEntity.notFound().build();
         empresaExistente.setNombreEmpresa(dto.getNombreEmpresa());
+        empresaExistente.setTelefono(dto.getTelefono());
         Empresa actualizada = empresaRepository.save(empresaExistente);
         return ResponseEntity.ok(convertirEntidadADto(actualizada));
     }

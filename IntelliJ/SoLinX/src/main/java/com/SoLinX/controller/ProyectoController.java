@@ -3,7 +3,7 @@ package com.SoLinX.controller;
 import com.SoLinX.dto.ProyectoDto;
 import com.SoLinX.model.Empresa;
 import com.SoLinX.model.Proyecto;
-import com.SoLinX.model.Usuario;
+import com.SoLinX.repository.EmpresaRepository;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.ProyectoService;
 import lombok.AllArgsConstructor;
@@ -21,6 +21,7 @@ public class ProyectoController {
 
     private final ProyectoService proyectoService;
     private final UsuarioRepository usuarioRepository;
+    private final EmpresaRepository empresaRepository;
 
     @PostMapping("/proyecto")
     public ResponseEntity<ProyectoDto> save(@RequestBody ProyectoDto dto) {
@@ -72,9 +73,27 @@ public class ProyectoController {
         return ResponseEntity.noContent().build();
     }
 
+    // Endpoint para subir/actualizar imagen del proyecto como Base64
+    @PutMapping("/proyecto/{id}/imagen")
+    public ResponseEntity<String> actualizarImagenProyecto(
+            @PathVariable("id") Integer id,
+            @RequestBody java.util.Map<String, String> body) {
+        Proyecto proyecto = proyectoService.getById(id);
+        if (proyecto == null) return ResponseEntity.notFound().build();
+        proyecto.setImagenProyecto(body.get("imagenProyecto"));
+        proyectoService.save(proyecto);
+        return ResponseEntity.ok("Imagen del proyecto actualizada correctamente.");
+    }
+
     private String obtenerTelefonoEmpresa(Integer idEmpresa) {
         try {
-            Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa);
+            // Primero intentar obtener el teléfono de la tabla Empresa directamente
+            Empresa empresa = empresaRepository.findById(idEmpresa).orElse(null);
+            if (empresa != null && empresa.getTelefono() != null) {
+                return empresa.getTelefono();
+            }
+            // Fallback: obtenerlo del Usuario vinculado a la empresa
+            com.SoLinX.model.Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa);
             if (usuario != null && usuario.getTelefono() != null) {
                 return usuario.getTelefono();
             }
@@ -97,6 +116,7 @@ public class ProyectoController {
                 .ubicacion(proyecto.getUbicacion())
                 .fechaTermino(proyecto.getFechaTermino())
                 .imagenRef(proyecto.getImagenRef())
+                .imagenProyecto(proyecto.getImagenProyecto())
                 .idEmpresa(idEmpresa)
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
                 .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible")
@@ -124,6 +144,7 @@ public class ProyectoController {
                 .fechaInicio(fechaRegistro)
                 .fechaTermino(dto.getFechaTermino())
                 .imagenRef(imagenFinal)
+                .imagenProyecto(dto.getImagenProyecto())
                 .empresa(empresa)
                 .build();
     }

@@ -3,9 +3,11 @@ package com.SoLinX.service.impl;
 import com.SoLinX.dto.RegistroEmpresaDTO;
 import com.SoLinX.dto.RegistroEmpresaResponseDTO;
 import com.SoLinX.model.Empresa;
+import com.SoLinX.model.Perfil;
 import com.SoLinX.model.Usuario;
 import com.SoLinX.model.UsuarioEmpresa;
 import com.SoLinX.repository.EmpresaRepository;
+import com.SoLinX.repository.PerfilRepository;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.repository.UsuarioEmpresaRepository;
 import com.SoLinX.service.RegistroEmpresaService;
@@ -20,6 +22,7 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
     private final UsuarioRepository usuarioRepository;
     private final EmpresaRepository empresaRepository;
     private final UsuarioEmpresaRepository usuarioEmpresaRepository;
+    private final PerfilRepository perfilRepository;
 
     @Override
     @Transactional
@@ -43,6 +46,7 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
 
             Empresa nuevaEmpresa = Empresa.builder()
                     .nombreEmpresa(dto.getNombreEmpresa())
+                    .telefono(dto.getTelefono())
                     .build();
 
             Empresa empresaGuardada = empresaRepository.save(nuevaEmpresa);
@@ -53,6 +57,13 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
                     .build();
 
             usuarioEmpresaRepository.save(usuarioEmpresa);
+
+            // Crear perfil automáticamente para el nuevo usuario empresa
+            Perfil perfil = Perfil.builder()
+                    .tema("claro")
+                    .idUsuario(usuarioGuardado.getIdUsuario())
+                    .build();
+            perfilRepository.save(perfil);
 
             return RegistroEmpresaResponseDTO.builder()
                     .idUsuario(usuarioGuardado.getIdUsuario())
