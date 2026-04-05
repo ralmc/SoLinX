@@ -271,3 +271,28 @@ SELECT * FROM Empresa;
 SELECT * FROM Proyecto;
 SELECT * FROM Perfil;
 SELECT * FROM Usuario;
+
+/* ===========================================================
+TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
+===========================================================
+
+ [ ESTUDIANTES ]
+ ---------------------------------------------------
+ Correo: mauro@correo.com     | Password: pass123
+ Correo: sofia@correo.com     | Password: pas123
+ Correo: luis@correo.com      | Password: pass123
+ Correo: ana@correo.com       | Password: pass123
+ Correo: pedro@correo.com     | Password: pass123
+
+ [ EMPRESAS ]
+ ---------------------------------------------------
+ Correo: laura@technova.com   | Password: empresa123
+ Correo: aa@gmail.com         | Password: 111
+ Correo: oo@gmail.com         | Password: 222
+
+ [ SUPERVISORES / ADMIN ]
+ ---------------------------------------------------
+ Correo: carlos@technova.com  | Password: sup123
+
+===========================================================
+*/

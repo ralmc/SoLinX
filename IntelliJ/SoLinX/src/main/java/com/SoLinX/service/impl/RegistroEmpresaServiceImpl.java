@@ -14,6 +14,7 @@ import com.SoLinX.service.RegistroEmpresaService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +24,7 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
     private final EmpresaRepository empresaRepository;
     private final UsuarioEmpresaRepository usuarioEmpresaRepository;
     private final PerfilRepository perfilRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -34,11 +36,13 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
                 return null;
             }
 
+            String passwordHash = passwordEncoder.encode(dto.getUserPassword());
+
             Usuario nuevoUsuario = Usuario.builder()
                     .nombre(dto.getNombreEmpresa())
                     .correo(dto.getCorreo())
                     .telefono(dto.getTelefono())
-                    .userPassword(dto.getUserPassword())
+                    .userPassword(passwordHash)
                     .rol("empresa")
                     .build();
 
