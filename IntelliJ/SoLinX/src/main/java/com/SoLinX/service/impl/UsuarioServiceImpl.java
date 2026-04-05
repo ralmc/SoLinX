@@ -4,6 +4,7 @@ import com.SoLinX.model.Usuario;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.UsuarioService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
+
     private final UsuarioRepository usuarioRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public List<Usuario> getAll()
@@ -43,7 +46,16 @@ public class UsuarioServiceImpl implements UsuarioService {
         aux.setNombre(busuario.getNombre());
         aux.setCorreo(busuario.getCorreo());
         aux.setTelefono(busuario.getTelefono());
-        aux.setUserPassword(busuario.getUserPassword());
+        if (busuario.getUserPassword() != null && !busuario.getUserPassword().isEmpty()) {
+
+            String nuevaPass = busuario.getUserPassword();
+
+            if (!nuevaPass.startsWith("$2a$")) {
+                nuevaPass = passwordEncoder.encode(nuevaPass);
+            }
+
+            aux.setUserPassword(nuevaPass);
+        }
         aux.setRol(busuario.getRol());
         usuarioRepository.save(aux);
         return aux;

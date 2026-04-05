@@ -10,6 +10,7 @@ import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.RegistroService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +19,17 @@ public class RegistroServiceImpl implements RegistroService {
     private final UsuarioRepository usuarioRepository;
     private final EstudianteRepository estudianteRepository;
     private final UsuarioEstudianteRepository usuarioEstudianteRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    private boolean esPasswordSeguro(String password) {
+        if (password == null) return false;
+
+        return password.length() >= 8 &&
+                password.matches(".*[A-Z].*") &&
+                password.matches(".*[a-z].*") &&
+                password.matches(".*\\d.*") &&
+                password.matches(".*[@$!%*?&].*");
+    }
 
     public String registrar(RegistroDto dto) {
 
@@ -29,6 +41,10 @@ public class RegistroServiceImpl implements RegistroService {
         // Validar que las contraseñas coincidan
         if (!dto.getContraseña().equals(dto.getConfirmarContraseña())) {
             return "Las contraseñas no coinciden.";
+        }
+
+        if (!esPasswordSeguro(dto.getContraseña())) {
+            return "La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo.";
         }
 
         // Validar que el correo no esté registrado
@@ -58,11 +74,13 @@ public class RegistroServiceImpl implements RegistroService {
         }
 
         // Crear usuario
+        String passwordHash = passwordEncoder.encode(dto.getContraseña());
+
         Usuario u = Usuario.builder()
                 .nombre(dto.getNombreUsuario())
                 .correo(dto.getCorreo())
                 .telefono(null)
-                .userPassword(dto.getContraseña())
+                .userPassword(passwordHash)
                 .rol("estudiante")
                 .build();
 
@@ -78,4 +96,5 @@ public class RegistroServiceImpl implements RegistroService {
 
         return "Registro exitoso";
     }
+
 }
