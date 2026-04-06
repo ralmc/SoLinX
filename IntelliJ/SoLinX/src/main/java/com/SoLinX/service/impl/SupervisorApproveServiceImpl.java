@@ -5,68 +5,43 @@ import com.SoLinX.model.*;
 import com.SoLinX.repository.*;
 import com.SoLinX.service.SupervisorApproveService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class SupervisorApproveServiceImpl implements SupervisorApproveService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final SupervisorRepository supervisorRepository;
+    private final UsuarioRepository           usuarioRepository;
+    private final SupervisorRepository        supervisorRepository;
     private final UsuarioSupervisorRepository usuarioSupervisorRepository;
-    private final EmpresaRepository empresaRepository;
-    private final SolicitudRepository solicitudRepository;
-    private final EstudianteRepository estudianteRepository;
+    private final EmpresaRepository           empresaRepository;
+    private final SolicitudRepository         solicitudRepository;
+    private final EstudianteRepository        estudianteRepository;
     private final UsuarioEstudianteRepository usuarioEstudianteRepository;
-    private final ProyectoRepository proyectoRepository;
+    private final ProyectoRepository          proyectoRepository;
 
     @Override
     public SupervisorResponseDto getSupervisorData(Integer idUsuario) {
         try {
-            // Buscar usuario
             Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
-            if (usuarioOpt.isEmpty()) {
-                return SupervisorResponseDto.builder()
-                        .success(false)
-                        .message("Usuario no encontrado")
-                        .supervisor(null)
-                        .build();
-            }
+            if (usuarioOpt.isEmpty()) return error("Usuario no encontrado");
 
             Usuario usuario = usuarioOpt.get();
-
-            // Buscar relación UsuarioSupervisor
             UsuarioSupervisor usuarioSupervisor = usuarioSupervisorRepository.findByIdUsuario(idUsuario);
-            if (usuarioSupervisor == null) {
-                return SupervisorResponseDto.builder()
-                        .success(false)
-                        .message("Supervisor no encontrado")
-                        .supervisor(null)
-                        .build();
-            }
+            if (usuarioSupervisor == null) return error("Supervisor no encontrado");
 
-            // Buscar Supervisor
             Optional<Supervisor> supervisorOpt = supervisorRepository.findById(usuarioSupervisor.getIdSupervisor());
-            if (supervisorOpt.isEmpty()) {
-                return SupervisorResponseDto.builder()
-                        .success(false)
-                        .message("Datos de supervisor no encontrados")
-                        .supervisor(null)
-                        .build();
-            }
+            if (supervisorOpt.isEmpty()) return error("Datos de supervisor no encontrados");
 
             Supervisor supervisor = supervisorOpt.get();
-
-            // Usar la relación @ManyToOne
             Empresa empresa = supervisor.getEmpresa();
-            String nombreEmpresa = empresa != null ? empresa.getNombreEmpresa() : "Empresa no encontrada";
-            Integer idEmpresa = empresa != null ? empresa.getIdEmpresa() : null;
 
-            // Construir DTO
             SupervisorDto supervisorDTO = SupervisorDto.builder()
                     .idSupervisor(supervisor.getIdSupervisor())
                     .idUsuario(usuario.getIdUsuario())
@@ -74,8 +49,8 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .correo(usuario.getCorreo())
                     .telefono(usuario.getTelefono())
                     .area(supervisor.getArea())
-                    .idEmpresa(idEmpresa)
-                    .nombreEmpresa(nombreEmpresa)
+                    .idEmpresa(empresa != null ? empresa.getIdEmpresa() : null)
+                    .nombreEmpresa(empresa != null ? empresa.getNombreEmpresa() : "Empresa no encontrada")
                     .build();
 
             return SupervisorResponseDto.builder()
@@ -85,71 +60,35 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .build();
 
         } catch (Exception e) {
-            return SupervisorResponseDto.builder()
-                    .success(false)
-                    .message("Error al obtener datos: " + e.getMessage())
-                    .supervisor(null)
-                    .build();
+            return error("Error al obtener datos: " + e.getMessage());
         }
     }
 
     @Override
     public SolicitudesResponseDto getSolicitudesEnviadas(Integer idSupervisor) {
         try {
-            // Obtener solicitudes con estado 'enviada'
-            List<Solicitud> solicitudes = solicitudRepository.findSolicitudesEnviadasBySupervisor(idSupervisor);
-
-            // Convertir a DTOs
-            List<SolicitudDto> solicitudesDTO = new ArrayList<>();
-            for (Solicitud sol : solicitudes) {
-                SolicitudDto dto = convertirSolicitudADTO(sol);
-                if (dto != null) {
-                    solicitudesDTO.add(dto);
-                }
-            }
-
+            List<SolicitudDto> dtos = convertirLista(
+                    solicitudRepository.findSolicitudesEnviadasBySupervisor(idSupervisor));
             return SolicitudesResponseDto.builder()
-                    .success(true)
-                    .message("Solicitudes obtenidas correctamente")
-                    .solicitudes(solicitudesDTO)
-                    .build();
-
+                    .success(true).message("Solicitudes obtenidas correctamente")
+                    .solicitudes(dtos).build();
         } catch (Exception e) {
             return SolicitudesResponseDto.builder()
-                    .success(false)
-                    .message("Error al obtener solicitudes: " + e.getMessage())
-                    .solicitudes(null)
-                    .build();
+                    .success(false).message("Error: " + e.getMessage()).build();
         }
     }
 
     @Override
     public SolicitudesResponseDto getSolicitudesAceptadas(Integer idEmpresa) {
         try {
-            // Obtener solicitudes con estado 'aceptada'
-            List<Solicitud> solicitudes = solicitudRepository.findSolicitudesAceptadasByEmpresa(idEmpresa);
-
-            // Convertir a DTOs
-            List<SolicitudDto> solicitudesDTO = new ArrayList<>();
-            for (Solicitud sol : solicitudes) {
-                SolicitudDto dto = convertirSolicitudADTO(sol);
-                if (dto != null) {
-                    solicitudesDTO.add(dto);
-                }
-            }
-
+            List<SolicitudDto> dtos = convertirLista(
+                    solicitudRepository.findSolicitudesAceptadasByEmpresa(idEmpresa));
             return SolicitudesResponseDto.builder()
-                    .success(true)
-                    .message("Aceptaciones obtenidas correctamente")
-                    .solicitudes(solicitudesDTO)
-                    .build();
-
+                    .success(true).message("Aceptaciones obtenidas correctamente")
+                    .solicitudes(dtos).build();
         } catch (Exception e) {
             return SolicitudesResponseDto.builder()
-                    .success(false)
-                    .message("Error al obtener aceptaciones: " + e.getMessage())
-                    .solicitudes(null)
-                    .build();
+                    .success(false).message("Error: " + e.getMessage()).build();
         }
     }
 
@@ -157,83 +96,54 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
     public AprobacionResponseDto actualizarSolicitud(Integer idSolicitud, String nuevoEstado) {
         try {
             Optional<Solicitud> solicitudOpt = solicitudRepository.findById(idSolicitud);
-
-            if (solicitudOpt.isEmpty()) {
-                return AprobacionResponseDto.builder()
-                        .success(false)
-                        .message("Solicitud no encontrada")
-                        .build();
-            }
+            if (solicitudOpt.isEmpty()) return AprobacionResponseDto.builder()
+                    .success(false).message("Solicitud no encontrada").build();
 
             Solicitud solicitud = solicitudOpt.get();
             solicitud.setEstadoSolicitud(nuevoEstado);
             solicitudRepository.save(solicitud);
 
-            String mensaje;
-            switch (nuevoEstado) {
-                case "aceptada":
-                    mensaje = "Solicitud aceptada correctamente";
-                    break;
-                case "aprobada":
-                    mensaje = "Solicitud aprobada correctamente";
-                    break;
-                case "rechazada":
-                    mensaje = "Solicitud rechazada";
-                    break;
-                default:
-                    mensaje = "Solicitud actualizada correctamente";
-                    break;
-            }
+            String mensaje = switch (nuevoEstado) {
+                case "aceptada"  -> "Solicitud aceptada correctamente";
+                case "aprobada"  -> "Solicitud aprobada correctamente";
+                case "rechazada" -> "Solicitud rechazada";
+                default          -> "Solicitud actualizada correctamente";
+            };
 
-            return AprobacionResponseDto.builder()
-                    .success(true)
-                    .message(mensaje)
-                    .build();
+            return AprobacionResponseDto.builder().success(true).message(mensaje).build();
 
         } catch (Exception e) {
             return AprobacionResponseDto.builder()
-                    .success(false)
-                    .message("Error al actualizar: " + e.getMessage())
-                    .build();
+                    .success(false).message("Error al actualizar: " + e.getMessage()).build();
         }
     }
 
-    // ✅ MÉTODO AUXILIAR CORREGIDO
+    // ─── Helpers ───────────────────────────────────────────────────────────────
+    private List<SolicitudDto> convertirLista(List<Solicitud> solicitudes) {
+        List<SolicitudDto> dtos = new ArrayList<>();
+        for (Solicitud sol : solicitudes) {
+            SolicitudDto dto = convertirSolicitudADTO(sol);
+            if (dto != null) dtos.add(dto);
+        }
+        return dtos;
+    }
+
     private SolicitudDto convertirSolicitudADTO(Solicitud solicitud) {
         try {
-            // ✅ Obtener Estudiante desde la relación @ManyToOne
             Estudiante estudiante = solicitud.getEstudiante();
-            if (estudiante == null) {
-                System.out.println("❌ Estudiante no encontrado en solicitud ID: " + solicitud.getIdSolicitud());
-                return null;
-            }
+            if (estudiante == null) { log.warn("Estudiante no encontrado en solicitud ID: {}", solicitud.getIdSolicitud()); return null; }
 
-            // ✅ Buscar Usuario del Estudiante usando la boleta
-            UsuarioEstudiante usuarioEstudiante = usuarioEstudianteRepository.findByBoleta(estudiante.getBoleta());
-            if (usuarioEstudiante == null) {
-                System.out.println("❌ UsuarioEstudiante no encontrado para boleta: " + estudiante.getBoleta());
-                return null;
-            }
+            UsuarioEstudiante ue = usuarioEstudianteRepository.findByBoleta(estudiante.getBoleta()).orElse(null);
+            if (ue == null) { log.warn("UsuarioEstudiante no encontrado para boleta: {}", estudiante.getBoleta()); return null; }
 
-            Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioEstudiante.getIdUsuario());
-            if (usuarioOpt.isEmpty()) {
-                System.out.println("❌ Usuario no encontrado para idUsuario: " + usuarioEstudiante.getIdUsuario());
-                return null;
-            }
-            Usuario usuario = usuarioOpt.get();
+            Usuario usuario = usuarioRepository.findById(ue.getIdUsuario()).orElse(null);
+            if (usuario == null) { log.warn("Usuario no encontrado para idUsuario: {}", ue.getIdUsuario()); return null; }
 
-            // ✅ Obtener Proyecto desde la relación @ManyToOne
             Proyecto proyecto = solicitud.getProyecto();
-            if (proyecto == null) {
-                System.out.println("❌ Proyecto no encontrado en solicitud ID: " + solicitud.getIdSolicitud());
-                return null;
-            }
+            if (proyecto == null) { log.warn("Proyecto no encontrado en solicitud ID: {}", solicitud.getIdSolicitud()); return null; }
 
-            // ✅ Obtener Empresa desde la relación @ManyToOne del Proyecto
             Empresa empresa = proyecto.getEmpresa();
-            String nombreEmpresa = empresa != null ? empresa.getNombreEmpresa() : "Empresa no encontrada";
 
-            // Construir DTO
             return SolicitudDto.builder()
                     .idSolicitud(solicitud.getIdSolicitud())
                     .fechaSolicitud(solicitud.getFechaSolicitud().toString())
@@ -244,13 +154,16 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .escuela(estudiante.getEscuela())
                     .idProyecto(proyecto.getIdProyecto())
                     .nombreProyecto(proyecto.getNombreProyecto())
-                    .nombreEmpresa(nombreEmpresa)
+                    .nombreEmpresa(empresa != null ? empresa.getNombreEmpresa() : "Empresa no encontrada")
                     .build();
 
         } catch (Exception e) {
-            System.out.println("❌ Error en convertirSolicitudADTO: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error en convertirSolicitudADTO: {}", e.getMessage());
             return null;
         }
+    }
+
+    private SupervisorResponseDto error(String mensaje) {
+        return SupervisorResponseDto.builder().success(false).message(mensaje).supervisor(null).build();
     }
 }

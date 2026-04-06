@@ -54,7 +54,7 @@ public class EmpresaCrear extends Fragment {
         btnRegister.setOnClickListener(v -> registrarEmpresa());
 
         tvLoginLink.setOnClickListener(v ->
-                ((InicioHelper) requireActivity()).Iniciar()
+                ((InicioHelper) requireActivity()).mostrarIniciarSesion()
         );
     }
 
@@ -109,7 +109,7 @@ public class EmpresaCrear extends Fragment {
                 Toast.makeText(requireContext(),
                         "¡Empresa registrada exitosamente!", Toast.LENGTH_LONG).show();
 
-                ((InicioHelper) requireActivity()).Iniciar();
+                ((InicioHelper) requireActivity()).mostrarIniciarSesion();
             }
 
             @Override
