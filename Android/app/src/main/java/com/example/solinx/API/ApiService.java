@@ -9,14 +9,10 @@ import com.example.solinx.DTO.RegistroAlumnoDTO;
 import com.example.solinx.DTO.RegistroEmpresaDTO;
 import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
 import com.example.solinx.DTO.HorarioDTO;
-
-// Importes de la versión upstream
 import com.example.solinx.DTO.SolicitudAcceptDTO;
 import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.RESPONSE.ProyectoResponse;
 import com.example.solinx.RESPONSE.SolicitudResponse;
-
-// Importes de la versión stashed
 import com.example.solinx.RESPONSE.AprobacionResponse;
 import com.example.solinx.RESPONSE.SolicitudesResponse;
 import com.example.solinx.RESPONSE.SupervisorResponse;
@@ -27,6 +23,8 @@ import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
@@ -35,18 +33,17 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 
 public interface ApiService {
 
-    // -------------------------
-    // Autenticación y registro
-    // -------------------------
-
+    // ── Auth ──────────────────────────────────────────────────────────────────
     @POST("login")
     Call<LoginResponseDTO> login(@Body LoginDTO loginDto);
 
+    @POST("auth/verificar/reenviar")
+    Call<String> reenviarVerificacion(@Query("correo") String correo);
+
+    // ── Registro ──────────────────────────────────────────────────────────────
     @POST("registro/empresa")
     Call<RegistroEmpresaResponseDTO> registrarEmpresa(@Body RegistroEmpresaDTO dto);
 
@@ -56,10 +53,7 @@ public interface ApiService {
     @POST("horario/{boleta}")
     Call<HorarioDTO> crearHorario(@Path("boleta") int boleta, @Body HorarioDTO dto);
 
-    // -------------------------
-    // CRUD de Proyectos
-    // -------------------------
-
+    // ── Proyectos ─────────────────────────────────────────────────────────────
     @GET("proyecto")
     Call<List<ProyectoResponse>> obtenerProyectos();
 
@@ -75,10 +69,7 @@ public interface ApiService {
     @DELETE("proyecto/{id}")
     Call<Void> eliminarProyecto(@Path("id") int id);
 
-    // -------------------------
-    // Solicitudes por Empresa
-    // -------------------------
-
+    // ── Solicitudes ───────────────────────────────────────────────────────────
     @GET("solicitud/empresa/{idEmpresa}")
     Call<List<SolicitudResponse>> obtenerSolicitudesPorEmpresa(@Path("idEmpresa") int idEmpresa);
 
@@ -88,24 +79,24 @@ public interface ApiService {
             @Query("nuevoEstado") String nuevoEstado
     );
 
-    // -------------------------
-    // Datos del Supervisor
-    // -------------------------
+    @GET("solicitudes/estudiante/{boleta}")
+    Call<List<SolicitudDTO>> obtenerSolicitudesEstudiante(@Path("boleta") Integer boleta);
 
+    @POST("solicitud")
+    Call<SolicitudDTO> enviarSolicitud(@Body SolicitudDTO solicitudDTO);
+
+    @POST("solicitud/accept")
+    Call<Void> aceptarSolicitud(@Body SolicitudAcceptDTO dto);
+
+    // ── Supervisor ────────────────────────────────────────────────────────────
     @GET("supervisor/datos")
-    Call<SupervisorResponse> getSupervisorData(
-            @Query("idUsuario") int idUsuario
-    );
+    Call<SupervisorResponse> getSupervisorData(@Query("idUsuario") int idUsuario);
 
     @GET("supervisor/solicitudes-enviadas")
-    Call<SolicitudesResponse> getSolicitudesEnviadas(
-            @Query("idSupervisor") int idSupervisor
-    );
+    Call<SolicitudesResponse> getSolicitudesEnviadas(@Query("idSupervisor") int idSupervisor);
 
     @GET("supervisor/solicitudes-aceptadas")
-    Call<SolicitudesResponse> getSolicitudesAceptadas(
-            @Query("idEmpresa") int idEmpresa
-    );
+    Call<SolicitudesResponse> getSolicitudesAceptadas(@Query("idEmpresa") int idEmpresa);
 
     @FormUrlEncoded
     @POST("supervisor/actualizar-solicitud")
@@ -113,20 +104,12 @@ public interface ApiService {
             @Field("idSolicitud") int idSolicitud,
             @Field("nuevoEstado") String nuevoEstado
     );
-    @GET("solicitudes/estudiante/{boleta}")
-    Call<List<SolicitudDTO>> obtenerSolicitudesEstudiante(@Path("boleta") Integer boleta);
 
-    // Enviar solicitud
-    @POST("solicitud")
-    Call<SolicitudDTO> enviarSolicitud(@Body SolicitudDTO solicitudDTO);
-
-    @POST("solicitud/accept")
-    Call<Void> aceptarSolicitud(@Body SolicitudAcceptDTO dto);
-
-    // Obtener horario
+    // ── Horario ───────────────────────────────────────────────────────────────
     @GET("horario/{boleta}")
     Call<HorarioDTO> obtenerHorario(@Path("boleta") int boleta);
-    // Documentos
+
+    // ── Documentos ────────────────────────────────────────────────────────────
     @GET("documento/{boleta}")
     Call<List<DocumentoDTO>> getDocumentos(@Path("boleta") Integer boleta);
 
@@ -138,21 +121,16 @@ public interface ApiService {
             @Part MultipartBody.Part archivo
     );
 
-    // -------------------------
-    // Foto de Perdil
-    // -------------------------
-
+    // ── Perfil ────────────────────────────────────────────────────────────────
     @GET("perfil/usuario/{idUsuario}")
     Call<PerfilDTO> obtenerPerfil(@Path("idUsuario") int idUsuario);
 
     @PUT("perfil/usuario/{idUsuario}/foto")
     @Headers("Content-Type: application/json")
-    Call<String> actualizarFoto(@Path("idUsuario") int idUsuario, @Body java.util.Map<String, String> body);
+    Call<String> actualizarFoto(@Path("idUsuario") int idUsuario,
+                                @Body java.util.Map<String, String> body);
 
-    // -------------------------
-    // Notificaciones Alumno
-    // -------------------------
-
+    // ── Notificaciones ────────────────────────────────────────────────────────
     @GET("notificacion/usuario/{idUsuario}")
     Call<List<NotificacionDTO>> obtenerNotificaciones(@Path("idUsuario") int idUsuario);
 

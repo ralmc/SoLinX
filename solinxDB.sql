@@ -39,7 +39,17 @@ CREATE TABLE Usuario (
     correo VARCHAR(150) UNIQUE NOT NULL,
     telefono VARCHAR(20) DEFAULT NULL,
     userPassword VARCHAR(255) NOT NULL,
-    rol ENUM('estudiante', 'empresa', 'supervisor', 'administrador') NOT NULL
+    rol ENUM('estudiante', 'empresa', 'supervisor', 'administrador') NOT NULL,
+    verificado BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE TokenVerificacion (
+    idToken INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    token VARCHAR(36) NOT NULL UNIQUE,
+    fechaExpira TIMESTAMP NOT NULL,
+    usado BOOLEAN NOT NULL DEFAULT FALSE,
+    idUsuario INT NOT NULL,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Horario(
@@ -177,16 +187,16 @@ INSERT INTO Supervisor (area, idEmpresa) VALUES
 ('Sistemas', 3);
 
 -- 4. USUARIOS
-INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol) VALUES
-('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante'),
-('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa'),
-('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor'),
-('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante'),
-('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa'),
-('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa'),
-('Luis Herrera', 'luis@correo.com', '5533334444', 'pass123', 'estudiante'),
-('Ana Martínez', 'ana@correo.com', '5555556666', 'pass123', 'estudiante'),
-('Pedro Jiménez', 'pedro@correo.com', '5577778888', 'pass123', 'estudiante');
+INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol, verificado) VALUES
+('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante', TRUE),
+('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa', TRUE),
+('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor', TRUE),
+('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pas123', 'estudiante', TRUE),
+('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa', TRUE),
+('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa', TRUE),
+('Luis Herrera', 'luis@correo.com', '5533334444', 'pass123', 'estudiante', TRUE),
+('Ana Martínez', 'ana@correo.com', '5555556666', 'pass123', 'estudiante', TRUE),
+('Pedro Jiménez', 'pedro@correo.com', '5577778888', 'pass123', 'estudiante', TRUE);
 
 -- 5. VINCULAR USUARIOS CON ROLES
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
