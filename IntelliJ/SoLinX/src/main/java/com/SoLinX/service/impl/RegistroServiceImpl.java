@@ -10,7 +10,6 @@ import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.RegistroService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 @AllArgsConstructor
@@ -19,17 +18,6 @@ public class RegistroServiceImpl implements RegistroService {
     private final UsuarioRepository           usuarioRepository;
     private final EstudianteRepository        estudianteRepository;
     private final UsuarioEstudianteRepository usuarioEstudianteRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-
-    private boolean esPasswordSeguro(String password) {
-        if (password == null) return false;
-
-        return password.length() >= 8 &&
-                password.matches(".*[A-Z].*") &&
-                password.matches(".*[a-z].*") &&
-                password.matches(".*\\d.*") &&
-                password.matches(".*[@$!%*?&].*");
-    }
 
     public String registrar(RegistroDto dto) {
         if (!dto.getCorreo().equals(dto.getConfirmarCorreo()))
@@ -66,5 +54,4 @@ public class RegistroServiceImpl implements RegistroService {
 
         return "Registro exitoso";
     }
-
 }

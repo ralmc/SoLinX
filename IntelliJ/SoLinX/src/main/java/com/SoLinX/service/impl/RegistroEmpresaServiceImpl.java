@@ -8,16 +8,15 @@ import com.SoLinX.service.RegistroEmpresaService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 @AllArgsConstructor
 public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
 
-    private final UsuarioRepository      usuarioRepository;
-    private final EmpresaRepository      empresaRepository;
+    private final UsuarioRepository        usuarioRepository;
+    private final EmpresaRepository        empresaRepository;
     private final UsuarioEmpresaRepository usuarioEmpresaRepository;
-    private final PerfilRepository       perfilRepository;
+    private final PerfilRepository         perfilRepository;
 
     @Override
     @Transactional
@@ -29,7 +28,7 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
                     .nombre(dto.getNombreEmpresa())
                     .correo(dto.getCorreo())
                     .telefono(dto.getTelefono())
-                    .userPassword(passwordHash)
+                    .userPassword(dto.getUserPassword())
                     .rol("empresa")
                     .build());
 
@@ -46,13 +45,6 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
                     .tema("claro")
                     .idUsuario(usuarioGuardado.getIdUsuario())
                     .build());
-
-            // Crear perfil automáticamente para el nuevo usuario empresa
-            Perfil perfil = Perfil.builder()
-                    .tema("claro")
-                    .idUsuario(usuarioGuardado.getIdUsuario())
-                    .build();
-            perfilRepository.save(perfil);
 
             return RegistroEmpresaResponseDTO.builder()
                     .idUsuario(usuarioGuardado.getIdUsuario())
