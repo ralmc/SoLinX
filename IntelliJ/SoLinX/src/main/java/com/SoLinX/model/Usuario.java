@@ -1,10 +1,7 @@
 package com.SoLinX.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data @AllArgsConstructor @NoArgsConstructor @Builder
 @Entity
@@ -12,6 +9,7 @@ import lombok.NoArgsConstructor;
         @Index(name = "idx_correo", columnList = "correo", unique = true)
 })
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idUsuario")
@@ -31,4 +29,7 @@ public class Usuario {
 
     @Column(name = "rol", nullable = false)
     private String rol;
+
+    @Column(name = "verificado", nullable = false)
+    private Boolean verificado = false;
 }

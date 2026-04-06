@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.solinx.API.ApiClient;
@@ -98,13 +99,28 @@ public class IniciarSesion extends Fragment {
                     public void onResponse(@NonNull Call<LoginResponseDTO> call,
                                            @NonNull Response<LoginResponseDTO> response) {
                         setLoading(false);
-                        if (response.code() == 401) { showToast("Correo o contraseña incorrectos"); return; }
-                        if (!response.isSuccessful() || response.body() == null) { showToast("Error al conectar con el servidor"); return; }
+
+                        if (response.code() == 401) {
+                            String motivo = response.headers().get("X-Login-Error");
+                            if ("NO_VERIFICADO".equals(motivo)) {
+                                mostrarDialogoNoVerificado(correo);
+                            } else {
+                                showToast("Correo o contraseña incorrectos");
+                            }
+                            return;
+                        }
+
+                        if (!response.isSuccessful() || response.body() == null) {
+                            showToast("Error al conectar con el servidor");
+                            return;
+                        }
+
                         manejarLoginExitoso(response.body());
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<LoginResponseDTO> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<LoginResponseDTO> call,
+                                          @NonNull Throwable t) {
                         setLoading(false);
                         Log.e(TAG, "Error de red", t);
                         showToast("Sin conexión: " + t.getMessage());
@@ -112,6 +128,46 @@ public class IniciarSesion extends Fragment {
                 });
     }
 
+    // ─── Diálogo cuenta no verificada ──────────────────────────────────────────
+    private void mostrarDialogoNoVerificado(String correo) {
+        if (getContext() == null) return;
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Cuenta no verificada")
+                .setMessage("Tu cuenta aún no ha sido verificada.\n\nRevisa tu bandeja de entrada (y spam) o solicita un nuevo enlace.")
+                .setPositiveButton("Reenviar correo", (dialog, which) ->
+                        reenviarCorreoVerificacion(correo))
+                .setNegativeButton("Cerrar", null)
+                .show();
+    }
+
+    private void reenviarCorreoVerificacion(String correo) {
+        setLoading(true);
+
+        ApiClient.getClient().create(ApiService.class)
+                .reenviarVerificacion(correo)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(@NonNull Call<String> call,
+                                           @NonNull Response<String> response) {
+                        setLoading(false);
+                        if (response.isSuccessful()) {
+                            showToast("Correo de verificación enviado");
+                        } else {
+                            showToast("No se pudo reenviar el correo");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call,
+                                          @NonNull Throwable t) {
+                        setLoading(false);
+                        showToast("Sin conexión: " + t.getMessage());
+                    }
+                });
+    }
+
+    // ─── Login exitoso ─────────────────────────────────────────────────────────
     private void manejarLoginExitoso(LoginResponseDTO resp) {
         Log.d(TAG, "Login OK — usuario: " + resp.getNombre() + " | rol: " + resp.getRol());
         guardarSesionBasica(resp);
