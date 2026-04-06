@@ -1,14 +1,6 @@
 -- ============================================
 -- BASE DE DATOS SOLINX
 -- ============================================
--- ============================================
--- BASE DE DATOS SOLINX (ACTUALIZADA)
--- Cambios:
---   1. Empresa: agregado campo 'telefono'
---   2. Perfil: foto como LONGTEXT (Base64) para almacenamiento en BD
---   3. Proyecto: agregado campo 'imagenProyecto' LONGTEXT (Base64)
---      (se conserva 'imagenRef' como nombre de referencia local)
--- ============================================
 DROP DATABASE IF EXISTS solinx;
 CREATE DATABASE IF NOT EXISTS solinx;
 USE solinx;

@@ -9,6 +9,7 @@ import com.SoLinX.repository.UsuarioEstudianteRepository;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.RegistroService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,7 @@ public class RegistroServiceImpl implements RegistroService {
     private final UsuarioRepository           usuarioRepository;
     private final EstudianteRepository        estudianteRepository;
     private final UsuarioEstudianteRepository usuarioEstudianteRepository;
+    private final BCryptPasswordEncoder       passwordEncoder;
 
     public String registrar(RegistroDto dto) {
         if (!dto.getCorreo().equals(dto.getConfirmarCorreo()))
@@ -43,7 +45,7 @@ public class RegistroServiceImpl implements RegistroService {
         Usuario u = usuarioRepository.save(Usuario.builder()
                 .nombre(dto.getNombreUsuario())
                 .correo(dto.getCorreo())
-                .userPassword(dto.getContraseña())
+                .userPassword(passwordEncoder.encode(dto.getContraseña()))
                 .rol("estudiante")
                 .build());
 

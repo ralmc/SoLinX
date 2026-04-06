@@ -7,6 +7,7 @@ import com.SoLinX.repository.*;
 import com.SoLinX.service.LoginService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -14,23 +15,22 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class LoginServiceImpl implements LoginService {
 
-    private final UsuarioRepository           usuarioRepository;
+    private final UsuarioRepository            usuarioRepository;
     private final UsuarioEstudianteRepository  usuarioEstudianteRepository;
     private final UsuarioEmpresaRepository     usuarioEmpresaRepository;
     private final UsuarioSupervisorRepository  usuarioSupervisorRepository;
     private final EstudianteRepository         estudianteRepository;
     private final SupervisorRepository         supervisorRepository;
+    private final BCryptPasswordEncoder        passwordEncoder;
 
     @Override
     public LoginResponseDto login(LoginDto loginDto) {
-        String correo   = loginDto.getCorreo().trim();
+        String correo = loginDto.getCorreo().trim();
         String password = loginDto.getUserPassword();
 
-        Usuario usuario = usuarioRepository
-                .findByCorreoAndUserPassword(correo, password)
-                .orElse(null);
+        Usuario usuario = usuarioRepository.findByCorreo(correo).orElse(null);
 
-        if (usuario == null) {
+        if (usuario == null || !passwordEncoder.matches(password, usuario.getUserPassword())) {
             log.warn("Login fallido para correo: {}", correo);
             return null;
         }
