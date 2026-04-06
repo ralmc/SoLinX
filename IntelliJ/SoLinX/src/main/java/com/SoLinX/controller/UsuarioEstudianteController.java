@@ -10,61 +10,38 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/SoLinX/api")
 @RestController
+@RequestMapping("/SoLinX/api")
 @AllArgsConstructor
 public class UsuarioEstudianteController {
 
     private final UsuarioEstudianteService usuarioEstudianteService;
 
     @GetMapping("/usuarioEstudiante")
-    public ResponseEntity<List<UsuarioEstudianteDto>> lista(@RequestParam(name = "idUsuario", defaultValue = "", required = false) Integer idUsuario) {
-        List<UsuarioEstudiante> usuarios = usuarioEstudianteService.getAll();
-        if (usuarios == null || usuarios.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        if (idUsuario != null) {
-            return ResponseEntity.ok(
-                    usuarios.stream()
-                            .filter(u -> u.getIdUsuario().equals(idUsuario))
-                            .map(u -> UsuarioEstudianteDto.builder()
-                                    .idUsuario(u.getIdUsuario())
-                                    .boleta(u.getBoleta())
-                                    .build())
-                            .collect(Collectors.toList())
-            );
-        }
-        return ResponseEntity.ok(
-                usuarios.stream()
-                        .map(u -> UsuarioEstudianteDto.builder()
-                                .idUsuario(u.getIdUsuario())
-                                .boleta(u.getBoleta())
-                                .build())
-                        .collect(Collectors.toList())
-        );
+    public ResponseEntity<List<UsuarioEstudianteDto>> lista(
+            @RequestParam(required = false) Integer idUsuario) {
+        List<UsuarioEstudianteDto> result = usuarioEstudianteService.getAll().stream()
+                .filter(u -> idUsuario == null || u.getIdUsuario().equals(idUsuario))
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/usuarioEstudiante/{id}")
     public ResponseEntity<UsuarioEstudianteDto> getById(@PathVariable Integer id) {
         UsuarioEstudiante u = usuarioEstudianteService.getById(id);
-        if (u == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(UsuarioEstudianteDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .boleta(u.getBoleta())
-                .build());
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/usuarioEstudiante")
     public ResponseEntity<UsuarioEstudianteDto> save(@RequestBody UsuarioEstudianteDto dto) {
-        UsuarioEstudiante u = UsuarioEstudiante.builder()
-                .idUsuario(dto.getIdUsuario())
-                .boleta(dto.getBoleta())
-                .build();
-        usuarioEstudianteService.save(u);
-        return ResponseEntity.ok(UsuarioEstudianteDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .boleta(u.getBoleta())
-                .build());
+        return ResponseEntity.ok(toDto(usuarioEstudianteService.save(fromDto(dto))));
+    }
+
+    @PutMapping("/usuarioEstudiante/{id}")
+    public ResponseEntity<UsuarioEstudianteDto> update(@PathVariable Integer id, @RequestBody UsuarioEstudianteDto dto) {
+        UsuarioEstudiante u = usuarioEstudianteService.update(id, fromDto(dto));
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/usuarioEstudiante/{id}")
@@ -73,15 +50,11 @@ public class UsuarioEstudianteController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/usuarioEstudiante/{id}")
-    public ResponseEntity<UsuarioEstudianteDto> update(@PathVariable Integer id, @RequestBody UsuarioEstudianteDto dto) {
-        UsuarioEstudiante u = usuarioEstudianteService.update(id, UsuarioEstudiante.builder()
-                .idUsuario(dto.getIdUsuario())
-                .boleta(dto.getBoleta())
-                .build());
-        return ResponseEntity.ok(UsuarioEstudianteDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .boleta(u.getBoleta())
-                .build());
+    private UsuarioEstudianteDto toDto(UsuarioEstudiante u) {
+        return UsuarioEstudianteDto.builder().idUsuario(u.getIdUsuario()).boleta(u.getBoleta()).build();
+    }
+
+    private UsuarioEstudiante fromDto(UsuarioEstudianteDto d) {
+        return UsuarioEstudiante.builder().idUsuario(d.getIdUsuario()).boleta(d.getBoleta()).build();
     }
 }

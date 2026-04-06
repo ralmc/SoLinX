@@ -5,8 +5,10 @@ import com.SoLinX.model.Usuario;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.PasswordUpdateService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PasswordUpdateServiceImpl implements PasswordUpdateService {
@@ -15,20 +17,22 @@ public class PasswordUpdateServiceImpl implements PasswordUpdateService {
 
     @Override
     public String actualizarPassword(PasswordUpdateDto dto) {
-
-        Usuario usuario = usuarioRepository.findByCorreo(dto.getCorreo());
+        Usuario usuario = usuarioRepository.findByCorreo(dto.getCorreo().trim())
+                .orElse(null);
 
         if (usuario == null) {
+            log.warn("Cambio de password — correo no existe: {}", dto.getCorreo());
             return "UsuarioNoExiste";
         }
 
         if (!usuario.getUserPassword().equals(dto.getOldPassword())) {
+            log.warn("Cambio de password fallido para: {}", dto.getCorreo());
             return "PasswordIncorrecta";
         }
 
         usuario.setUserPassword(dto.getNewPassword());
         usuarioRepository.save(usuario);
-
+        log.info("Password actualizado para: {}", dto.getCorreo());
         return "OK";
     }
 }

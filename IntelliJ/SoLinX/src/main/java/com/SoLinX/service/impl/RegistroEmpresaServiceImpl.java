@@ -2,14 +2,8 @@ package com.SoLinX.service.impl;
 
 import com.SoLinX.dto.RegistroEmpresaDTO;
 import com.SoLinX.dto.RegistroEmpresaResponseDTO;
-import com.SoLinX.model.Empresa;
-import com.SoLinX.model.Perfil;
-import com.SoLinX.model.Usuario;
-import com.SoLinX.model.UsuarioEmpresa;
-import com.SoLinX.repository.EmpresaRepository;
-import com.SoLinX.repository.PerfilRepository;
-import com.SoLinX.repository.UsuarioRepository;
-import com.SoLinX.repository.UsuarioEmpresaRepository;
+import com.SoLinX.model.*;
+import com.SoLinX.repository.*;
 import com.SoLinX.service.RegistroEmpresaService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,47 +14,38 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @AllArgsConstructor
 public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final EmpresaRepository empresaRepository;
+    private final UsuarioRepository      usuarioRepository;
+    private final EmpresaRepository      empresaRepository;
     private final UsuarioEmpresaRepository usuarioEmpresaRepository;
-    private final PerfilRepository perfilRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PerfilRepository       perfilRepository;
 
     @Override
     @Transactional
     public RegistroEmpresaResponseDTO registrarEmpresa(RegistroEmpresaDTO dto) {
         try {
+            if (usuarioRepository.findByCorreo(dto.getCorreo()).isPresent()) return null;
 
-            Usuario usuarioExistente = usuarioRepository.findByCorreo(dto.getCorreo());
-            if (usuarioExistente != null) {
-                return null;
-            }
-
-            String passwordHash = passwordEncoder.encode(dto.getUserPassword());
-
-            Usuario nuevoUsuario = Usuario.builder()
+            Usuario usuarioGuardado = usuarioRepository.save(Usuario.builder()
                     .nombre(dto.getNombreEmpresa())
                     .correo(dto.getCorreo())
                     .telefono(dto.getTelefono())
                     .userPassword(passwordHash)
                     .rol("empresa")
-                    .build();
+                    .build());
 
-            Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
-
-            Empresa nuevaEmpresa = Empresa.builder()
+            Empresa empresaGuardada = empresaRepository.save(Empresa.builder()
                     .nombreEmpresa(dto.getNombreEmpresa())
-                    .telefono(dto.getTelefono())
-                    .build();
+                    .build());
 
-            Empresa empresaGuardada = empresaRepository.save(nuevaEmpresa);
-
-            UsuarioEmpresa usuarioEmpresa = UsuarioEmpresa.builder()
+            usuarioEmpresaRepository.save(UsuarioEmpresa.builder()
                     .idUsuario(usuarioGuardado.getIdUsuario())
                     .idEmpresa(empresaGuardada.getIdEmpresa())
-                    .build();
+                    .build());
 
-            usuarioEmpresaRepository.save(usuarioEmpresa);
+            perfilRepository.save(Perfil.builder()
+                    .tema("claro")
+                    .idUsuario(usuarioGuardado.getIdUsuario())
+                    .build());
 
             // Crear perfil automáticamente para el nuevo usuario empresa
             Perfil perfil = Perfil.builder()
@@ -77,6 +62,7 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
                     .idEmpresa(empresaGuardada.getIdEmpresa())
                     .nombreEmpresa(empresaGuardada.getNombreEmpresa())
                     .build();
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;

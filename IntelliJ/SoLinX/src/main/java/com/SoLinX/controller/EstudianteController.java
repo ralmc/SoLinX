@@ -7,94 +7,50 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/SoLinX/api")
 @RestController
+@RequestMapping("/SoLinX/api")
 @AllArgsConstructor
 public class EstudianteController {
+
     private final EstudianteService estudianteService;
-    private List<EstudianteDto> EstudianteDtos;
 
-    public void loadList() {
-        EstudianteDtos = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            EstudianteDtos.add(
-                    EstudianteDto.builder()
-                            .boleta(i++)
-                            .carrera("Carrera " + i)
-                            .escuela("Escuela " + i)
-                            .build()
-            );
-        }
-    }
-
-    @RequestMapping("/estudiante")
+    @GetMapping("/estudiante")
     public ResponseEntity<List<EstudianteDto>> lista() {
-        List<Estudiante> Estudiantes = estudianteService.getAll();
-        if(Estudiantes == null || Estudiantes.size()== 0) {
-            return ResponseEntity.notFound( ).build( );
-        } return ResponseEntity
-                .ok(
-                        Estudiantes
-                                .stream()
-                                .map(u -> EstudianteDto.builder()
-                                        .boleta(u.getBoleta())
-                                        .carrera(u.getCarrera())
-                                        .escuela(u.getEscuela())
-                                        .build())
-                                .collect(Collectors.toList()));
+        return ResponseEntity.ok(estudianteService.getAll().stream()
+                .map(this::toDto).collect(Collectors.toList()));
     }
 
-    @RequestMapping("/estudiante/{id}")
-    public ResponseEntity<EstudianteDto>getById(@PathVariable Integer boleta) {
-        Estudiante u = estudianteService.getById(boleta);
-
-        if(u == null ) {
-            return  ResponseEntity.notFound().build();
-        } return ResponseEntity.ok(EstudianteDto.builder()
-                .boleta(u.getBoleta())
-                .carrera(u.getCarrera())
-                .escuela(u.getEscuela())
-                .build());
+    @GetMapping("/estudiante/{id}")
+    public ResponseEntity<EstudianteDto> getById(@PathVariable("id") Integer id) {
+        Estudiante u = estudianteService.getById(id);
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping( "/estudiante")
-    public ResponseEntity<EstudianteDto> save(@RequestBody EstudianteDto EstudianteDto) {
-        Estudiante u = Estudiante.
-                builder()
-                .boleta( EstudianteDto.getBoleta())
-                .carrera( EstudianteDto.getCarrera())
-                .escuela(EstudianteDto.getEscuela())
-                .build();
-        estudianteService.save(u);
-        return ResponseEntity.ok(EstudianteDto.builder()
-                .boleta(u.getBoleta())
-                .carrera(u.getCarrera())
-                .escuela(u.getEscuela())
-                .build());
+    @PostMapping("/estudiante")
+    public ResponseEntity<EstudianteDto> save(@RequestBody EstudianteDto dto) {
+        return ResponseEntity.ok(toDto(estudianteService.save(fromDto(dto))));
     }
 
-    @DeleteMapping( "/estudiante/{id}")
-    public ResponseEntity<EstudianteDto> delete(@PathVariable Integer id) {
+    @PutMapping("/estudiante/{id}")
+    public ResponseEntity<EstudianteDto> update(@PathVariable Integer id, @RequestBody EstudianteDto dto) {
+        Estudiante aux = estudianteService.update(id, fromDto(dto));
+        return aux != null ? ResponseEntity.ok(toDto(aux)) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/estudiante/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         estudianteService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping( "/estudiante/{id}")
-    public ResponseEntity<EstudianteDto>update( @PathVariable Integer id, @RequestBody EstudianteDto EstudianteDto) {
-        Estudiante aux = estudianteService.update( id, Estudiante
-                .builder()
-                .boleta( EstudianteDto.getBoleta())
-                .carrera( EstudianteDto.getCarrera())
-                .escuela(EstudianteDto.getEscuela())
-                .build());
-        return ResponseEntity.ok(EstudianteDto.builder()
-                .boleta( aux.getBoleta())
-                .carrera(aux.getCarrera())
-                .escuela(aux.getEscuela())
-                .build());
+    private EstudianteDto toDto(Estudiante e) {
+        return EstudianteDto.builder().boleta(e.getBoleta()).carrera(e.getCarrera()).escuela(e.getEscuela()).build();
+    }
+
+    private Estudiante fromDto(EstudianteDto d) {
+        return Estudiante.builder().boleta(d.getBoleta()).carrera(d.getCarrera()).escuela(d.getEscuela()).build();
     }
 }

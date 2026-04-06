@@ -10,61 +10,38 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/SoLinX/api")
 @RestController
+@RequestMapping("/SoLinX/api")
 @AllArgsConstructor
 public class UsuarioSupervisorController {
 
     private final UsuarioSupervisorService usuarioSupervisorService;
 
     @GetMapping("/usuarioSupervisor")
-    public ResponseEntity<List<UsuarioSupervisorDto>> lista(@RequestParam(name = "idUsuario", required = false) Integer idUsuario) {
-        List<UsuarioSupervisor> usuarios = usuarioSupervisorService.getAll();
-        if (usuarios == null || usuarios.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        if (idUsuario != null) {
-            return ResponseEntity.ok(
-                    usuarios.stream()
-                            .filter(u -> u.getIdUsuario().equals(idUsuario))
-                            .map(u -> UsuarioSupervisorDto.builder()
-                                    .idUsuario(u.getIdUsuario())
-                                    .idSupervisor(u.getIdSupervisor())
-                                    .build())
-                            .collect(Collectors.toList())
-            );
-        }
-        return ResponseEntity.ok(
-                usuarios.stream()
-                        .map(u -> UsuarioSupervisorDto.builder()
-                                .idUsuario(u.getIdUsuario())
-                                .idSupervisor(u.getIdSupervisor())
-                                .build())
-                        .collect(Collectors.toList())
-        );
+    public ResponseEntity<List<UsuarioSupervisorDto>> lista(
+            @RequestParam(required = false) Integer idUsuario) {
+        List<UsuarioSupervisorDto> result = usuarioSupervisorService.getAll().stream()
+                .filter(u -> idUsuario == null || u.getIdUsuario().equals(idUsuario))
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/usuarioSupervisor/{id}")
     public ResponseEntity<UsuarioSupervisorDto> getById(@PathVariable Integer id) {
         UsuarioSupervisor u = usuarioSupervisorService.getById(id);
-        if (u == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(UsuarioSupervisorDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .idSupervisor(u.getIdSupervisor())
-                .build());
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/usuarioSupervisor")
     public ResponseEntity<UsuarioSupervisorDto> save(@RequestBody UsuarioSupervisorDto dto) {
-        UsuarioSupervisor u = UsuarioSupervisor.builder()
-                .idUsuario(dto.getIdUsuario())
-                .idSupervisor(dto.getIdSupervisor())
-                .build();
-        usuarioSupervisorService.save(u);
-        return ResponseEntity.ok(UsuarioSupervisorDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .idSupervisor(u.getIdSupervisor())
-                .build());
+        return ResponseEntity.ok(toDto(usuarioSupervisorService.save(fromDto(dto))));
+    }
+
+    @PutMapping("/usuarioSupervisor/{id}")
+    public ResponseEntity<UsuarioSupervisorDto> update(@PathVariable Integer id, @RequestBody UsuarioSupervisorDto dto) {
+        UsuarioSupervisor u = usuarioSupervisorService.update(id, fromDto(dto));
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/usuarioSupervisor/{id}")
@@ -73,15 +50,11 @@ public class UsuarioSupervisorController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/usuarioSupervisor/{id}")
-    public ResponseEntity<UsuarioSupervisorDto> update(@PathVariable Integer id, @RequestBody UsuarioSupervisorDto dto) {
-        UsuarioSupervisor u = usuarioSupervisorService.update(id, UsuarioSupervisor.builder()
-                .idUsuario(dto.getIdUsuario())
-                .idSupervisor(dto.getIdSupervisor())
-                .build());
-        return ResponseEntity.ok(UsuarioSupervisorDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .idSupervisor(u.getIdSupervisor())
-                .build());
+    private UsuarioSupervisorDto toDto(UsuarioSupervisor u) {
+        return UsuarioSupervisorDto.builder().idUsuario(u.getIdUsuario()).idSupervisor(u.getIdSupervisor()).build();
+    }
+
+    private UsuarioSupervisor fromDto(UsuarioSupervisorDto d) {
+        return UsuarioSupervisor.builder().idUsuario(d.getIdUsuario()).idSupervisor(d.getIdSupervisor()).build();
     }
 }

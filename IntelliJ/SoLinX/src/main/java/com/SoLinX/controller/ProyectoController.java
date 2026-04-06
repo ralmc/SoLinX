@@ -3,10 +3,12 @@ package com.SoLinX.controller;
 import com.SoLinX.dto.ProyectoDto;
 import com.SoLinX.model.Empresa;
 import com.SoLinX.model.Proyecto;
+import com.SoLinX.model.Usuario;
 import com.SoLinX.repository.EmpresaRepository;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.ProyectoService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequestMapping("/SoLinX/api")
 @RestController
 @AllArgsConstructor
@@ -87,18 +90,10 @@ public class ProyectoController {
 
     private String obtenerTelefonoEmpresa(Integer idEmpresa) {
         try {
-            // Primero intentar obtener el teléfono de la tabla Empresa directamente
-            Empresa empresa = empresaRepository.findById(idEmpresa).orElse(null);
-            if (empresa != null && empresa.getTelefono() != null) {
-                return empresa.getTelefono();
-            }
-            // Fallback: obtenerlo del Usuario vinculado a la empresa
-            com.SoLinX.model.Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa);
-            if (usuario != null && usuario.getTelefono() != null) {
-                return usuario.getTelefono();
-            }
+            Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa).orElse(null);
+            if (usuario != null && usuario.getTelefono() != null) return usuario.getTelefono();
         } catch (Exception e) {
-            System.err.println("Error obteniendo teléfono: " + e.getMessage());
+            log.warn("Error obteniendo teléfono de empresa {}: {}", idEmpresa, e.getMessage());
         }
         return "No disponible";
     }
