@@ -76,6 +76,18 @@ public class ProyectoController {
         return ResponseEntity.noContent().build();
     }
 
+    // Endpoint para subir/actualizar imagen del proyecto como Base64
+    @PutMapping("/proyecto/{id}/imagen")
+    public ResponseEntity<String> actualizarImagenProyecto(
+            @PathVariable("id") Integer id,
+            @RequestBody java.util.Map<String, String> body) {
+        Proyecto proyecto = proyectoService.getById(id);
+        if (proyecto == null) return ResponseEntity.notFound().build();
+        proyecto.setImagenProyecto(body.get("imagenProyecto"));
+        proyectoService.save(proyecto);
+        return ResponseEntity.ok("Imagen del proyecto actualizada correctamente.");
+    }
+
     private String obtenerTelefonoEmpresa(Integer idEmpresa) {
         try {
             Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa).orElse(null);
@@ -99,6 +111,7 @@ public class ProyectoController {
                 .ubicacion(proyecto.getUbicacion())
                 .fechaTermino(proyecto.getFechaTermino())
                 .imagenRef(proyecto.getImagenRef())
+                .imagenProyecto(proyecto.getImagenProyecto())
                 .idEmpresa(idEmpresa)
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
                 .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible")
@@ -126,6 +139,7 @@ public class ProyectoController {
                 .fechaInicio(fechaRegistro)
                 .fechaTermino(dto.getFechaTermino())
                 .imagenRef(imagenFinal)
+                .imagenProyecto(dto.getImagenProyecto())
                 .empresa(empresa)
                 .build();
     }

@@ -3,22 +3,18 @@ CONFIGURACIÓN OFICIAL DEL PROYECTO SOLINX (OBLIGATORIO)
 LEE TODO ANTES DE EMPEZAR.
 SI NO SIGUES ESTO EXACTAMENTE, EL PROYECTO PUEDE NO FUNCIONAR.
 
----
+CONFIGURACIÓN BASE (TODOS IGUAL)
 
-## CONFIGURACIÓN BASE (TODOS IGUAL)
-
-JDK: 11 (Eclipse Temurin)
-Servidor: Apache Tomcat 9
-Java EE Version: Jakarta EE 8 Web
+JDK: 17 (Eclipse Temurin)
+Servidor: Apache Tomcat 10.1
+Java EE Version: Jakarta EE 11 Web
 IDE: Apache NetBeans
 
----
-
-## PARTE 1: INSTALAR JDK 11
+PARTE 1: INSTALAR JDK 17
 
 Paso 1:
 Busca en Google:
-Temurin JDK 11 download
+Temurin JDK 17 download
 
 Paso 2:
 Descarga:
@@ -31,22 +27,23 @@ Paso 4:
 Verifica:
 
 Abre CMD y escribe:
+
 java -version
 
-Debe decir:
-openjdk version "11..."
+Debe decir algo como:
+
+openjdk version "17..."
 
 SI NO → NO SIGAS
 
----
-
-## PARTE 2: CONFIGURAR JAVA_HOME (OBLIGATORIO)
+PARTE 2: CONFIGURAR JAVA_HOME (OBLIGATORIO)
 
 Esto hace que TODA la computadora reconozca Java.
 
 Paso 1:
 Ubica tu JDK, ejemplo:
-C:\Program Files\Eclipse Adoptium\jdk-11
+
+C:\Program Files\Eclipse Adoptium\jdk-17
 
 Paso 2:
 Presiona:
@@ -71,12 +68,14 @@ JAVA_HOME
 Valor:
 (Ruta de tu JDK)
 Ejemplo:
-C:\Program Files\Eclipse Adoptium\jdk-11
+
+C:\Program Files\Eclipse Adoptium\jdk-17
 
 Paso 5:
 Busca la variable "Path" → Editar
 
 Agrega:
+
 %JAVA_HOME%\bin
 
 Paso 6:
@@ -86,13 +85,12 @@ Paso 7:
 Cierra y abre CMD otra vez
 
 Escribe:
+
 java -version
 
 SI FUNCIONA → LISTO
 
----
-
-## PARTE 3: CONFIGURAR JDK EN NETBEANS
+PARTE 3: CONFIGURAR JDK EN NETBEANS
 
 Abrir Apache NetBeans
 
@@ -102,18 +100,19 @@ Tools → Java Platforms
 Click:
 Add Platform
 
-Seleccionar carpeta del JDK 11
+Seleccionar carpeta del JDK 17
 
 Verifica que diga:
-JDK 11
+JDK 17
 
----
+PARTE 4: INSTALAR TOMCAT 10.1
 
-## PARTE 4: INSTALAR TOMCAT 9
+⚠️ IMPORTANTE:
+Jakarta EE 11 usa jakarta.* (NO javax.*)
 
 Paso 1:
 Busca en Google:
-Apache Tomcat 9 download
+Apache Tomcat 10.1 download
 
 Paso 2:
 Descarga:
@@ -121,14 +120,13 @@ Descarga:
 
 Paso 3:
 Descomprime en:
-C:\Tomcat9\
+
+C:\Tomcat10\
 
 IMPORTANTE:
 No cambiar nombre
 
----
-
-## PARTE 5: AGREGAR TOMCAT EN NETBEANS
+PARTE 5: AGREGAR TOMCAT EN NETBEANS
 
 Ir a:
 Tools → Servers
@@ -140,13 +138,12 @@ Seleccionar:
 Apache Tomcat or TomEE
 
 Seleccionar carpeta:
-C:\Tomcat9\
+
+C:\Tomcat10\
 
 Terminar
 
----
-
-## PARTE 6: CONFIGURAR EL PROYECTO SOLINX
+PARTE 6: CONFIGURAR EL PROYECTO SOLINX
 
 Abrir el proyecto
 
@@ -156,30 +153,32 @@ En "Run":
 Server → Apache Tomcat
 
 En "Libraries":
-Java Platform → JDK 11
+Java Platform → JDK 17
 
 Verificar:
-Java EE Version → Jakarta EE 8 Web
+Java EE Version → Jakarta EE 11 Web
 
----
+⚠️ IMPORTANTE:
+Si tu proyecto usa javax.*, NO va a funcionar → debe usar jakarta.*
 
-## PARTE 7: EJECUTAR
+PARTE 7: EJECUTAR
 
 Click derecho → Run
 o presionar F6
 
 Debe abrir:
+
 http://localhost:8080/
-
----
-
-## ERRORES COMUNES
+ERRORES COMUNES
 
 NO HAY SERVIDOR:
 → No agregaste Tomcat
 
 NO CORRE:
-→ No estás usando JDK 11
+→ No estás usando JDK 17
+
+ERRORS DE IMPORTS:
+→ Estás usando javax.* en lugar de jakarta.*
 
 NO RECONOCE JAVA:
 → No configuraste JAVA_HOME
@@ -187,24 +186,22 @@ NO RECONOCE JAVA:
 PUERTO OCUPADO:
 → Cambiar puerto o cerrar programa
 
----
+REGLAS DEL EQUIPO
 
-## REGLAS DEL EQUIPO
+NO cambiar versiones
 
-1. NO cambiar versiones
-2. TODOS deben usar JDK 11
-3. TODOS deben usar Tomcat 9
-4. NO modificar configuración sin avisar
-5. SI FALLA → AVISAR
+TODOS deben usar JDK 17
 
----
+TODOS deben usar Tomcat 10.1
 
-## RESUMEN FINAL
+NO modificar configuración sin avisar
 
-JDK 11 + Tomcat 9 + Jakarta EE 8 = FUNCIONA
+SI FALLA → AVISAR
+
+RESUMEN FINAL
+
+JDK 17 + Tomcat 10.1 + Jakarta EE 11 = FUNCIONA
 
 Cualquier cambio = ERRORES
 
----
-
-## FIN
+FIN

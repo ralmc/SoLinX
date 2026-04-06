@@ -4,6 +4,7 @@ import com.SoLinX.model.Usuario;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.UsuarioService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override public List<Usuario> getAll() { return usuarioRepository.findAll(); }
 
