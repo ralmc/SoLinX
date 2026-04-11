@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/SoLinX/api")
 @RestController
+@RequestMapping("/SoLinX/api")
 @AllArgsConstructor
 public class UsuarioEmpresaController {
 
@@ -19,69 +19,42 @@ public class UsuarioEmpresaController {
 
     @GetMapping("/usuarioEmpresa")
     public ResponseEntity<List<UsuarioEmpresaDto>> lista(
-            @RequestParam(name = "idUsuario", required = false) Integer idUsuario) {
-        List<UsuarioEmpresa> usuarios = usuarioEmpresaService.getAll();
-        if (usuarios == null || usuarios.isEmpty()) return ResponseEntity.notFound().build();
-        if (idUsuario != null) {
-            return ResponseEntity.ok(
-                    usuarios.stream()
-                            .filter(u -> u.getIdUsuario().equals(idUsuario))
-                            .map(u -> UsuarioEmpresaDto.builder()
-                                    .idUsuario(u.getIdUsuario())
-                                    .idEmpresa(u.getIdEmpresa())
-                                    .build())
-                            .collect(Collectors.toList())
-            );
-        }
-        return ResponseEntity.ok(
-                usuarios.stream()
-                        .map(u -> UsuarioEmpresaDto.builder()
-                                .idUsuario(u.getIdUsuario())
-                                .idEmpresa(u.getIdEmpresa())
-                                .build())
-                        .collect(Collectors.toList())
-        );
+            @RequestParam(required = false) Integer idUsuario) {
+        List<UsuarioEmpresaDto> result = usuarioEmpresaService.getAll().stream()
+                .filter(u -> idUsuario == null || u.getIdUsuario().equals(idUsuario))
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/usuarioEmpresa/{id}")
-    public ResponseEntity<UsuarioEmpresaDto> getById(@PathVariable("id") Integer id) {
+    public ResponseEntity<UsuarioEmpresaDto> getById(@PathVariable Integer id) {
         UsuarioEmpresa u = usuarioEmpresaService.getById(id);
-        if (u == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(UsuarioEmpresaDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .idEmpresa(u.getIdEmpresa())
-                .build());
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/usuarioEmpresa")
     public ResponseEntity<UsuarioEmpresaDto> save(@RequestBody UsuarioEmpresaDto dto) {
-        UsuarioEmpresa u = UsuarioEmpresa.builder()
-                .idUsuario(dto.getIdUsuario())
-                .idEmpresa(dto.getIdEmpresa())
-                .build();
-        usuarioEmpresaService.save(u);
-        return ResponseEntity.ok(UsuarioEmpresaDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .idEmpresa(u.getIdEmpresa())
-                .build());
+        return ResponseEntity.ok(toDto(usuarioEmpresaService.save(fromDto(dto))));
+    }
+
+    @PutMapping("/usuarioEmpresa/{id}")
+    public ResponseEntity<UsuarioEmpresaDto> update(@PathVariable Integer id, @RequestBody UsuarioEmpresaDto dto) {
+        UsuarioEmpresa u = usuarioEmpresaService.update(id, fromDto(dto));
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/usuarioEmpresa/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         usuarioEmpresaService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/usuarioEmpresa/{id}")
-    public ResponseEntity<UsuarioEmpresaDto> update(@PathVariable("id") Integer id,
-                                                    @RequestBody UsuarioEmpresaDto dto) {
-        UsuarioEmpresa u = usuarioEmpresaService.update(id, UsuarioEmpresa.builder()
-                .idUsuario(dto.getIdUsuario())
-                .idEmpresa(dto.getIdEmpresa())
-                .build());
-        return ResponseEntity.ok(UsuarioEmpresaDto.builder()
-                .idUsuario(u.getIdUsuario())
-                .idEmpresa(u.getIdEmpresa())
-                .build());
+    private UsuarioEmpresaDto toDto(UsuarioEmpresa u) {
+        return UsuarioEmpresaDto.builder().idUsuario(u.getIdUsuario()).idEmpresa(u.getIdEmpresa()).build();
+    }
+
+    private UsuarioEmpresa fromDto(UsuarioEmpresaDto d) {
+        return UsuarioEmpresa.builder().idUsuario(d.getIdUsuario()).idEmpresa(d.getIdEmpresa()).build();
     }
 }

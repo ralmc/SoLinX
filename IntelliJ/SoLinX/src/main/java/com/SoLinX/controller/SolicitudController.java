@@ -54,7 +54,7 @@ public class SolicitudController {
      */
     private String[] obtenerDatosUsuarioEstudiante(Integer boleta) {
         try {
-            UsuarioEstudiante ue = usuarioEstudianteRepository.findByBoleta(boleta);
+            UsuarioEstudiante ue = usuarioEstudianteRepository.findByBoleta(boleta).orElse(null);
             if (ue == null) return new String[]{null, null};
 
             Optional<Usuario> usuarioOpt = usuarioRepository.findById(ue.getIdUsuario());

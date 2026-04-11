@@ -48,6 +48,7 @@ public class ProyectoServiceImpl implements ProyectoService {
             aux.setFechaInicio(bProyecto.getFechaInicio());
             aux.setFechaTermino(bProyecto.getFechaTermino());
             aux.setImagenRef(bProyecto.getImagenRef());
+            aux.setImagenProyecto(bProyecto.getImagenProyecto());
             aux.setEmpresa(bProyecto.getEmpresa());
 
             return proyectoRepository.save(aux);

@@ -11,6 +11,7 @@ import com.SoLinX.repository.SolicitudRepository;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.ProyectoService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequestMapping("/SoLinX/api")
 @RestController
 @AllArgsConstructor
@@ -28,7 +30,6 @@ public class ProyectoController {
     private final UsuarioRepository usuarioRepository;
     private final EmpresaRepository empresaRepository;
     private final SolicitudRepository solicitudRepository;
-
 
     @PostMapping("/proyecto")
     public ResponseEntity<ProyectoDto> save(@RequestBody ProyectoDto dto) {
@@ -63,9 +64,9 @@ public class ProyectoController {
      * NUEVO: Devuelve los proyectos que el alumno debe ver en su pantalla.
      *
      * 1. Si ya tiene una solicitud en estado 'aprobada' → devuelve enProyecto=true
-     *    con la info del proyecto al que pertenece y el correo de la empresa.
+     * con la info del proyecto al que pertenece y el correo de la empresa.
      * 2. Si no → devuelve la lista de proyectos DISPONIBLES, excluyendo los que
-     *    el alumno ya tiene en estados 'enviada', 'aprobada_supervisor', 'aceptada'.
+     * el alumno ya tiene en estados 'enviada', 'aprobada_supervisor', 'aceptada'.
      */
     @GetMapping("/proyecto/alumno/{boleta}")
     public ResponseEntity<ProyectoAlumnoResponseDto> listarParaAlumno(
@@ -83,7 +84,7 @@ public class ProyectoController {
                 String correoEmpresa = null;
                 try {
                     if (proyecto.getEmpresa() != null) {
-                        Usuario u = usuarioRepository.findByEmpresaId(proyecto.getEmpresa().getIdEmpresa());
+                        Usuario u = usuarioRepository.findByEmpresaId(proyecto.getEmpresa().getIdEmpresa()).orElse(null);
                         if (u != null) correoEmpresa = u.getCorreo();
                     }
                 } catch (Exception e) {
@@ -144,6 +145,7 @@ public class ProyectoController {
         proyectoService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
     @PutMapping("/proyecto/{id}/imagen")
     public ResponseEntity<String> actualizarImagenProyecto(
             @PathVariable("id") Integer id,
@@ -163,12 +165,12 @@ public class ProyectoController {
             if (empresa != null && empresa.getTelefono() != null) {
                 return empresa.getTelefono();
             }
-            Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa);
+            Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa).orElse(null);
             if (usuario != null && usuario.getTelefono() != null) {
                 return usuario.getTelefono();
             }
         } catch (Exception e) {
-            System.err.println("Error obteniendo teléfono: " + e.getMessage());
+            log.warn("Error obteniendo teléfono de empresa {}: {}", idEmpresa, e.getMessage());
         }
         return "No disponible";
     }
@@ -186,6 +188,7 @@ public class ProyectoController {
                 .ubicacion(proyecto.getUbicacion())
                 .fechaTermino(proyecto.getFechaTermino())
                 .imagenRef(proyecto.getImagenRef())
+                .imagenProyecto(proyecto.getImagenProyecto())
                 .idEmpresa(idEmpresa)
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
                 .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible")
@@ -213,6 +216,7 @@ public class ProyectoController {
                 .fechaInicio(fechaRegistro)
                 .fechaTermino(dto.getFechaTermino())
                 .imagenRef(imagenFinal)
+                .imagenProyecto(dto.getImagenProyecto())
                 .empresa(empresa)
                 .build();
     }

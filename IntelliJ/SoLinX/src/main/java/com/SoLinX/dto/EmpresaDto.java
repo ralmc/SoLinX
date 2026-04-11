@@ -10,4 +10,5 @@ public class EmpresaDto {
     private String nombreEmpresa;
     private String telefono;
     private String correo;
+
 }

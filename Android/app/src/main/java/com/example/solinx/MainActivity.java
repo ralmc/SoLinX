@@ -2,10 +2,7 @@ package com.example.solinx;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,57 +10,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.solinx.CONEXION.InicioHelper;
 import com.example.solinx.UTIL.ThemeUtils;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private TextView solinx;
-    private ImageView imgLogoAve;
-    Button btnIniciarSesion, btnCrearCuenta;
-    private TextView tvAlumno, tvEmpresa, tvSupervisor;
-    private LinearLayout layoutInferior;
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        solinx = findViewById(R.id.solinx);
-        imgLogoAve = findViewById(R.id.imgLogoAve);
-        btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
-        btnCrearCuenta = findViewById(R.id.btnCrearCuenta);
-        tvAlumno = findViewById(R.id.tvAlumno);
-        tvEmpresa = findViewById(R.id.tvEmpresa);
-        tvSupervisor = findViewById(R.id.tvSupervisor);
-        layoutInferior = findViewById(R.id.layoutInferior);
+        Button btnIniciarSesion = findViewById(R.id.btnIniciarSesion);
+        Button btnCrearCuenta   = findViewById(R.id.btnCrearCuenta);
+        TextView tvEmpresa      = findViewById(R.id.tvEmpresa);
+        TextView tvSupervisor   = findViewById(R.id.tvSupervisor);
 
-        btnIniciarSesion.setOnClickListener(this);
-        btnCrearCuenta.setOnClickListener(this);
-        tvSupervisor.setOnClickListener(this);
-        tvEmpresa.setOnClickListener(this);
-        tvAlumno.setOnClickListener(this);
+        btnIniciarSesion.setOnClickListener(v -> irA(InicioHelper.EXTRA_INICIAR));
+        tvSupervisor.setOnClickListener(v    -> irA(InicioHelper.EXTRA_INICIAR));
+        btnCrearCuenta.setOnClickListener(v  -> irA(InicioHelper.EXTRA_CREAR));
+        tvEmpresa.setOnClickListener(v       -> irA(InicioHelper.EXTRA_CREAR_E));
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.btnIniciarSesion) {
-            iniciarSesion();
-        } else if (v.getId() == R.id.btnCrearCuenta) {
-            Intent intent = new Intent(this, InicioHelper.class);
-            intent.putExtra("CREAR","CREAR");
-            startActivity(intent);
-        } else if (v.getId() == R.id.tvSupervisor) {
-            iniciarSesion();
-        } else if (v.getId() == R.id.tvEmpresa) {
-            Intent intent = new Intent(this, InicioHelper.class);
-            intent.putExtra("CREARe","CREARe");
-            startActivity(intent);
-        }
-    }
-
-    public void iniciarSesion() {
+    private void irA(String accion) {
         Intent intent = new Intent(this, InicioHelper.class);
-        intent.putExtra("INICIAR","INICIAR");
+        intent.putExtra("accion", accion);
         startActivity(intent);
     }
 }

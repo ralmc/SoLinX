@@ -50,7 +50,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_menu_edit"
             app:startIconTint="?attr/colorSecondary">
@@ -72,7 +74,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             app:startIconTint="?attr/colorSecondary">
@@ -94,7 +98,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_dialog_map"
             app:startIconTint="?attr/colorSecondary">
@@ -118,7 +124,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_menu_agenda"
             app:startIconTint="?attr/colorSecondary">
@@ -142,7 +150,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_dialog_email"
             app:startIconTint="?attr/colorSecondary">
@@ -164,7 +174,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_dialog_email"
             app:startIconTint="?attr/colorSecondary">
@@ -186,7 +198,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="?attr/colorSecondary"
@@ -210,7 +224,9 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:boxStrokeColor="?attr/colorSecondary"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
             app:hintTextColor="?attr/colorSecondary"
             app:passwordToggleEnabled="true"
             app:passwordToggleTint="?attr/colorSecondary"
@@ -269,5 +285,6 @@
             android:focusable="true" />
 
         <View android:layout_width="match_parent" android:layout_height="20dp" />
+
     </LinearLayout>
 </ScrollView>

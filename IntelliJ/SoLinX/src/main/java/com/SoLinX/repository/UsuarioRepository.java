@@ -6,15 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+    Optional<Usuario> findByCorreoAndUserPassword(String correo, String userPassword);
+    Optional<Usuario> findByCorreo(String correo);
 
-    Usuario findByCorreoAndUserPassword(String correo, String userPassword);
-    Usuario findByCorreo(String correo);
-
-    @Query("SELECT u FROM Usuario u " +
+    @Query(value = "SELECT u.* FROM usuario u " +
             "JOIN UsuarioEmpresa ue ON u.idUsuario = ue.idUsuario " +
-            "WHERE ue.idEmpresa = :idEmpresa")
-    Usuario findByEmpresaId(@Param("idEmpresa") Integer idEmpresa);
-    
+            "WHERE ue.idEmpresa = :idEmpresa", nativeQuery = true)
+    Optional<Usuario> findByEmpresaId(@Param("idEmpresa") Integer idEmpresa);
+
 }

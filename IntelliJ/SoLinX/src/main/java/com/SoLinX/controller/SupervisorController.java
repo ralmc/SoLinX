@@ -8,53 +8,39 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/SoLinX/api/supervisor")
 @RestController
+@RequestMapping("/SoLinX/api/supervisor")
 @AllArgsConstructor
 public class SupervisorController {
 
-    private final SupervisorApproveService SupervisorApproveService;
+    private final SupervisorApproveService supervisorApproveService;
 
     @GetMapping("/datos")
-    public ResponseEntity<SupervisorResponseDto> getSupervisorData(@RequestParam Integer idUsuario) {
-        SupervisorResponseDto response = SupervisorApproveService.getSupervisorData(idUsuario);
-
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(404).body(response);
-        }
-        return ResponseEntity.ok(response);
+    public ResponseEntity<SupervisorResponseDto> getSupervisorData(
+            @RequestParam(name = "idUsuario") Integer idUsuario) {
+        SupervisorResponseDto response = supervisorApproveService.getSupervisorData(idUsuario);
+        return response.getSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(404).body(response);
     }
 
     @GetMapping("/solicitudes-enviadas")
-    public ResponseEntity<SolicitudesResponseDto> getSolicitudesEnviadas(@RequestParam Integer idSupervisor) {
-        SolicitudesResponseDto response = SupervisorApproveService.getSolicitudesEnviadas(idSupervisor);
-
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(500).body(response);
-        }
-        return ResponseEntity.ok(response);
+    public ResponseEntity<SolicitudesResponseDto> getSolicitudesEnviadas(
+            @RequestParam(name = "idSupervisor") Integer idSupervisor) {
+        SolicitudesResponseDto response = supervisorApproveService.getSolicitudesEnviadas(idSupervisor);
+        return response.getSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(500).body(response);
     }
 
     @GetMapping("/solicitudes-aceptadas")
-    public ResponseEntity<SolicitudesResponseDto> getSolicitudesAceptadas(@RequestParam Integer idEmpresa) {
-        SolicitudesResponseDto response = SupervisorApproveService.getSolicitudesAceptadas(idEmpresa);
-
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(500).body(response);
-        }
-        return ResponseEntity.ok(response);
+    public ResponseEntity<SolicitudesResponseDto> getSolicitudesAceptadas(
+            @RequestParam(name = "idEmpresa") Integer idEmpresa) {
+        SolicitudesResponseDto response = supervisorApproveService.getSolicitudesAceptadas(idEmpresa);
+        return response.getSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(500).body(response);
     }
 
     @PostMapping("/actualizar-solicitud")
     public ResponseEntity<AprobacionResponseDto> actualizarSolicitud(
-            @RequestParam Integer idSolicitud,
-            @RequestParam String nuevoEstado) {
-
-        AprobacionResponseDto response = SupervisorApproveService.actualizarSolicitud(idSolicitud, nuevoEstado);
-
-        if (!response.getSuccess()) {
-            return ResponseEntity.status(400).body(response);
-        }
-        return ResponseEntity.ok(response);
+            @RequestParam(name = "idSolicitud") Integer idSolicitud,
+            @RequestParam(name = "nuevoEstado") String nuevoEstado) {
+        AprobacionResponseDto response = supervisorApproveService.actualizarSolicitud(idSolicitud, nuevoEstado);
+        return response.getSuccess() ? ResponseEntity.ok(response) : ResponseEntity.status(400).body(response);
     }
 }

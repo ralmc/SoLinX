@@ -16,6 +16,7 @@ public class ProyectoDto {
     private String carreraEnfocada;
     private String nombreProyecto;
     private String imagenRef;
+    private String imagenProyecto;
     private String nombreEmpresa;
     private String objetivo;
     private Date fechaInicio;

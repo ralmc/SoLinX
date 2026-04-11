@@ -1,14 +1,11 @@
 package com.SoLinX.service.impl;
 
 import com.SoLinX.dto.RegistroDto;
-import com.SoLinX.model.Estudiante;
-import com.SoLinX.model.Usuario;
-import com.SoLinX.model.UsuarioEstudiante;
-import com.SoLinX.repository.EstudianteRepository;
-import com.SoLinX.repository.UsuarioEstudianteRepository;
-import com.SoLinX.repository.UsuarioRepository;
+import com.SoLinX.model.*;
+import com.SoLinX.repository.*;
 import com.SoLinX.service.RegistroService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,63 +15,62 @@ public class RegistroServiceImpl implements RegistroService {
     private final UsuarioRepository usuarioRepository;
     private final EstudianteRepository estudianteRepository;
     private final UsuarioEstudianteRepository usuarioEstudianteRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
+    private boolean esPasswordSeguro(String password) {
+        if (password == null) return false;
+        return password.length() >= 8 &&
+                password.matches(".*[A-Z].*") &&
+                password.matches(".*[a-z].*") &&
+                password.matches(".*\\d.*") &&
+                password.matches(".*[@$!%*?&].*");
+    }
+
+    @Override
     public String registrar(RegistroDto dto) {
 
-        // Validar que los correos coincidan
-        if (!dto.getCorreo().equals(dto.getConfirmarCorreo())) {
+        if (!dto.getCorreo().equals(dto.getConfirmarCorreo()))
             return "Los correos no coinciden.";
-        }
 
-        // Validar que las contraseñas coincidan
-        if (!dto.getContraseña().equals(dto.getConfirmarContraseña())) {
+        if (!dto.getContraseña().equals(dto.getConfirmarContraseña()))
             return "Las contraseñas no coinciden.";
-        }
 
-        // Validar que el correo no esté registrado
-        if (usuarioRepository.findByCorreo(dto.getCorreo()) != null) {
+        if (!esPasswordSeguro(dto.getContraseña()))
+            return "Contraseña insegura.";
+
+        if (usuarioRepository.findByCorreo(dto.getCorreo()).isPresent())
             return "El correo ya está registrado.";
-        }
 
-        // NUEVA VALIDACIÓN: Verificar si la boleta ya está registrada
-        Estudiante estudianteExistente = estudianteRepository.findById(dto.getBoleta()).orElse(null);
+        Estudiante estudianteExistente =
+                estudianteRepository.findById(dto.getBoleta()).orElse(null);
+
         if (estudianteExistente != null) {
-            // Verificar si ya tiene un usuario asociado
-            UsuarioEstudiante usuarioEstudianteExistente = usuarioEstudianteRepository.findByBoleta(dto.getBoleta());
-            if (usuarioEstudianteExistente != null) {
+            if (usuarioEstudianteRepository.findByBoleta(dto.getBoleta()).isPresent())
                 return "La boleta ya está registrada.";
-            }
         }
 
-        // Crear o actualizar estudiante
-        Estudiante est = estudianteExistente;
-        if (est == null) {
-            est = Estudiante.builder()
-                    .boleta(dto.getBoleta())
-                    .carrera(dto.getCarrera())
-                    .escuela(dto.getEscuela())
-                    .build();
-            estudianteRepository.save(est);
-        }
+        Estudiante est = (estudianteExistente != null)
+                ? estudianteExistente
+                : estudianteRepository.save(Estudiante.builder()
+                .boleta(dto.getBoleta())
+                .carrera(dto.getCarrera())
+                .escuela(dto.getEscuela())
+                .build());
 
-        // Crear usuario
-        Usuario u = Usuario.builder()
+        String hash = passwordEncoder.encode(dto.getContraseña());
+
+        Usuario u = usuarioRepository.save(Usuario.builder()
                 .nombre(dto.getNombreUsuario())
                 .correo(dto.getCorreo())
-                .telefono(null)
-                .userPassword(dto.getContraseña())
+                .userPassword(hash)
                 .rol("estudiante")
-                .build();
+                .verificado(false)
+                .build());
 
-        usuarioRepository.save(u);
-
-        // Crear relación usuario-estudiante
-        UsuarioEstudiante ue = UsuarioEstudiante.builder()
+        usuarioEstudianteRepository.save(UsuarioEstudiante.builder()
                 .idUsuario(u.getIdUsuario())
                 .boleta(est.getBoleta())
-                .build();
-
-        usuarioEstudianteRepository.save(ue);
+                .build());
 
         return "Registro exitoso";
     }

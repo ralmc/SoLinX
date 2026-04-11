@@ -6,27 +6,28 @@ import com.SoLinX.repository.*;
 import com.SoLinX.service.NotificacionService;
 import com.SoLinX.service.SupervisorApproveService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class SupervisorApproveServiceImpl implements SupervisorApproveService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final SupervisorRepository supervisorRepository;
+    private final UsuarioRepository           usuarioRepository;
+    private final SupervisorRepository        supervisorRepository;
     private final UsuarioSupervisorRepository usuarioSupervisorRepository;
-    private final EmpresaRepository empresaRepository;
-    private final SolicitudRepository solicitudRepository;
-    private final EstudianteRepository estudianteRepository;
+    private final EmpresaRepository           empresaRepository;
+    private final SolicitudRepository         solicitudRepository;
+    private final EstudianteRepository        estudianteRepository;
     private final UsuarioEstudianteRepository usuarioEstudianteRepository;
-    private final ProyectoRepository proyectoRepository;
-    private final NotificacionService notificacionService;
+    private final ProyectoRepository          proyectoRepository;
+    private final NotificacionService         notificacionService;
 
     private static final SimpleDateFormat FORMATO_FECHA =
             new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -35,39 +36,19 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
     public SupervisorResponseDto getSupervisorData(Integer idUsuario) {
         try {
             Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
-            if (usuarioOpt.isEmpty()) {
-                return SupervisorResponseDto.builder()
-                        .success(false)
-                        .message("Usuario no encontrado")
-                        .supervisor(null)
-                        .build();
-            }
+            if (usuarioOpt.isEmpty()) return error("Usuario no encontrado");
 
             Usuario usuario = usuarioOpt.get();
 
             UsuarioSupervisor usuarioSupervisor = usuarioSupervisorRepository.findByIdUsuario(idUsuario);
-            if (usuarioSupervisor == null) {
-                return SupervisorResponseDto.builder()
-                        .success(false)
-                        .message("Supervisor no encontrado")
-                        .supervisor(null)
-                        .build();
-            }
+            if (usuarioSupervisor == null) return error("Supervisor no encontrado");
 
             Optional<Supervisor> supervisorOpt = supervisorRepository.findById(usuarioSupervisor.getIdSupervisor());
-            if (supervisorOpt.isEmpty()) {
-                return SupervisorResponseDto.builder()
-                        .success(false)
-                        .message("Datos de supervisor no encontrados")
-                        .supervisor(null)
-                        .build();
-            }
+            if (supervisorOpt.isEmpty()) return error("Datos de supervisor no encontrados");
 
             Supervisor supervisor = supervisorOpt.get();
 
             Empresa empresa = supervisor.getEmpresa();
-            String nombreEmpresa = empresa != null ? empresa.getNombreEmpresa() : "Empresa no encontrada";
-            Integer idEmpresa = empresa != null ? empresa.getIdEmpresa() : null;
 
             SupervisorDto supervisorDTO = SupervisorDto.builder()
                     .idSupervisor(supervisor.getIdSupervisor())
@@ -76,8 +57,8 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .correo(usuario.getCorreo())
                     .telefono(usuario.getTelefono())
                     .area(supervisor.getArea())
-                    .idEmpresa(idEmpresa)
-                    .nombreEmpresa(nombreEmpresa)
+                    .idEmpresa(empresa != null ? empresa.getIdEmpresa() : null)
+                    .nombreEmpresa(empresa != null ? empresa.getNombreEmpresa() : "Empresa no encontrada")
                     .build();
 
             return SupervisorResponseDto.builder()
@@ -87,111 +68,63 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .build();
 
         } catch (Exception e) {
-            return SupervisorResponseDto.builder()
-                    .success(false)
-                    .message("Error al obtener datos: " + e.getMessage())
-                    .supervisor(null)
-                    .build();
+            return error("Error al obtener datos: " + e.getMessage());
         }
     }
 
     @Override
     public SolicitudesResponseDto getSolicitudesEnviadas(Integer idSupervisor) {
         try {
-            List<Solicitud> solicitudes = solicitudRepository.findSolicitudesEnviadasBySupervisor(idSupervisor);
-
-            List<SolicitudDto> solicitudesDTO = new ArrayList<>();
-            for (Solicitud sol : solicitudes) {
-                SolicitudDto dto = convertirSolicitudADTO(sol);
-                if (dto != null) {
-                    solicitudesDTO.add(dto);
-                }
-            }
+            List<SolicitudDto> dtos = convertirLista(
+                    solicitudRepository.findSolicitudesEnviadasBySupervisor(idSupervisor));
 
             return SolicitudesResponseDto.builder()
-                    .success(true)
-                    .message("Solicitudes obtenidas correctamente")
-                    .solicitudes(solicitudesDTO)
-                    .build();
-
+                    .success(true).message("Solicitudes obtenidas correctamente")
+                    .solicitudes(dtos).build();
         } catch (Exception e) {
             return SolicitudesResponseDto.builder()
-                    .success(false)
-                    .message("Error al obtener solicitudes: " + e.getMessage())
-                    .solicitudes(new ArrayList<>())
-                    .build();
+                    .success(false).message("Error: " + e.getMessage())
+                    .solicitudes(new ArrayList<>()).build();
         }
     }
 
     @Override
     public SolicitudesResponseDto getSolicitudesAceptadas(Integer idEmpresa) {
         try {
-            List<Solicitud> solicitudes = solicitudRepository.findSolicitudesAceptadasByEmpresa(idEmpresa);
-
-            List<SolicitudDto> solicitudesDTO = new ArrayList<>();
-            for (Solicitud sol : solicitudes) {
-                SolicitudDto dto = convertirSolicitudADTO(sol);
-                if (dto != null) {
-                    solicitudesDTO.add(dto);
-                }
-            }
+            List<SolicitudDto> dtos = convertirLista(
+                    solicitudRepository.findSolicitudesAceptadasByEmpresa(idEmpresa));
 
             return SolicitudesResponseDto.builder()
-                    .success(true)
-                    .message("Aceptaciones obtenidas correctamente")
-                    .solicitudes(solicitudesDTO)
-                    .build();
-
+                    .success(true).message("Aceptaciones obtenidas correctamente")
+                    .solicitudes(dtos).build();
         } catch (Exception e) {
             return SolicitudesResponseDto.builder()
-                    .success(false)
-                    .message("Error al obtener aceptaciones: " + e.getMessage())
-                    .solicitudes(new ArrayList<>())
-                    .build();
+                    .success(false).message("Error: " + e.getMessage())
+                    .solicitudes(new ArrayList<>()).build();
         }
     }
 
-    /**
-     * Actualiza el estado de una solicitud desde el flujo del supervisor.
-     *
-     * Estados que acepta el supervisor:
-     *   - "aprobada_supervisor"  → Paso 1: supervisor aprueba, pasa a empresa
-     *   - "rechazada_supervisor" → Paso 1: supervisor rechaza
-     *   - "aprobada"             → Paso 4: supervisor da visto bueno final
-     *   - "rechazada"            → Paso 4: supervisor rechaza el visto bueno final
-     *
-     * En cada caso se notifica al alumno.
-     */
     @Override
     public AprobacionResponseDto actualizarSolicitud(Integer idSolicitud, String nuevoEstado) {
         try {
             Optional<Solicitud> solicitudOpt = solicitudRepository.findById(idSolicitud);
-
-            if (solicitudOpt.isEmpty()) {
-                return AprobacionResponseDto.builder()
-                        .success(false)
-                        .message("Solicitud no encontrada")
-                        .build();
-            }
+            if (solicitudOpt.isEmpty()) return AprobacionResponseDto.builder()
+                    .success(false).message("Solicitud no encontrada").build();
 
             Solicitud solicitud = solicitudOpt.get();
 
-            // Normalizar valores que llegan del Android (aprobada/rechazada) según el estado actual
+            // Normalizar valores que llegan del Android según el estado actual
             String estadoActual = solicitud.getEstadoSolicitud();
             String estadoFinal = nuevoEstado;
 
-            // Si viene "aprobada" o "rechazada" genéricas, determinar cuál es según el paso en el que está
             if ("aprobada".equalsIgnoreCase(nuevoEstado)) {
                 if ("enviada".equalsIgnoreCase(estadoActual)) {
-                    // Paso 1: supervisor está aprobando por primera vez
                     estadoFinal = "aprobada_supervisor";
                 }
-                // Si ya estaba en 'aceptada' (empresa admitió), queda 'aprobada' (visto bueno final)
             } else if ("rechazada".equalsIgnoreCase(nuevoEstado)) {
                 if ("enviada".equalsIgnoreCase(estadoActual)) {
                     estadoFinal = "rechazada_supervisor";
                 }
-                // Si estaba en 'aceptada', queda 'rechazada' (rechazo final)
             }
 
             solicitud.setEstadoSolicitud(estadoFinal);
@@ -205,7 +138,7 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
             try {
                 idUsuarioAlumno = solicitud.getEstudiante().getUsuarioEstudiante().getIdUsuario();
             } catch (Exception e) {
-                System.out.println("No se pudo obtener idUsuario del alumno: " + e.getMessage());
+                log.warn("No se pudo obtener idUsuario del alumno: {}", e.getMessage());
             }
 
             String mensaje;
@@ -231,7 +164,7 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     mensajeNotif = "Tu participación en el proyecto \"" + nombreProyecto +
                             "\" ha sido confirmada oficialmente por el supervisor.";
 
-                    // Cuando se da visto bueno final, descontar vacante y rechazar las demás pendientes del alumno
+                    // Cuando se da visto bueno final, descontar vacante y rechazar las demás
                     try {
                         Proyecto proyecto = solicitud.getProyecto();
                         if (proyecto != null) {
@@ -247,7 +180,7 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                         }
                         solicitudRepository.saveAll(pendientes);
                     } catch (Exception e) {
-                        System.out.println("Error al procesar paso final: " + e.getMessage());
+                        log.error("Error al procesar paso final: {}", e.getMessage());
                     }
                     break;
                 case "rechazada":
@@ -265,7 +198,7 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                 try {
                     notificacionService.crear(idUsuarioAlumno, tituloNotif, mensajeNotif);
                 } catch (Exception e) {
-                    System.out.println("Error al enviar notificación: " + e.getMessage());
+                    log.error("Error al enviar notificación: {}", e.getMessage());
                 }
             }
 
@@ -275,42 +208,50 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .build();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error general en actualizarSolicitud: ", e);
             return AprobacionResponseDto.builder()
-                    .success(false)
-                    .message("Error al actualizar: " + e.getMessage())
-                    .build();
+                    .success(false).message("Error al actualizar: " + e.getMessage()).build();
         }
+    }
+
+    // ─── Helpers ───────────────────────────────────────────────────────────────
+    private List<SolicitudDto> convertirLista(List<Solicitud> solicitudes) {
+        List<SolicitudDto> dtos = new ArrayList<>();
+        for (Solicitud sol : solicitudes) {
+            SolicitudDto dto = convertirSolicitudADTO(sol);
+            if (dto != null) dtos.add(dto);
+        }
+        return dtos;
     }
 
     private SolicitudDto convertirSolicitudADTO(Solicitud solicitud) {
         try {
             Estudiante estudiante = solicitud.getEstudiante();
-            if (estudiante == null) return null;
+            if (estudiante == null) { log.warn("Estudiante no encontrado en solicitud ID: {}", solicitud.getIdSolicitud()); return null; }
 
-            UsuarioEstudiante usuarioEstudiante = usuarioEstudianteRepository.findByBoleta(estudiante.getBoleta());
-            if (usuarioEstudiante == null) return null;
+            // Usando un enfoque más seguro sin usar Optional directamente en un findBy que devuelve entidad
+            UsuarioEstudiante ue = usuarioEstudianteRepository.findByBoleta(estudiante.getBoleta()).orElse(null);
+            if (ue == null) { log.warn("UsuarioEstudiante no encontrado para boleta: {}", estudiante.getBoleta()); return null; }
 
-            Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioEstudiante.getIdUsuario());
-            if (usuarioOpt.isEmpty()) return null;
-            Usuario usuario = usuarioOpt.get();
+            Usuario usuario = usuarioRepository.findById(ue.getIdUsuario()).orElse(null);
+            if (usuario == null) { log.warn("Usuario no encontrado para idUsuario: {}", ue.getIdUsuario()); return null; }
 
             Proyecto proyecto = solicitud.getProyecto();
-            if (proyecto == null) return null;
+            if (proyecto == null) { log.warn("Proyecto no encontrado en solicitud ID: {}", solicitud.getIdSolicitud()); return null; }
 
             Empresa empresa = proyecto.getEmpresa();
             String nombreEmpresa = empresa != null ? empresa.getNombreEmpresa() : "Empresa no encontrada";
 
-            // Correo de la empresa
+            // Correo de la empresa (Lógica tuya)
             String correoEmpresa = null;
             if (empresa != null) {
                 try {
-                    Usuario usuarioEmpresa = usuarioRepository.findByEmpresaId(empresa.getIdEmpresa());
+                    Usuario usuarioEmpresa = usuarioRepository.findByEmpresaId(empresa.getIdEmpresa()).orElse(null);
                     if (usuarioEmpresa != null) {
                         correoEmpresa = usuarioEmpresa.getCorreo();
                     }
                 } catch (Exception e) {
-                    System.out.println("Error obteniendo correo empresa: " + e.getMessage());
+                    log.warn("Error obteniendo correo empresa: {}", e.getMessage());
                 }
             }
 
@@ -336,9 +277,12 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .build();
 
         } catch (Exception e) {
-            System.out.println("Error en convertirSolicitudADTO: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error en convertirSolicitudADTO: {}", e.getMessage());
             return null;
         }
+    }
+
+    private SupervisorResponseDto error(String mensaje) {
+        return SupervisorResponseDto.builder().success(false).message(mensaje).supervisor(null).build();
     }
 }

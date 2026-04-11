@@ -50,6 +50,7 @@ public class EmpresaVistaCuenta extends AppCompatActivity {
 
     private ImageButton btnRegresar;
     private TextView tvNombre, tvCorreo, tvTelefono;
+    private TextView tvNombrePersona;
     private TextView btnContactarSoporte, btnCerrarSesion;
     private ImageView imgPerfil;
     private View viewModoClaro, viewModoOscuro;
@@ -74,6 +75,7 @@ public class EmpresaVistaCuenta extends AppCompatActivity {
         setupImagePicker();
         cargarDatosEmpresa();
         cargarFotoPerfil();
+        mostrarNombrePersonaEnHeader();
         setupListeners();
         actualizarIndicadoresTema();
     }
@@ -83,11 +85,31 @@ public class EmpresaVistaCuenta extends AppCompatActivity {
         tvNombre            = findViewById(R.id.tvNombre);
         tvCorreo            = findViewById(R.id.tvCorreo);
         tvTelefono          = findViewById(R.id.tvTelefono);
+        tvNombrePersona     = findViewById(R.id.tvNombrePersona);
         imgPerfil           = findViewById(R.id.imgPerfil);
         viewModoClaro       = findViewById(R.id.viewModoClaro);
         viewModoOscuro      = findViewById(R.id.viewModoOscuro);
         btnContactarSoporte = findViewById(R.id.btnContactarSoporte);
         btnCerrarSesion     = findViewById(R.id.btnCerrarSesion);
+    }
+
+    private void mostrarNombrePersonaEnHeader() {
+        if (tvNombrePersona == null) return;
+
+        SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+        String nombrePersona = prefs.getString("nombre", "Empresa");
+
+        if (nombrePersona == null || nombrePersona.isEmpty()) {
+            nombrePersona = "Empresa";
+        }
+
+        tvNombrePersona.setText(nombrePersona);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mostrarNombrePersonaEnHeader();
     }
 
     private void setupImagePicker() {
@@ -121,20 +143,41 @@ public class EmpresaVistaCuenta extends AppCompatActivity {
                     EmpresaDTO e = response.body();
                     nombreEmpresa = e.getNombreEmpresa() != null ? e.getNombreEmpresa() : "";
                     runOnUiThread(() -> {
-                        tvNombre.setText(e.getNombreEmpresa() != null ? e.getNombreEmpresa() : "N/A");
-                        tvCorreo.setText(e.getCorreo() != null ? e.getCorreo() : "N/A");
-                        tvTelefono.setText(e.getTelefono() != null ? e.getTelefono() : "N/A");
+                        if (isFinishing() || isDestroyed()) return;
+
+                        // Leer el nombre de la PERSONA que maneja la empresa desde prefs
+                        android.content.SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+                        String nombrePersona = prefs.getString("nombre", "");
+
+                        if (tvNombre != null) {
+                            // Mostrar el nombre completo de la persona (con apellidos)
+                            if (nombrePersona != null && !nombrePersona.isEmpty()) {
+                                tvNombre.setText(nombrePersona);
+                            } else {
+                                tvNombre.setText(e.getNombreEmpresa() != null ? e.getNombreEmpresa() : "N/A");
+                            }
+                        }
+                        if (tvCorreo != null) {
+                            tvCorreo.setText(e.getCorreo() != null ? e.getCorreo() : "N/A");
+                        }
+                        if (tvTelefono != null) {
+                            tvTelefono.setText(e.getTelefono() != null ? e.getTelefono() : "N/A");
+                        }
                     });
                 } else {
-                    Toast.makeText(EmpresaVistaCuenta.this,
-                            "No se pudieron cargar los datos", Toast.LENGTH_SHORT).show();
+                    if (!isFinishing() && !isDestroyed()) {
+                        Toast.makeText(EmpresaVistaCuenta.this,
+                                "No se pudieron cargar los datos", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<EmpresaDTO> call, @NonNull Throwable t) {
-                Toast.makeText(EmpresaVistaCuenta.this,
-                        "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                if (!isFinishing() && !isDestroyed()) {
+                    Toast.makeText(EmpresaVistaCuenta.this,
+                            "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

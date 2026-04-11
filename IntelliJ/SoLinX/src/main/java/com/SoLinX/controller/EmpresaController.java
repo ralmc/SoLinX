@@ -24,7 +24,7 @@ public class EmpresaController {
         // Buscar el correo del usuario asociado a la empresa
         String correo = null;
         try {
-            Usuario u = usuarioRepository.findByEmpresaId(emp.getIdEmpresa());
+            Usuario u = usuarioRepository.findByEmpresaId(emp.getIdEmpresa()).orElse(null);
             if (u != null) correo = u.getCorreo();
         } catch (Exception e) {
             // Si falla, correo queda null
@@ -42,6 +42,7 @@ public class EmpresaController {
     public ResponseEntity<EmpresaDto> save(@RequestBody EmpresaDto dto) {
         Empresa empresa = Empresa.builder()
                 .nombreEmpresa(dto.getNombreEmpresa())
+                .telefono(dto.getTelefono())
                 .build();
         Empresa empresaGuardada = empresaRepository.save(empresa);
         return ResponseEntity.ok(convertirEntidadADto(empresaGuardada));
@@ -69,6 +70,7 @@ public class EmpresaController {
         Empresa empresaExistente = empresaRepository.findById(id).orElse(null);
         if (empresaExistente == null) return ResponseEntity.notFound().build();
         empresaExistente.setNombreEmpresa(dto.getNombreEmpresa());
+        empresaExistente.setTelefono(dto.getTelefono());
         Empresa actualizada = empresaRepository.save(empresaExistente);
         return ResponseEntity.ok(convertirEntidadADto(actualizada));
     }

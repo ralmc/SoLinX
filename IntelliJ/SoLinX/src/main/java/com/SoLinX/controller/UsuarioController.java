@@ -2,7 +2,6 @@ package com.SoLinX.controller;
 
 import com.SoLinX.dto.UsuarioDto;
 import com.SoLinX.model.Usuario;
-import com.SoLinX.service.UsuarioEmpresaService; // Asegúrate de tener este service o repository
 import com.SoLinX.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,47 +10,66 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequestMapping("/SoLinX/api")
 @RestController
+@RequestMapping("/SoLinX/api")
 @AllArgsConstructor
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
-    private final UsuarioEmpresaService usuarioEmpresaService;
 
-    @RequestMapping("/usuario")
-    public ResponseEntity<List<UsuarioDto>> lista(@RequestParam (name = "nombre", defaultValue = "", required = false) String nombre) {
+    @GetMapping("/usuario")
+    public ResponseEntity<List<UsuarioDto>> lista(
+            @RequestParam(required = false) String nombre) {
         List<Usuario> usuarios = usuarioService.getAll();
-        if(usuarios == null || usuarios.size()== 0) {
-            return ResponseEntity.notFound().build( );
-        } if( nombre != null && !nombre.isEmpty()) {
-            return ResponseEntity.ok( usuarios.stream().filter(u -> u.getNombre().equals(nombre) ).map( u -> UsuarioDto.builder().idUsuario(u.getIdUsuario()).nombre(u.getNombre()).correo(u.getCorreo()).telefono(u.getTelefono()).userPassword(u.getUserPassword()).rol(u.getRol()).build()).collect(Collectors.toList()));
-        } return ResponseEntity.ok(usuarios.stream().map(u -> UsuarioDto.builder().idUsuario(u.getIdUsuario()).nombre(u.getNombre()).correo(u.getCorreo()).telefono(u.getTelefono()).userPassword(u.getUserPassword()).rol(u.getRol()).build()).collect(Collectors.toList()));
+        List<UsuarioDto> result = usuarios.stream()
+                .filter(u -> nombre == null || nombre.isEmpty() || u.getNombre().equals(nombre))
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
-    @RequestMapping("/usuario/{id}")
-    public ResponseEntity<UsuarioDto>getById(@PathVariable("id") Integer id) {
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<UsuarioDto> getById(@PathVariable Integer id) {
         Usuario u = usuarioService.getById(id);
-        if(u == null ) return  ResponseEntity.notFound().build();
-        return ResponseEntity.ok(UsuarioDto.builder().idUsuario(u.getIdUsuario()).nombre(u.getNombre()).correo(u.getCorreo()).telefono(u.getTelefono()).userPassword(u.getUserPassword()).rol(u.getRol()).build());
+        return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping( "/usuario")
-    public ResponseEntity<UsuarioDto> save(@RequestBody UsuarioDto usuarioDto) {
-        Usuario u = Usuario.builder().nombre( usuarioDto.getNombre()).correo( usuarioDto.getCorreo()).telefono(usuarioDto.getTelefono()).userPassword(usuarioDto.getUserPassword()).rol(usuarioDto.getRol()).build();
-        usuarioService.save(u);
-        return ResponseEntity.ok(UsuarioDto.builder().nombre(u.getNombre()).correo(u.getCorreo()).telefono(u.getTelefono()).userPassword(u.getUserPassword()).rol(u.getRol()).build());
+    @PostMapping("/usuario")
+    public ResponseEntity<UsuarioDto> save(@RequestBody UsuarioDto dto) {
+        return ResponseEntity.ok(toDto(usuarioService.save(fromDto(dto))));
     }
 
-    @DeleteMapping( "/usuario/{id}")
-    public ResponseEntity<UsuarioDto> delete(@PathVariable("id") Integer id) {
+    @PutMapping("/usuario/{id}")
+    public ResponseEntity<UsuarioDto> update(@PathVariable Integer id, @RequestBody UsuarioDto dto) {
+        Usuario updated = usuarioService.update(id, fromDto(dto));
+        return updated != null ? ResponseEntity.ok(toDto(updated)) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/usuario/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         usuarioService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping( "/usuario/{id}")
-    public ResponseEntity<UsuarioDto>update( @PathVariable("id") Integer id, @RequestBody UsuarioDto usuarioDto) {
-        Usuario aux = usuarioService.update( id, Usuario.builder().idUsuario( usuarioDto.getIdUsuario()).nombre( usuarioDto.getNombre()).correo( usuarioDto.getCorreo()).telefono(usuarioDto.getTelefono()).userPassword(usuarioDto.getUserPassword()).rol(usuarioDto.getRol()).build());
-        return ResponseEntity.ok(UsuarioDto.builder().idUsuario(aux.getIdUsuario()).nombre(aux.getNombre()).correo(aux.getCorreo()).telefono(aux.getTelefono()).userPassword(aux.getUserPassword()).rol(aux.getRol()).build());
+    private UsuarioDto toDto(Usuario u) {
+        return UsuarioDto.builder()
+                .idUsuario(u.getIdUsuario())
+                .nombre(u.getNombre())
+                .correo(u.getCorreo())
+                .telefono(u.getTelefono())
+                .userPassword(u.getUserPassword())
+                .rol(u.getRol())
+                .build();
+    }
+
+    private Usuario fromDto(UsuarioDto d) {
+        return Usuario.builder()
+                .idUsuario(d.getIdUsuario())
+                .nombre(d.getNombre())
+                .correo(d.getCorreo())
+                .telefono(d.getTelefono())
+                .userPassword(d.getUserPassword())
+                .rol(d.getRol())
+                .build();
     }
 }

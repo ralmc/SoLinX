@@ -38,6 +38,9 @@ public class Proyecto {
     @Column(name = "imagenRef")
     private String imagenRef;
 
+    @Column(name = "imagenProyecto", columnDefinition = "LONGTEXT")
+    private String imagenProyecto;
+
     @Column(name = "fechaInicio")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaInicio;
