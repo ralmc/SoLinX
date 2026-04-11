@@ -16,6 +16,21 @@
         android:gravity="center_horizontal"
         android:padding="30dp">
 
+
+        <ImageButton
+            android:id="@+id/btnRegresarFlecha"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Regresar"
+            android:scaleType="fitCenter"
+            android:layout_gravity="left"
+            android:src="@drawable/flechaizq"
+            app:tint="@color/flecha_color"
+            />
+
         <View android:layout_width="match_parent" android:layout_height="20dp" />
 
         <TextView

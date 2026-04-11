@@ -63,6 +63,12 @@
             android:name=".AlumnoVistaCuenta"
             android:exported="false" />
         <activity
+            android:name=".SupervisorVistaCuenta"
+            android:exported="false" />
+        <activity
+            android:name=".EmpresaVistaCuenta"
+            android:exported="false" />
+        <activity
             android:name=".AprobarSolicitudesAlumnosActivity"
             android:exported="false" />
         <activity

@@ -13,11 +13,13 @@ public class SolicitudDto {
 
     private Integer idSolicitud;
     private String fechaSolicitud;
+    private String fechaAceptacion;
     private String estadoSolicitud;
 
     private Integer boleta;
     private Integer boletaAlumno;
     private String nombreEstudiante;
+    private String correoEstudiante;
     private String carrera;
     private String carreraAlumno;
     private String escuela;
@@ -26,4 +28,5 @@ public class SolicitudDto {
     private Integer idProyecto;
     private String nombreProyecto;
     private String nombreEmpresa;
+    private String correoEmpresa;
 }

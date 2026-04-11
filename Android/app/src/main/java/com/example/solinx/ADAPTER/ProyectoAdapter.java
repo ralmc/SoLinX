@@ -2,6 +2,9 @@ package com.example.solinx.ADAPTER;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,12 +52,26 @@ public class ProyectoAdapter extends RecyclerView.Adapter<ProyectoAdapter.Proyec
 
         holder.txtVacantes.setText("Vacantes disponibles: " + proyecto.getVacantes());
 
-        holder.imgLogoEmpresa.setImageResource(R.drawable.solinx_logo);
+        // Pintar imagen Base64 si existe, si no usar el logo
+        if (proyecto.getImagenProyecto() != null && !proyecto.getImagenProyecto().isEmpty()) {
+            try {
+                byte[] bytes = Base64.decode(proyecto.getImagenProyecto(), Base64.DEFAULT);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (bmp != null) {
+                    holder.imgLogoEmpresa.setImageBitmap(bmp);
+                } else {
+                    holder.imgLogoEmpresa.setImageResource(R.drawable.solinx_logo);
+                }
+            } catch (Exception e) {
+                holder.imgLogoEmpresa.setImageResource(R.drawable.solinx_logo);
+            }
+        } else {
+            holder.imgLogoEmpresa.setImageResource(R.drawable.solinx_logo);
+        }
 
         holder.cardProyecto.setOnClickListener(v -> {
             Intent intent = new Intent(context, AlumnoEnviarSolicitud.class);
 
-            // Pasar TODOS los datos del proyecto
             intent.putExtra("proyectoId", proyecto.getIdProyecto());
             intent.putExtra("nombreEmpresa", proyecto.getNombreEmpresa());
             intent.putExtra("nombreProyecto", proyecto.getNombreProyecto());
@@ -66,6 +83,7 @@ public class ProyectoAdapter extends RecyclerView.Adapter<ProyectoAdapter.Proyec
             intent.putExtra("ubicacion", proyecto.getUbicacion());
             intent.putExtra("objetivo", proyecto.getObjetivo());
             intent.putExtra("imagenRef", proyecto.getImagenRef());
+            intent.putExtra("imagenProyecto", proyecto.getImagenProyecto());
             intent.putExtra("idEmpresa", proyecto.getIdEmpresa());
 
             context.startActivity(intent);

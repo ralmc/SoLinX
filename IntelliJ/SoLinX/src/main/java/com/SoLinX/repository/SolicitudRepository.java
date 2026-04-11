@@ -10,24 +10,29 @@ import java.util.List;
 public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
 
     @Query(value = """
-        SELECT s.* 
+        SELECT s.*
         FROM Solicitud s
         JOIN Proyecto p ON s.idProyecto = p.idProyecto
         WHERE p.idEmpresa = :idEmpresa
+          AND s.estadoSolicitud IN ('aprobada_supervisor', 'aceptada', 'rechazada_empresa')
     """, nativeQuery = true)
     List<Solicitud> findSolicitudesByEmpresa(@Param("idEmpresa") Integer idEmpresa);
 
+    /**
+     * El supervisor ve TODAS las solicitudes en estado 'enviada' sin importar la empresa.
+     * El parámetro idSupervisor se mantiene por compatibilidad del endpoint pero no se usa.
+     */
     @Query(value = "SELECT sol.* FROM Solicitud sol " +
-            "JOIN Proyecto proj ON sol.idProyecto = proj.idProyecto " +
-            "JOIN Empresa emp ON proj.idEmpresa = emp.idEmpresa " +
-            "JOIN Supervisor sup ON emp.idEmpresa = sup.idEmpresa " +
-            "WHERE sup.idSupervisor = :idSupervisor AND sol.estadoSolicitud = 'enviada'",
+            "WHERE sol.estadoSolicitud = 'enviada'",
             nativeQuery = true)
     List<Solicitud> findSolicitudesEnviadasBySupervisor(@Param("idSupervisor") Integer idSupervisor);
 
+    /**
+     * El supervisor ve TODAS las solicitudes en estado 'aceptada' (las que la empresa ya admitió)
+     * sin importar de qué empresa sean. El parámetro idEmpresa se mantiene por compatibilidad.
+     */
     @Query(value = "SELECT sol.* FROM Solicitud sol " +
-            "JOIN Proyecto proj ON sol.idProyecto = proj.idProyecto " +
-            "WHERE proj.idEmpresa = :idEmpresa AND sol.estadoSolicitud = 'aceptada'",
+            "WHERE sol.estadoSolicitud = 'aceptada'",
             nativeQuery = true)
     List<Solicitud> findSolicitudesAceptadasByEmpresa(@Param("idEmpresa") Integer idEmpresa);
 
@@ -45,4 +50,17 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
             @Param("boleta") Integer boleta,
             @Param("idSolicitudAceptada") Integer idSolicitudAceptada
     );
+
+    @Query(value = "SELECT sol.idProyecto FROM Solicitud sol " +
+            "WHERE sol.boleta = :boleta " +
+            "AND sol.estadoSolicitud IN ('enviada', 'aprobada_supervisor', 'aceptada', 'aprobada')",
+            nativeQuery = true)
+    List<Integer> findIdProyectosEnProcesoPorBoleta(@Param("boleta") Integer boleta);
+
+    @Query("SELECT s FROM Solicitud s " +
+            "JOIN FETCH s.proyecto p " +
+            "JOIN FETCH p.empresa e " +
+            "JOIN FETCH s.estudiante est " +
+            "WHERE est.boleta = :boleta AND s.estadoSolicitud = 'aprobada'")
+    List<Solicitud> findSolicitudAprobadaByBoleta(@Param("boleta") Integer boleta);
 }

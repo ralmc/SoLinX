@@ -4,19 +4,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.EmpresaDTO;
 import com.example.solinx.DTO.PerfilDTO;
 import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
@@ -31,11 +35,12 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
     ImageView btnRegresar, imgLogoProyecto, fotoPerfilHeader;
     TextView btnEnviar, txtNombreEmpresa, txtNombreProyecto, fechaini, fechafin;
     TextView txtCarreraEnfocada, telefono, vacantes, ubi, obj;
-    TextView btnboleta;
+    TextView btnboleta, btnEnviarCorreo;
 
     private Integer proyectoId;
     private Integer idEmpresa;
     private Integer boletaAlumno;
+    private String correoEmpresa = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,40 +64,34 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
         obj               = findViewById(R.id.objetivo);
         btnboleta         = findViewById(R.id.btnboleta);
         fotoPerfilHeader  = findViewById(R.id.fotoPerfilHeader);
+        btnEnviarCorreo   = findViewById(R.id.btnEnviarCorreo);
 
         btnEnviar.setOnClickListener(this);
         btnRegresar.setOnClickListener(this);
+        if (btnEnviarCorreo != null) btnEnviarCorreo.setOnClickListener(this);
 
         obtenerBoletaEstudiante();
         cargarFotoYBoleta();
         recibirDatosDelProyecto();
+        buscarCorreoEmpresa();
     }
 
     private void obtenerBoletaEstudiante() {
         SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
         String boletaStr = prefs.getString("boleta", null);
 
-        Log.d(TAG, "Boleta leída de SharedPreferences: " + boletaStr);
-
         if (boletaStr != null && !boletaStr.equals("N/A")) {
             try {
                 boletaAlumno = Integer.parseInt(boletaStr);
-                Log.d(TAG, "Boleta parseada: " + boletaAlumno);
             } catch (NumberFormatException e) {
-                Log.e(TAG, "Error al parsear boleta: " + boletaStr);
                 boletaAlumno = null;
             }
-        } else {
-            Log.e(TAG, "Boleta no encontrada o N/A");
-            boletaAlumno = null;
         }
     }
 
     private void cargarFotoYBoleta() {
         SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
         String boleta = prefs.getString("boleta", "N/A");
-
-        Log.d(TAG, "Cargando foto y boleta para: " + boleta);
 
         if (btnboleta != null) {
             btnboleta.setText(boleta);
@@ -140,6 +139,7 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
             int    vacantesDisponibles = intent.getIntExtra("vacantes", 0);
             String ubicacion           = intent.getStringExtra("ubicacion");
             String objetivo            = intent.getStringExtra("objetivo");
+            String imagenProyecto      = intent.getStringExtra("imagenProyecto");
 
             txtNombreEmpresa.setText(nombreEmpresa != null && !nombreEmpresa.isEmpty()
                     ? "Empresa: " + nombreEmpresa : "");
@@ -159,8 +159,47 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
             obj.setText("Objetivo: " + (objetivo != null && !objetivo.isEmpty()
                     ? objetivo : "No especificado"));
 
-            imgLogoProyecto.setImageResource(R.drawable.solinx_logo);
+            // Pintar imagen Base64 del proyecto si existe
+            if (imagenProyecto != null && !imagenProyecto.isEmpty()) {
+                try {
+                    byte[] bytes = Base64.decode(imagenProyecto, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (bmp != null) {
+                        imgLogoProyecto.setImageBitmap(bmp);
+                    } else {
+                        imgLogoProyecto.setImageResource(R.drawable.solinx_logo);
+                    }
+                } catch (Exception e) {
+                    imgLogoProyecto.setImageResource(R.drawable.solinx_logo);
+                }
+            } else {
+                imgLogoProyecto.setImageResource(R.drawable.solinx_logo);
+            }
         }
+    }
+
+    /**
+     * Busca el correo de la empresa usando el endpoint /empresa/{id}
+     * que ahora devuelve el correo asociado al usuario de la empresa.
+     */
+    private void buscarCorreoEmpresa() {
+        if (idEmpresa == null || idEmpresa == 0) return;
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.obtenerEmpresaPorId(idEmpresa).enqueue(new Callback<EmpresaDTO>() {
+            @Override
+            public void onResponse(Call<EmpresaDTO> call, Response<EmpresaDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    correoEmpresa = response.body().getCorreo();
+                    Log.d(TAG, "Correo empresa obtenido: " + correoEmpresa);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EmpresaDTO> call, Throwable t) {
+                Log.e(TAG, "No se pudo obtener correo empresa: " + t.getMessage());
+            }
+        });
     }
 
     @Override
@@ -170,7 +209,46 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
             finish();
         } else if (id == R.id.btnEnviar) {
             enviarSolicitud();
+        } else if (id == R.id.btnEnviarCorreo) {
+            abrirCorreoEmpresa();
         }
+    }
+
+    private void abrirCorreoEmpresa() {
+        String nombreEmpresa = getIntent().getStringExtra("nombreEmpresa");
+        String nombreProyecto = getIntent().getStringExtra("nombreProyecto");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enviar correo a " + (nombreEmpresa != null ? nombreEmpresa : "Empresa"));
+
+        final EditText input = new EditText(this);
+        input.setHint("Escribe tu mensaje aquí...");
+        input.setMinLines(3);
+        input.setPadding(40, 20, 40, 20);
+        builder.setView(input);
+
+        builder.setPositiveButton("Enviar", (dialog, which) -> {
+            String mensaje = input.getText().toString().trim();
+            if (mensaje.isEmpty()) {
+                Toast.makeText(this, "Escribe un mensaje", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String destinatario = (correoEmpresa != null && !correoEmpresa.isEmpty()) ? correoEmpresa : "";
+
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setData(Uri.parse("mailto:" + destinatario));
+            emailIntent.putExtra(Intent.EXTRA_SUBJECT,
+                    "SoLinX - Consulta sobre proyecto: " + (nombreProyecto != null ? nombreProyecto : ""));
+            emailIntent.putExtra(Intent.EXTRA_TEXT, mensaje);
+            try {
+                startActivity(Intent.createChooser(emailIntent, "Enviar correo con..."));
+            } catch (Exception e) {
+                Toast.makeText(this, "No hay app de correo disponible", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
     }
 
     private void enviarSolicitud() {
@@ -196,7 +274,6 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
         apiService.enviarSolicitud(solicitudDTO).enqueue(new Callback<SolicitudDTO>() {
             @Override
             public void onResponse(Call<SolicitudDTO> call, Response<SolicitudDTO> response) {
-                Log.d(TAG, "Response: " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(AlumnoEnviarSolicitud.this,
                             "¡Solicitud enviada con éxito!", Toast.LENGTH_SHORT).show();
@@ -212,7 +289,6 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
 
             @Override
             public void onFailure(Call<SolicitudDTO> call, Throwable t) {
-                Log.e(TAG, "Error de red: " + t.getMessage());
                 Toast.makeText(AlumnoEnviarSolicitud.this,
                         "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 btnEnviar.setEnabled(true);

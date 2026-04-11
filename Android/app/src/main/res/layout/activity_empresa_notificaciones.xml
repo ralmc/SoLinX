@@ -57,15 +57,17 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
-
             <ImageView
-                android:id="@+id/btnCerrarSesion"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/icono_salida"
-                android:contentDescription="Cerrar Sesión"
+                android:id="@+id/imgPerfilEmpresa"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/imagen_prederterminada"
+                android:scaleType="centerCrop"
+                android:contentDescription="Perfil"
                 android:clickable="true"
-                android:focusable="true"/>
+                android:focusable="true"
+                android:layout_marginEnd="8dp"/>
+
         </LinearLayout>
 
         <View

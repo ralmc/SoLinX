@@ -1,37 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootFragmentAlumnoEmpresas"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".AlumnoEmpresas">
+    android:background="?android:attr/windowBackground">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewProyectos"
+    <!-- Vista de lista de proyectos disponibles -->
+    <LinearLayout
+        android:id="@+id/layoutListaProyectos"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        tools:listitem="@layout/card_proyecto" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/txtNoProyectos"
+        <TextView
+            android:id="@+id/txtNoProyectos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No hay proyectos disponibles"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:textColor="?android:attr/textColorSecondary" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewProyectos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/activity_item_proyecto_card" />
+
+    </LinearLayout>
+
+    <!-- Vista de "ya perteneces a este proyecto" (oculta por defecto) -->
+    <FrameLayout
+        android:id="@+id/containerProyectoAsignado"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="No hay proyectos disponibles"
-        android:textSize="16sp"
-        android:textColor="?android:attr/textColorSecondary"
-        android:gravity="center"
-        android:visibility="gone" />
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:visibility="gone" />
-</LinearLayout>
+        <include layout="@layout/card_proyecto_asignado" />
+    </FrameLayout>
+
+</FrameLayout>

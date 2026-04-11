@@ -1,7 +1,6 @@
 package com.SoLinX.controller;
 
 import com.SoLinX.dto.SolicitudAcceptDto;
-import com.SoLinX.model.Solicitud;
 import com.SoLinX.service.SolicitudAcceptService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +14,13 @@ public class SolicitudAcceptController {
     private final SolicitudAcceptService solicitudAcceptService;
 
     @PostMapping("/solicitud/accept")
-    public ResponseEntity<Solicitud> aceptar(@RequestBody SolicitudAcceptDto dto) {
-        Solicitud solicitud = solicitudAcceptService.aceptar(dto);
-        return ResponseEntity.ok(solicitud);
+    public ResponseEntity<Void> aceptar(@RequestBody SolicitudAcceptDto dto) {
+        try {
+            solicitudAcceptService.aceptar(dto);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 }

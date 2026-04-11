@@ -1,6 +1,7 @@
 package com.example.solinx.API;
 
 import com.example.solinx.DTO.DocumentoDTO;
+import com.example.solinx.DTO.EmpresaDTO;
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
 import com.example.solinx.DTO.NotificacionDTO;
@@ -16,8 +17,10 @@ import com.example.solinx.RESPONSE.SolicitudResponse;
 import com.example.solinx.RESPONSE.AprobacionResponse;
 import com.example.solinx.RESPONSE.SolicitudesResponse;
 import com.example.solinx.RESPONSE.SupervisorResponse;
+import com.example.solinx.RESPONSE.ProyectoAlumnoResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -53,9 +56,19 @@ public interface ApiService {
     @POST("horario/{boleta}")
     Call<HorarioDTO> crearHorario(@Path("boleta") int boleta, @Body HorarioDTO dto);
 
+    // ── Empresa ───────────────────────────────────────────────────────────────
+    @GET("empresa/{id}")
+    Call<EmpresaDTO> obtenerEmpresaPorId(@Path("id") int idEmpresa);
+
+    @PUT("empresa/{id}")
+    Call<EmpresaDTO> actualizarEmpresa(@Path("id") int idEmpresa, @Body EmpresaDTO empresa);
+
     // ── Proyectos ─────────────────────────────────────────────────────────────
     @GET("proyecto")
     Call<List<ProyectoResponse>> obtenerProyectos();
+
+    @GET("proyecto/alumno/{boleta}")
+    Call<ProyectoAlumnoResponse> obtenerProyectosParaAlumno(@Path("boleta") int boleta);
 
     @GET("proyecto/empresa/{id}")
     Call<List<ProyectoResponse>> obtenerProyectosPorEmpresa(@Path("id") int idEmpresa);
@@ -68,6 +81,10 @@ public interface ApiService {
 
     @DELETE("proyecto/{id}")
     Call<Void> eliminarProyecto(@Path("id") int id);
+
+    @PUT("proyecto/{id}/imagen")
+    @Headers("Content-Type: application/json")
+    Call<String> actualizarImagenProyecto(@Path("id") int id, @Body Map<String, String> body);
 
     // ── Solicitudes ───────────────────────────────────────────────────────────
     @GET("solicitud/empresa/{idEmpresa}")
@@ -127,8 +144,11 @@ public interface ApiService {
 
     @PUT("perfil/usuario/{idUsuario}/foto")
     @Headers("Content-Type: application/json")
-    Call<String> actualizarFoto(@Path("idUsuario") int idUsuario,
-                                @Body java.util.Map<String, String> body);
+    Call<String> actualizarFoto(@Path("idUsuario") int idUsuario, @Body Map<String, String> body);
+
+    @PUT("perfil/usuario/{idUsuario}/tema")
+    @Headers("Content-Type: application/json")
+    Call<String> actualizarTema(@Path("idUsuario") int idUsuario, @Body Map<String, String> body);
 
     // ── Notificaciones ────────────────────────────────────────────────────────
     @GET("notificacion/usuario/{idUsuario}")
