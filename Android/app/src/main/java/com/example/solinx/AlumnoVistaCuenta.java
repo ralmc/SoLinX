@@ -14,6 +14,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,12 +49,16 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final String TAG = "AlumnoVistaCuenta";
 
+    // Correo de soporte (supervisor general)
+    private static final String CORREO_SOPORTE = "solinx.soporte@gmail.com";
+
     // Views
     private ImageButton btnRegresar;
     private TextView tvBoleta, tvNombre, tvCorreo, tvEscuela, tvCarrera, tvPuntosStatus;
     private ImageView imgPerfil;
     private View viewModoClaro, viewModoOscuro;
     private Button btnCerrarSesion;
+    private TextView btnContactarSoporte;
 
     // Horario
     private TextView tvHorarioLunes, tvHorarioMartes, tvHorarioMiercoles;
@@ -66,7 +71,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private SharedPreferences preferences;
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
-    // ─── Lifecycle ────────────────────────────────────────────────────────────
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
@@ -85,7 +89,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         cargarHorario();
     }
 
-    // ─── Init ─────────────────────────────────────────────────────────────────
     private void initViews() {
         btnRegresar     = findViewById(R.id.regresar);
         tvBoleta        = findViewById(R.id.tvBoleta);
@@ -98,6 +101,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         viewModoClaro   = findViewById(R.id.viewModoClaro);
         viewModoOscuro  = findViewById(R.id.viewModoOscuro);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnContactarSoporte = findViewById(R.id.btnContactarSoporte);
 
         tvHorarioLunes     = findViewById(R.id.tvHorarioLunes);
         tvHorarioMartes    = findViewById(R.id.tvHorarioMartes);
@@ -121,7 +125,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         );
     }
 
-    // ─── Datos de usuario ─────────────────────────────────────────────────────
     private void cargarDatosUsuario() {
         Intent intent = getIntent();
 
@@ -148,7 +151,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         return val != null ? val : preferences.getString(prefKey, defVal);
     }
 
-    // ─── Solicitudes ──────────────────────────────────────────────────────────
     private void cargarSolicitudes() {
         if (boleta == null || boleta.equals("N/A")) {
             tvPuntosStatus.setText("No se pudo cargar la información de solicitudes.");
@@ -166,7 +168,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                     if (response.isSuccessful() && response.body() != null) {
                         mostrarSolicitudes(response.body());
                     } else {
-                        Log.e(TAG, "Error solicitudes: " + response.code());
                         runOnUiThread(() ->
                                 tvPuntosStatus.setText("Error al cargar solicitudes."));
                     }
@@ -175,14 +176,12 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Call<List<SolicitudDTO>> call,
                                       @NonNull Throwable t) {
-                    Log.e(TAG, "Fallo red solicitudes: " + t.getMessage());
                     runOnUiThread(() ->
                             tvPuntosStatus.setText("Error de conexión."));
                 }
             });
 
         } catch (NumberFormatException e) {
-            Log.e(TAG, "Boleta inválida: " + boleta);
             tvPuntosStatus.setText("Boleta inválida.");
         }
     }
@@ -215,7 +214,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         });
     }
 
-    // ─── Horario ──────────────────────────────────────────────────────────────
     private void cargarHorario() {
         if (boleta == null || boleta.equals("N/A")) return;
 
@@ -238,8 +236,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                             tvHorarioSabado.setText(fmt(h.getSabInicio(), h.getSabFinal()));
                             tvHorarioDomingo.setText(fmt(h.getDomInicio(), h.getDomFinal()));
                         });
-                    } else {
-                        Log.w(TAG, "Sin horario: " + response.code());
                     }
                 }
 
@@ -261,7 +257,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         return i + " – " + f;
     }
 
-    // ─── Listeners ────────────────────────────────────────────────────────────
     private void setupListeners() {
         btnRegresar.setOnClickListener(v -> finish());
 
@@ -280,6 +275,10 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         });
 
         imgPerfil.setOnClickListener(v -> mostrarOpcionesFoto());
+
+        if (btnContactarSoporte != null) {
+            btnContactarSoporte.setOnClickListener(v -> contactarSoporte());
+        }
         btnCerrarSesion.setOnClickListener(v -> cerrarSesion());
     }
 
@@ -293,7 +292,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         }
     }
 
-    // ─── Foto de perfil ───────────────────────────────────────────────────────
     private void mostrarOpcionesFoto() {
         new AlertDialog.Builder(this)
                 .setTitle("Foto de perfil")
@@ -352,7 +350,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
             Toast.makeText(this, "Foto actualizada ✓", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
-            e.printStackTrace();
             Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
         }
     }
@@ -380,10 +377,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<String> call,
                                    @NonNull Response<String> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "Foto guardada en BD ✓");
-                } else {
-                    Log.e(TAG, "Error al guardar foto: " + response.code());
+                if (!response.isSuccessful()) {
                     Toast.makeText(AlumnoVistaCuenta.this,
                             "Error al guardar foto", Toast.LENGTH_SHORT).show();
                 }
@@ -453,16 +447,75 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                 .show();
     }
 
-    // ─── Cerrar sesión ────────────────────────────────────────────────────────
+    // ─── Contactar Soporte (Supervisor) ────────────────────────────────────────
+    private void contactarSoporte() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Contactar Soporte (Supervisor)");
+
+        final EditText input = new EditText(this);
+        input.setHint("Describe tu problema o consulta...");
+        input.setMinLines(3);
+        input.setPadding(40, 20, 40, 20);
+        builder.setView(input);
+
+        builder.setPositiveButton("Enviar", (dialog, which) -> {
+            String mensaje = input.getText().toString().trim();
+            if (mensaje.isEmpty()) {
+                Toast.makeText(this, "Escribe un mensaje", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String cuerpo = "Alumno: " + nombre + "\n"
+                    + "Boleta: " + boleta + "\n"
+                    + "Carrera: " + carrera + "\n"
+                    + "Escuela: " + escuela + "\n\n"
+                    + "Mensaje:\n" + mensaje;
+
+            String subject = "SoLinX - Soporte Alumno: " + nombre;
+
+            String mailtoUri = "mailto:" + CORREO_SOPORTE
+                    + "?subject=" + Uri.encode(subject)
+                    + "&body=" + Uri.encode(cuerpo);
+
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setData(Uri.parse(mailtoUri));
+
+            try {
+                startActivity(Intent.createChooser(emailIntent, "Enviar correo con..."));
+            } catch (Exception e) {
+                Toast.makeText(this, "No hay app de correo disponible", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
+    }
+
     private void cerrarSesion() {
         new AlertDialog.Builder(this)
                 .setTitle("Cerrar sesión")
                 .setMessage("¿Seguro que quieres salir?")
                 .setPositiveButton("Sí", (d, w) -> {
-                    preferences.edit().clear().apply();
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+                    // 1. Primero forzar modo claro (puede disparar recreate si estaba en oscuro)
+                    try {
+                        ThemeUtils.forceLightModeLocal(this);
+                    } catch (Exception ignored) {}
+
+                    // 2. Lanzar MainActivity con CLEAR_TASK ANTES de limpiar las prefs.
+                    //    Esto destruye esta activity y toda la pila.
+                    try {
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    } catch (Exception ignored) {}
+
+                    // 3. Limpiar las prefs con un pequeño retardo para que cualquier
+                    //    recreate ya haya terminado y no lea prefs vacías.
+                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                        try {
+                            getSharedPreferences("SoLinXPrefs", MODE_PRIVATE).edit().clear().apply();
+                            getSharedPreferences("sesion_usuario", MODE_PRIVATE).edit().clear().apply();
+                        } catch (Exception ignored) {}
+                    }, 300);
+
                     finish();
                 })
                 .setNegativeButton("No", null)

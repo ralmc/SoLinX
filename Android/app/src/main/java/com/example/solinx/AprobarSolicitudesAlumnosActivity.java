@@ -1,8 +1,11 @@
 package com.example.solinx;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,11 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.solinx.ADAPTER.SolicitudesAlumnoAdapter;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.AprobacionResponse;
 import com.example.solinx.RESPONSE.SolicitudesResponse;
-import com.example.solinx.ADAPTER.SolicitudesAdapter;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.ArrayList;
@@ -31,7 +34,7 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
     private static final String TAG = "AprobarSolicitudes";
 
     private RecyclerView recyclerView;
-    private SolicitudesAdapter adapter;
+    private SolicitudesAlumnoAdapter adapter;
     private ProgressBar progressBar;
     private TextView tvNoData;
 
@@ -44,9 +47,8 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
         ThemeUtils.applyTheme(this);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_supervisor_aprobar_solicitudes_alumnos);
+        setContentView(R.layout.activity_alumnos_lista_solicitudes);
 
-        // Obtener datos del Intent
         idSupervisor = getIntent().getIntExtra("idSupervisor", -1);
 
         if (idSupervisor == -1) {
@@ -55,17 +57,16 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
             return;
         }
 
-        // Inicializar vistas
         initViews();
-
-        // Inicializar API
         apiService = ApiClient.getClient().create(ApiService.class);
-
-        // Configurar RecyclerView
         setupRecyclerView();
-
-        // Cargar solicitudes
         cargarSolicitudes();
+
+        // Botón flecha de regreso
+        ImageButton btnRegresar = findViewById(R.id.btnRegresarFlecha);
+        if (btnRegresar != null) {
+            btnRegresar.setOnClickListener(v -> finish());
+        }
     }
 
     private void initViews() {
@@ -76,15 +77,20 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         solicitudesList = new ArrayList<>();
-        adapter = new SolicitudesAdapter(solicitudesList, new SolicitudesAdapter.OnSolicitudClickListener() {
+        adapter = new SolicitudesAlumnoAdapter(solicitudesList, new SolicitudesAlumnoAdapter.OnClickListener() {
             @Override
-            public void onAprobar(Solicitudes solicitud) {
-                mostrarDialogoConfirmacion(solicitud, "aceptar");
+            public void onAprobar(Solicitudes s) {
+                mostrarDialogoConfirmacion(s, "aprobar");
             }
 
             @Override
-            public void onRechazar(Solicitudes solicitud) {
-                mostrarDialogoConfirmacion(solicitud, "rechazar");
+            public void onRechazar(Solicitudes s) {
+                mostrarDialogoConfirmacion(s, "rechazar");
+            }
+
+            @Override
+            public void onEnviarCorreo(Solicitudes s) {
+                mostrarOpcionesCorreo(s);
             }
         });
 
@@ -104,11 +110,13 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    SolicitudesResponse solicitudesResponse = response.body();
+                    SolicitudesResponse r = response.body();
 
-                    if (solicitudesResponse.isSuccess()) {
+                    if (r.isSuccess()) {
                         solicitudesList.clear();
-                        solicitudesList.addAll(solicitudesResponse.getSolicitudes());
+                        if (r.getSolicitudes() != null) {
+                            solicitudesList.addAll(r.getSolicitudes());
+                        }
                         adapter.notifyDataSetChanged();
 
                         if (solicitudesList.isEmpty()) {
@@ -117,28 +125,85 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(AprobarSolicitudesAlumnosActivity.this,
-                                solicitudesResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                                r.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(AprobarSolicitudesAlumnosActivity.this,
                             "Error al cargar solicitudes", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Response not successful: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<SolicitudesResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Log.e(TAG, "Error: " + t.getMessage());
                 Toast.makeText(AprobarSolicitudesAlumnosActivity.this,
                         "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
+    // ─── Correo ───────────────────────────────────────────────────────────────
+
+    private void mostrarOpcionesCorreo(Solicitudes solicitud) {
+        String[] opciones = {"Enviar correo al Alumno", "Enviar correo a la Empresa"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("Enviar correo")
+                .setItems(opciones, (dialog, which) -> {
+                    if (which == 0) {
+                        mostrarDialogoCorreo(solicitud.getCorreoEstudiante(),
+                                solicitud.getNombreEstudiante(), "Alumno", solicitud.getNombreProyecto());
+                    } else {
+                        mostrarDialogoCorreo(solicitud.getCorreoEmpresa(),
+                                solicitud.getNombreEmpresa(), "Empresa", solicitud.getNombreProyecto());
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void mostrarDialogoCorreo(String correo, String nombre, String tipo, String proyecto) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Correo a " + tipo + ": " + (nombre != null ? nombre : ""));
+
+        final EditText input = new EditText(this);
+        input.setHint("Escribe tu mensaje aquí...");
+        input.setMinLines(3);
+        input.setPadding(40, 20, 40, 20);
+        builder.setView(input);
+
+        builder.setPositiveButton("Enviar", (dialog, which) -> {
+            String mensaje = input.getText().toString().trim();
+            if (mensaje.isEmpty()) {
+                Toast.makeText(this, "Escribe un mensaje", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String destinatario = (correo != null && !correo.isEmpty()) ? correo : "";
+            String subject = "SoLinX - Supervisor: Sobre proyecto " + (proyecto != null ? proyecto : "");
+
+            String mailtoUri = "mailto:" + destinatario
+                    + "?subject=" + Uri.encode(subject)
+                    + "&body=" + Uri.encode(mensaje);
+
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setData(Uri.parse(mailtoUri));
+
+            try {
+                startActivity(Intent.createChooser(emailIntent, "Enviar correo con..."));
+            } catch (Exception e) {
+                Toast.makeText(this, "No hay app de correo disponible", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
+    }
+
+    // ─── Aprobación ───────────────────────────────────────────────────────────
+
     private void mostrarDialogoConfirmacion(Solicitudes solicitud, String accion) {
-        String mensaje = accion.equals("aceptar")
-                ? "¿Aceptar solicitud de " + solicitud.getNombreEstudiante() + "?"
+        String mensaje = accion.equals("aprobar")
+                ? "¿Aprobar solicitud de " + solicitud.getNombreEstudiante() + "?"
                 : "¿Rechazar solicitud de " + solicitud.getNombreEstudiante() + "?";
 
         new AlertDialog.Builder(this)
@@ -152,12 +217,10 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
     private void procesarSolicitud(Solicitudes solicitud, String accion) {
         progressBar.setVisibility(View.VISIBLE);
 
-        String nuevoEstado = accion.equals("aceptar") ? "aceptada" : "rechazada";
+        String nuevoEstado = accion.equals("aprobar") ? "aprobada" : "rechazada";
 
         Call<AprobacionResponse> call = apiService.actualizarSolicitud(
-                solicitud.getIdSolicitud(),
-                nuevoEstado
-        );
+                solicitud.getIdSolicitud(), nuevoEstado);
 
         call.enqueue(new Callback<AprobacionResponse>() {
             @Override
@@ -165,28 +228,23 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    AprobacionResponse aprobacionResponse = response.body();
-
-                    if (aprobacionResponse.isSuccess()) {
+                    if (response.body().isSuccess()) {
                         Toast.makeText(AprobarSolicitudesAlumnosActivity.this,
-                                aprobacionResponse.getMessage(), Toast.LENGTH_SHORT).show();
-
+                                response.body().getMessage(), Toast.LENGTH_SHORT).show();
                         cargarSolicitudes();
                     } else {
                         Toast.makeText(AprobarSolicitudesAlumnosActivity.this,
-                                aprobacionResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                                response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(AprobarSolicitudesAlumnosActivity.this,
                             "Error al procesar solicitud", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Response not successful: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<AprobacionResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Log.e(TAG, "Error: " + t.getMessage());
                 Toast.makeText(AprobarSolicitudesAlumnosActivity.this,
                         "Error de conexión", Toast.LENGTH_SHORT).show();
             }

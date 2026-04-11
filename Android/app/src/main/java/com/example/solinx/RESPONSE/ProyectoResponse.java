@@ -13,6 +13,7 @@ public class ProyectoResponse implements Serializable {
     private String fechaInicio;
     private String fechaTermino;
     private String imagenRef;
+    private String imagenProyecto;
     private Integer idEmpresa;
     private String nombreEmpresa;
     private String telefonoEmpresa;
@@ -28,6 +29,7 @@ public class ProyectoResponse implements Serializable {
     public String getFechaInicio() { return fechaInicio; }
     public String getFechaTermino() { return fechaTermino; }
     public String getImagenRef() { return imagenRef; }
+    public String getImagenProyecto() { return imagenProyecto; }
     public Integer getIdEmpresa() { return idEmpresa; }
     public String getNombreEmpresa() { return nombreEmpresa; }
     public String getTelefonoEmpresa() { return telefonoEmpresa; }
@@ -41,6 +43,7 @@ public class ProyectoResponse implements Serializable {
     public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }
     public void setFechaTermino(String fechaTermino) { this.fechaTermino = fechaTermino; }
     public void setImagenRef(String imagenRef) { this.imagenRef = imagenRef; }
+    public void setImagenProyecto(String imagenProyecto) { this.imagenProyecto = imagenProyecto; }
     public void setIdEmpresa(Integer idEmpresa) { this.idEmpresa = idEmpresa; }
     public void setNombreEmpresa(String nombreEmpresa) { this.nombreEmpresa = nombreEmpresa; }
     public void setTelefonoEmpresa(String telefonoEmpresa) { this.telefonoEmpresa = telefonoEmpresa; }

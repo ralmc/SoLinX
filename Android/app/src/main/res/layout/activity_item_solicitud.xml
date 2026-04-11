@@ -112,6 +112,21 @@
                     android:padding="8dp"/>
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnEnviarCorreoAlumno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✉ Enviar Correo al Alumno"
+                android:textSize="13sp"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:layout_marginTop="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"/>
+
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

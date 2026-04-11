@@ -100,7 +100,7 @@
                 android:id="@+id/tv_detalle_proyecto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Tipo de servicio:"
+                android:text="Proyecto:"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="4dp"
@@ -122,7 +122,7 @@
                 android:id="@+id/tv_detalle_horas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Eleccion de horario:"
+                android:text="Escuela:"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp"
@@ -131,17 +131,35 @@
 
         </LinearLayout>
 
-        <!-- Botones Aprobar/Rechazar -->
+        <!-- Botones: Correo (izquierda) y Aprobar/Rechazar (derecha) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="end"
+            android:gravity="center_vertical"
             android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@id/layout_detalles_expandibles"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/btn_enviar_correo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✉ Correo"
+                android:textSize="16sp"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackground" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1"/>
 
             <TextView
                 android:id="@+id/btn_rechazar"

@@ -2,7 +2,9 @@ package com.SoLinX.controller;
 
 import com.SoLinX.dto.EmpresaDto;
 import com.SoLinX.model.Empresa;
+import com.SoLinX.model.Usuario;
 import com.SoLinX.repository.EmpresaRepository;
+import com.SoLinX.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +18,23 @@ import java.util.stream.Collectors;
 public class EmpresaController {
 
     private final EmpresaRepository empresaRepository;
+    private final UsuarioRepository usuarioRepository;
 
     private EmpresaDto convertirEntidadADto(Empresa emp) {
+        // Buscar el correo del usuario asociado a la empresa
+        String correo = null;
+        try {
+            Usuario u = usuarioRepository.findByEmpresaId(emp.getIdEmpresa());
+            if (u != null) correo = u.getCorreo();
+        } catch (Exception e) {
+            // Si falla, correo queda null
+        }
+
         return EmpresaDto.builder()
                 .idEmpresa(emp.getIdEmpresa())
                 .nombreEmpresa(emp.getNombreEmpresa())
+                .telefono(emp.getTelefono())
+                .correo(correo)
                 .build();
     }
 

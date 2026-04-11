@@ -21,6 +21,15 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="8dp">
+            <ImageButton
+                android:id="@+id/btnRegresarFlecha"
+                android:layout_width="36dp"
+                android:layout_height="40dp"
+                android:src="@drawable/flechaizq"
+                android:background="@android:color/transparent"
+                android:scaleType="fitCenter"
+                app:tint="@color/flecha_color"
+                android:contentDescription="Regresar"/>
 
             <ImageView
                 android:id="@+id/logoEmpresa"
@@ -32,7 +41,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Menú"
+                android:text="Gestión"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_marginStart="8dp" />
@@ -56,14 +65,7 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/btnCerrarSesion"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/icono_salida"
-                android:contentDescription="Cerrar Sesión"
-                android:clickable="true"
-                android:focusable="true"/>
+
         </LinearLayout>
 
         <View
@@ -134,7 +136,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="20dp">
             <EditText
                 android:id="@+id/etUbicacion"
                 android:layout_width="match_parent"
@@ -142,16 +144,45 @@
                 android:hint="Ubicación"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Sección de Imagen del Proyecto -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp">
-            <EditText
-                android:id="@+id/etImagenRef"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nombre imagen (ej: img_dron)"/>
-        </com.google.android.material.textfield.TextInputLayout>
+            android:text="Imagen del Proyecto"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="8dp"/>
+
+        <ImageView
+            android:id="@+id/imgPreview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:background="?attr/colorSurfaceVariant"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="Vista previa de imagen"/>
+
+        <TextView
+            android:id="@+id/tvImagenStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sin imagen seleccionada (se usará imagen por defecto)"
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnSeleccionarImagen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar Imagen"
+            android:textAllCaps="false"
+            android:backgroundTint="?attr/colorSecondary"
+            android:textColor="?attr/colorOnSecondary"
+            android:layout_marginBottom="24dp"
+            app:cornerRadius="8dp"/>
 
         <Button
             android:id="@+id/btnGuardar"

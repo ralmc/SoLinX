@@ -21,4 +21,9 @@ public class Empresa {
 
     @Column(name = "nombreEmpresa")
     private String nombreEmpresa;
+
+    // Aquí agregamos la variable para que coincida con la BD
+    @Column(name = "telefono")
+    private String telefono;
+
 }

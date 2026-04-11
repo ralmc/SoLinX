@@ -8,4 +8,6 @@ import lombok.Data;
 public class EmpresaDto {
     private int idEmpresa;
     private String nombreEmpresa;
+    private String telefono;
+    private String correo;
 }

@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="24dp">
-
         <TextView
             android:id="@+id/tv_title_register"
             android:layout_width="wrap_content"
@@ -23,8 +22,10 @@
             android:fontFamily="@font/fonts"
             android:textSize="35sp"
             android:textStyle="bold"
+            android:layout_marginStart="16dp"
             android:textColor="?attr/colorOnBackground"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="36dp"
+            android:gravity="center"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -33,7 +34,7 @@
             android:id="@+id/til_nombre_empresa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="25dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintTop_toBottomOf="@id/tv_title_register">
 
@@ -144,6 +145,18 @@
             app:layout_constraintTop_toBottomOf="@id/til_confirm_password"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
+        <ImageButton
+            android:id="@+id/btnRegresarFlecha"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/flechaizq"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:layout_marginTop="1dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="Regresar"
+            app:tint="@color/flecha_color"/>
+
 
             <ImageView
                 android:id="@+id/logo_bottom_left"

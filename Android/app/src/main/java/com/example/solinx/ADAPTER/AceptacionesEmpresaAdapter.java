@@ -5,42 +5,62 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.solinx.R;
-import com.example.solinx.Solicitud;
+import com.example.solinx.Solicitudes;
 
 import java.util.List;
 
-public class AceptacionesEmpresaAdapter extends RecyclerView.Adapter<AceptacionesEmpresaAdapter.AceptacionViewHolder> {
+public class AceptacionesEmpresaAdapter extends RecyclerView.Adapter<AceptacionesEmpresaAdapter.ViewHolder> {
 
-    private final List<Solicitud> listaSolicitudes;
+    private final List<Solicitudes> listaSolicitudes;
     private final Context context;
+    private final OnClickListener listener;
 
-    public AceptacionesEmpresaAdapter(Context context, List<Solicitud> listaSolicitudes) {
+    public interface OnClickListener {
+        void onAprobar(Solicitudes s);
+        void onRechazar(Solicitudes s);
+        void onEnviarCorreo(Solicitudes s);
+    }
+
+    public AceptacionesEmpresaAdapter(Context context, List<Solicitudes> listaSolicitudes,
+                                      OnClickListener listener) {
         this.context = context;
         this.listaSolicitudes = listaSolicitudes;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public AceptacionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.activity_card_aceptacion_empresa, parent, false);
-        return new AceptacionViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context)
+                .inflate(R.layout.activity_card_aceptacion_empresa, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AceptacionViewHolder holder, int position) {
-        Solicitud solicitud = listaSolicitudes.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Solicitudes s = listaSolicitudes.get(position);
 
-        holder.tvAceptacionId.setText("Aceptación #" + solicitud.getId());
-        holder.tvNombreAlumno.setText("Alumno: " + solicitud.getNombreAlumno());
-        holder.tvNombreEmpresa.setText("Empresa: " + solicitud.getNombreEmpresa());
+        holder.tvAceptacionId.setText("Aceptación #" + s.getIdSolicitud());
+        holder.tvNombreAlumno.setText("Alumno: " + (s.getNombreEstudiante() != null ? s.getNombreEstudiante() : "N/A"));
+        holder.tvNombreEmpresa.setText("Empresa: " + (s.getNombreEmpresa() != null ? s.getNombreEmpresa() : "N/A"));
 
-        holder.tvFechaAceptacion.setText("Fecha Aceptación: " + solicitud.getHorario());
+        String fecha = s.getFechaAceptacion();
+        holder.tvFechaAceptacion.setText("Fecha Aceptación: " + (fecha != null && !fecha.isEmpty() ? fecha : "N/A"));
+
+        if (holder.btnAprobar != null) {
+            holder.btnAprobar.setOnClickListener(v -> listener.onAprobar(s));
+        }
+        if (holder.btnRechazar != null) {
+            holder.btnRechazar.setOnClickListener(v -> listener.onRechazar(s));
+        }
+        if (holder.btnEnviarCorreo != null) {
+            holder.btnEnviarCorreo.setOnClickListener(v -> listener.onEnviarCorreo(s));
+        }
     }
 
     @Override
@@ -48,33 +68,20 @@ public class AceptacionesEmpresaAdapter extends RecyclerView.Adapter<Aceptacione
         return listaSolicitudes.size();
     }
 
-
-    class AceptacionViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvAceptacionId, tvNombreAlumno, tvNombreEmpresa, tvFechaAceptacion;
-        TextView btnRechazar, btnAprobar;
+        TextView btnRechazar, btnAprobar, btnEnviarCorreo;
 
-        public AceptacionViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            tvAceptacionId = itemView.findViewById(R.id.tv_aceptacion_id);
-            tvNombreAlumno = itemView.findViewById(R.id.tv_nombre_alumno);
-            tvNombreEmpresa = itemView.findViewById(R.id.tv_nombre_empresa);
+            tvAceptacionId    = itemView.findViewById(R.id.tv_aceptacion_id);
+            tvNombreAlumno    = itemView.findViewById(R.id.tv_nombre_alumno);
+            tvNombreEmpresa   = itemView.findViewById(R.id.tv_nombre_empresa);
             tvFechaAceptacion = itemView.findViewById(R.id.tv_fecha_aceptacion);
-            btnRechazar = itemView.findViewById(R.id.btn_rechazar);
-            btnAprobar = itemView.findViewById(R.id.btn_aprobar);
-
-            btnAprobar.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                Solicitud solicitud = listaSolicitudes.get(position);
-                Toast.makeText(context, "Aprobando aceptación: " + solicitud.getId(), Toast.LENGTH_SHORT).show();
-            });
-
-            btnRechazar.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                Solicitud solicitud = listaSolicitudes.get(position);
-                Toast.makeText(context, "Rechazando aceptación: " + solicitud.getId(), Toast.LENGTH_SHORT).show();
-            });
+            btnRechazar       = itemView.findViewById(R.id.btn_rechazar);
+            btnAprobar        = itemView.findViewById(R.id.btn_aprobar);
+            btnEnviarCorreo   = itemView.findViewById(R.id.btn_enviar_correo);
         }
     }
 }

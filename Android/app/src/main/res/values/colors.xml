@@ -21,4 +21,7 @@
     <color name="color_eliminar">#D32F2F</color>
     <color name="color_admitir">#7ED957</color>
     <color name="color_estado_pendiente">#FF9800</color>
+
+    <!-- Color de la flecha de regreso (modo claro = negro) -->
+    <color name="flecha_color">#000000</color>
 </resources>

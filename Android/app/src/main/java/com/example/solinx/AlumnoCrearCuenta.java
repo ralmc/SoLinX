@@ -84,7 +84,17 @@ public class AlumnoCrearCuenta extends Fragment implements View.OnClickListener 
                 android.R.layout.simple_dropdown_item_1line, escuelas));
         spCarrera.setAdapter(new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_dropdown_item_1line, carreras));
-    }
+    
+        // Botón flecha de regreso (en fragments, regresa al activity anterior)
+        try {
+            android.widget.ImageButton btnRegresarFlecha = view.findViewById(R.id.btnRegresarFlecha);
+            if (btnRegresarFlecha != null) {
+                btnRegresarFlecha.setOnClickListener(v -> {
+                    if (getActivity() != null) getActivity().finish();
+                });
+            }
+        } catch (Exception ignored) {}
+}
 
     @Override
     public void onClick(View view) {

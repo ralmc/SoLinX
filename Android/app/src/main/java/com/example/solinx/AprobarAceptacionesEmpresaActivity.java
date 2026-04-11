@@ -1,8 +1,11 @@
 package com.example.solinx;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,11 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.solinx.ADAPTER.AceptacionesEmpresaAdapter;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.AprobacionResponse;
 import com.example.solinx.RESPONSE.SolicitudesResponse;
-import com.example.solinx.ADAPTER.SolicitudesAdapter;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.ArrayList;
@@ -31,7 +34,7 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
     private static final String TAG = "AprobarAceptaciones";
 
     private RecyclerView recyclerView;
-    private SolicitudesAdapter adapter;
+    private AceptacionesEmpresaAdapter adapter;
     private ProgressBar progressBar;
     private TextView tvNoData;
 
@@ -46,7 +49,6 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supervisor_aprobar_aceptaciones_empresa);
 
-        // Obtener datos del Intent
         idEmpresa = getIntent().getIntExtra("idEmpresa", -1);
 
         if (idEmpresa == -1) {
@@ -55,17 +57,16 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
             return;
         }
 
-        // Inicializar vistas
         initViews();
-
-        // Inicializar API
         apiService = ApiClient.getClient().create(ApiService.class);
-
-        // Configurar RecyclerView
         setupRecyclerView();
-
-        // Cargar aceptaciones
         cargarAceptaciones();
+
+        // Botón flecha de regreso
+        ImageButton btnRegresar = findViewById(R.id.btnRegresarFlecha);
+        if (btnRegresar != null) {
+            btnRegresar.setOnClickListener(v -> finish());
+        }
     }
 
     private void initViews() {
@@ -76,15 +77,21 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         solicitudesList = new ArrayList<>();
-        adapter = new SolicitudesAdapter(solicitudesList, new SolicitudesAdapter.OnSolicitudClickListener() {
+        adapter = new AceptacionesEmpresaAdapter(this, solicitudesList,
+                new AceptacionesEmpresaAdapter.OnClickListener() {
             @Override
-            public void onAprobar(Solicitudes solicitud) {
-                mostrarDialogoConfirmacion(solicitud, "aprobar");
+            public void onAprobar(Solicitudes s) {
+                mostrarDialogoConfirmacion(s, "aprobar");
             }
 
             @Override
-            public void onRechazar(Solicitudes solicitud) {
-                mostrarDialogoConfirmacion(solicitud, "rechazar");
+            public void onRechazar(Solicitudes s) {
+                mostrarDialogoConfirmacion(s, "rechazar");
+            }
+
+            @Override
+            public void onEnviarCorreo(Solicitudes s) {
+                mostrarOpcionesCorreo(s);
             }
         });
 
@@ -104,11 +111,13 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    SolicitudesResponse solicitudesResponse = response.body();
+                    SolicitudesResponse r = response.body();
 
-                    if (solicitudesResponse.isSuccess()) {
+                    if (r.isSuccess()) {
                         solicitudesList.clear();
-                        solicitudesList.addAll(solicitudesResponse.getSolicitudes());
+                        if (r.getSolicitudes() != null) {
+                            solicitudesList.addAll(r.getSolicitudes());
+                        }
                         adapter.notifyDataSetChanged();
 
                         if (solicitudesList.isEmpty()) {
@@ -117,28 +126,86 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
                         }
                     } else {
                         Toast.makeText(AprobarAceptacionesEmpresaActivity.this,
-                                solicitudesResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                                r.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(AprobarAceptacionesEmpresaActivity.this,
                             "Error al cargar aceptaciones", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Response not successful: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<SolicitudesResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Log.e(TAG, "Error: " + t.getMessage());
                 Toast.makeText(AprobarAceptacionesEmpresaActivity.this,
                         "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
+    // ─── Correo ───────────────────────────────────────────────────────────────
+
+    private void mostrarOpcionesCorreo(Solicitudes solicitud) {
+        String[] opciones = {"Enviar correo al Alumno", "Enviar correo a la Empresa"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("Enviar correo")
+                .setItems(opciones, (dialog, which) -> {
+                    if (which == 0) {
+                        mostrarDialogoCorreo(solicitud.getCorreoEstudiante(),
+                                solicitud.getNombreEstudiante(), "Alumno", solicitud.getNombreProyecto());
+                    } else {
+                        mostrarDialogoCorreo(solicitud.getCorreoEmpresa(),
+                                solicitud.getNombreEmpresa(), "Empresa", solicitud.getNombreProyecto());
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void mostrarDialogoCorreo(String correo, String nombre, String tipo, String proyecto) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Correo a " + tipo + ": " + (nombre != null ? nombre : ""));
+
+        final EditText input = new EditText(this);
+        input.setHint("Escribe tu mensaje aquí...");
+        input.setMinLines(3);
+        input.setPadding(40, 20, 40, 20);
+        builder.setView(input);
+
+        builder.setPositiveButton("Enviar", (dialog, which) -> {
+            String mensaje = input.getText().toString().trim();
+            if (mensaje.isEmpty()) {
+                Toast.makeText(this, "Escribe un mensaje", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String destinatario = (correo != null && !correo.isEmpty()) ? correo : "";
+            String subject = "SoLinX - Supervisor: Sobre proyecto " + (proyecto != null ? proyecto : "");
+
+            String mailtoUri = "mailto:" + destinatario
+                    + "?subject=" + Uri.encode(subject)
+                    + "&body=" + Uri.encode(mensaje);
+
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+            emailIntent.setData(Uri.parse(mailtoUri));
+
+            try {
+                startActivity(Intent.createChooser(emailIntent, "Enviar correo con..."));
+            } catch (Exception e) {
+                Toast.makeText(this, "No hay app de correo disponible", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
+    }
+
+    // ─── Aprobación ───────────────────────────────────────────────────────────
+
     private void mostrarDialogoConfirmacion(Solicitudes solicitud, String accion) {
         String mensaje = accion.equals("aprobar")
-                ? "¿Aprobar aceptación de " + solicitud.getNombreEstudiante() + " en " + solicitud.getNombreProyecto() + "?"
+                ? "¿Aprobar aceptación de " + solicitud.getNombreEstudiante()
+                    + " en " + solicitud.getNombreProyecto() + "?"
                 : "¿Rechazar aceptación de " + solicitud.getNombreEstudiante() + "?";
 
         new AlertDialog.Builder(this)
@@ -155,9 +222,7 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
         String nuevoEstado = accion.equals("aprobar") ? "aprobada" : "rechazada";
 
         Call<AprobacionResponse> call = apiService.actualizarSolicitud(
-                solicitud.getIdSolicitud(),
-                nuevoEstado
-        );
+                solicitud.getIdSolicitud(), nuevoEstado);
 
         call.enqueue(new Callback<AprobacionResponse>() {
             @Override
@@ -165,28 +230,23 @@ public class AprobarAceptacionesEmpresaActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
-                    AprobacionResponse aprobacionResponse = response.body();
-
-                    if (aprobacionResponse.isSuccess()) {
+                    if (response.body().isSuccess()) {
                         Toast.makeText(AprobarAceptacionesEmpresaActivity.this,
-                                aprobacionResponse.getMessage(), Toast.LENGTH_SHORT).show();
-
+                                response.body().getMessage(), Toast.LENGTH_SHORT).show();
                         cargarAceptaciones();
                     } else {
                         Toast.makeText(AprobarAceptacionesEmpresaActivity.this,
-                                aprobacionResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                                response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(AprobarAceptacionesEmpresaActivity.this,
                             "Error al procesar aceptación", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Response not successful: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<AprobacionResponse> call, Throwable t) {
                 progressBar.setVisibility(View.GONE);
-                Log.e(TAG, "Error: " + t.getMessage());
                 Toast.makeText(AprobarAceptacionesEmpresaActivity.this,
                         "Error de conexión", Toast.LENGTH_SHORT).show();
             }

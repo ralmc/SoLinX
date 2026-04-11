@@ -56,7 +56,17 @@ public class IniciarSesion extends Fragment {
         btnEnviar.setOnClickListener(v -> hacerLogin());
         tvRegistroLink.setOnClickListener(v ->
                 ((InicioHelper)requireActivity()).Crear());
-    }
+    
+        // Botón flecha de regreso
+        try {
+            android.widget.ImageButton btnRegresarFlecha = view.findViewById(R.id.btnRegresarFlecha);
+            if (btnRegresarFlecha != null) {
+                btnRegresarFlecha.setOnClickListener(v -> {
+                    if (getActivity() != null) getActivity().finish();
+                });
+            }
+        } catch (Exception ignored) {}
+}
     private void hacerLogin() {
         String correo   = etUsuario.getText().toString().trim();
         String password = etContrasena.getText().toString().trim();
@@ -92,18 +102,8 @@ public class IniciarSesion extends Fragment {
 
                 guardarSesionBasica(loginResponse);
 
-                String rol = loginResponse.getRol();
-
-                if ("estudiante".equalsIgnoreCase(rol)) {
-                    guardarDatosEstudiante(loginResponse);
-                    navegarVistaAlumno(loginResponse);
-                } else if ("empresa".equalsIgnoreCase(rol)) {
-                    navegarVistaEmpresa(loginResponse);
-                } else if ("supervisor".equalsIgnoreCase(rol)) {
-                    navegarVistaSupervisor(loginResponse);
-                } else {
-                    Toast.makeText(requireContext(), "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();
-                }
+                // Cargar tema del perfil desde la BD y aplicarlo antes de navegar
+                cargarYAplicarTema(loginResponse);
             }
 
             @Override
@@ -123,6 +123,53 @@ public class IniciarSesion extends Fragment {
                 .putString("correo", loginResponse.getCorreo())
                 .apply();
         Log.d(TAG, "Sesión básica guardada");
+    }
+
+    /**
+     * Consulta el perfil del usuario en la BD para obtener su tema guardado (claro/oscuro)
+     * y lo aplica localmente. Después navega a la vista correspondiente según el rol.
+     * Si falla la consulta, navega igual con el tema por defecto (claro).
+     */
+    private void cargarYAplicarTema(LoginResponseDTO loginResponse) {
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.obtenerPerfil(loginResponse.getIdUsuario()).enqueue(new Callback<com.example.solinx.DTO.PerfilDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<com.example.solinx.DTO.PerfilDTO> call,
+                                   @NonNull Response<com.example.solinx.DTO.PerfilDTO> response) {
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getTema() != null) {
+                    String tema = response.body().getTema();
+                    Log.d(TAG, "Tema recibido de la BD: " + tema);
+                    com.example.solinx.UTIL.ThemeUtils.applyThemeFromBackend(requireContext(), tema);
+                } else {
+                    Log.d(TAG, "Sin tema en BD, usando claro por defecto");
+                    com.example.solinx.UTIL.ThemeUtils.forceLightModeLocal(requireContext());
+                }
+                navegarSegunRol(loginResponse);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<com.example.solinx.DTO.PerfilDTO> call, @NonNull Throwable t) {
+                Log.e(TAG, "Error al cargar tema: " + t.getMessage());
+                // Navegar igual con tema default
+                navegarSegunRol(loginResponse);
+            }
+        });
+    }
+
+    private void navegarSegunRol(LoginResponseDTO loginResponse) {
+        String rol = loginResponse.getRol();
+
+        if ("estudiante".equalsIgnoreCase(rol)) {
+            guardarDatosEstudiante(loginResponse);
+            navegarVistaAlumno(loginResponse);
+        } else if ("empresa".equalsIgnoreCase(rol)) {
+            navegarVistaEmpresa(loginResponse);
+        } else if ("supervisor".equalsIgnoreCase(rol)) {
+            navegarVistaSupervisor(loginResponse);
+        } else {
+            Toast.makeText(requireContext(), "Rol no permitido: " + rol, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void guardarDatosEstudiante(LoginResponseDTO loginResponse) {

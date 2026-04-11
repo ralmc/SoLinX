@@ -2,8 +2,11 @@ package com.example.solinx;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences; // IMPORTANTE
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.PerfilDTO;
 import com.example.solinx.RESPONSE.ProyectoResponse;
 import com.example.solinx.UTIL.ThemeUtils;
 
@@ -28,7 +32,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
     LinearLayout contenedorProyectos;
     TextView btnAñadir, tvMensajeVacio, btnotificaciones;
-    ImageView logoEmpresa, btnCerrarSesion;
+    ImageView logoEmpresa, imgPerfilEmpresa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +42,9 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_empresa_vista_menu);
 
         gestionarSesion();
-
         inicializarVistas();
         cargarDatosDelBackend();
+        cargarFotoPerfil();
     }
 
     private void gestionarSesion() {
@@ -48,24 +52,9 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
         if (getIntent().hasExtra("ID_EMPRESA_ACTUAL")) {
             int idRecibido = getIntent().getIntExtra("ID_EMPRESA_ACTUAL", -1);
-
-            android.util.Log.d("EmpresaVista", "✅ ID Empresa recibido del Intent: " + idRecibido);
-
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("id_empresa_activa", idRecibido);
             editor.commit();
-
-            android.util.Log.d("EmpresaVista", "✅ ID Empresa guardado en SharedPreferences: " + idRecibido);
-        } else {
-            android.util.Log.e("EmpresaVista", "❌ No se recibió ID_EMPRESA_ACTUAL en el Intent");
-
-            int idGuardado = prefs.getInt("id_empresa_activa", -1);
-            if (idGuardado != -1) {
-                android.util.Log.d("EmpresaVista", "✅ Recuperado idEmpresa de SharedPreferences: " + idGuardado);
-            } else {
-                android.util.Log.e("EmpresaVista", "❌ NO HAY idEmpresa EN NINGÚN LADO - ERROR CRÍTICO");
-                Toast.makeText(this, "Error: Sesión perdida. Vuelve a iniciar sesión.", Toast.LENGTH_LONG).show();
-            }
         }
     }
 
@@ -78,6 +67,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         cargarDatosDelBackend();
+        cargarFotoPerfil();
     }
 
     private void inicializarVistas() {
@@ -86,23 +76,48 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
         btnAñadir = findViewById(R.id.btnAñadir);
         logoEmpresa = findViewById(R.id.logoEmpresa);
         btnotificaciones = findViewById(R.id.notificaciones);
-        btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        imgPerfilEmpresa = findViewById(R.id.imgPerfilEmpresa);
 
         btnAñadir.setOnClickListener(this);
         logoEmpresa.setOnClickListener(this);
         btnotificaciones.setOnClickListener(this);
-        btnCerrarSesion.setOnClickListener(this);
+        if (imgPerfilEmpresa != null) {
+            imgPerfilEmpresa.setOnClickListener(this);
+        }
+    }
+
+    private void cargarFotoPerfil() {
+        if (imgPerfilEmpresa == null) return;
+
+        int idUsuario = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                .getInt("idUsuario", -1);
+        if (idUsuario == -1) return;
+
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.obtenerPerfil(idUsuario).enqueue(new Callback<PerfilDTO>() {
+            @Override
+            public void onResponse(Call<PerfilDTO> call, Response<PerfilDTO> response) {
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getFoto() != null
+                        && !response.body().getFoto().isEmpty()) {
+                    String b64 = response.body().getFoto();
+                    byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    runOnUiThread(() -> imgPerfilEmpresa.setImageBitmap(bmp));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PerfilDTO> call, Throwable t) {
+                // dejar el icono default
+            }
+        });
     }
 
     private void cargarDatosDelBackend() {
         int idActual = obtenerIdEmpresaActual();
 
-        android.util.Log.d("EmpresaVista", "============================================");
-        android.util.Log.d("EmpresaVista", "Cargando proyectos para idEmpresa: " + idActual);
-        android.util.Log.d("EmpresaVista", "============================================");
-
         if (idActual == -1) {
-            android.util.Log.e("EmpresaVista", "❌ idEmpresa es -1, NO SE PUEDE CARGAR PROYECTOS");
             Toast.makeText(this, "Error de sesión. Vuelve a iniciar sesión.", Toast.LENGTH_LONG).show();
             tvMensajeVacio.setVisibility(View.VISIBLE);
             tvMensajeVacio.setText("Error: No se pudo cargar la sesión");
@@ -114,20 +129,15 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
         apiService.obtenerProyectosPorEmpresa(idActual).enqueue(new Callback<List<ProyectoResponse>>() {
             @Override
             public void onResponse(Call<List<ProyectoResponse>> call, Response<List<ProyectoResponse>> response) {
-                android.util.Log.d("EmpresaVista", "Response Code: " + response.code());
-
                 if (response.isSuccessful() && response.body() != null) {
-                    android.util.Log.d("EmpresaVista", "✅ Proyectos recibidos: " + response.body().size());
                     renderizarProyectos(response.body());
                 } else {
-                    android.util.Log.e("EmpresaVista", "❌ Response no exitoso o body null");
                     renderizarProyectos(java.util.Collections.emptyList());
                 }
             }
 
             @Override
             public void onFailure(Call<List<ProyectoResponse>> call, Throwable t) {
-                android.util.Log.e("EmpresaVista", "❌ Error de red: " + t.getMessage());
                 Toast.makeText(EmpresaVista.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 tvMensajeVacio.setVisibility(View.VISIBLE);
                 tvMensajeVacio.setText("Error de conexión. Intenta de nuevo.");
@@ -152,7 +162,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
             TextView tvId = tarjeta.findViewById(R.id.tvIdProyecto);
             TextView tvCarrera = tarjeta.findViewById(R.id.tvCarreraEnfocada);
-
             TextView tvNombre = tarjeta.findViewById(R.id.tvNombreProyecto);
             TextView tvEmpresa = tarjeta.findViewById(R.id.tvNombreEmpresa);
             TextView tvObjetivo = tarjeta.findViewById(R.id.tvObjetivo);
@@ -165,7 +174,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
             TextView btnEliminar = tarjeta.findViewById(R.id.tvEliminar);
 
             tvId.setText("# " + contadorVisual);
-
             contadorVisual++;
 
             tvCarrera.setText("Carrera: " + proyecto.getCarreraEnfocada());
@@ -183,8 +191,22 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
                     ? proyecto.getFechaTermino().substring(0,10) : "---";
             tvFin.setText("Fin: " + fechaF);
 
-            img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
-
+            // Pintar imagen Base64 si existe, si no usar drawable local
+            if (proyecto.getImagenProyecto() != null && !proyecto.getImagenProyecto().isEmpty()) {
+                try {
+                    byte[] bytes = Base64.decode(proyecto.getImagenProyecto(), Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (bmp != null) {
+                        img.setImageBitmap(bmp);
+                    } else {
+                        img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
+                    }
+                } catch (Exception e) {
+                    img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
+                }
+            } else {
+                img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
+            }
 
             btnEdit.setOnClickListener(v -> {
                 Intent intent = new Intent(EmpresaVista.this, GestionProyectoActivity.class);
@@ -196,6 +218,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("vacantes", proyecto.getVacantes());
                 intent.putExtra("ubicacion", proyecto.getUbicacion());
                 intent.putExtra("imagen", proyecto.getImagenRef());
+                intent.putExtra("imagenProyecto", proyecto.getImagenProyecto());
                 startActivity(intent);
             });
 
@@ -243,14 +266,8 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
         } else if (id == R.id.notificaciones) {
             startActivity(new Intent(this, EmpresaNotificaciones.class));
 
-        } else if (id == R.id.btnCerrarSesion) {
-            SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-            prefs.edit().clear().apply();
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+        } else if (id == R.id.imgPerfilEmpresa) {
+            startActivity(new Intent(this, EmpresaVistaCuenta.class));
         }
     }
 }
