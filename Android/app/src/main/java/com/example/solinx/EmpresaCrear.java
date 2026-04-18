@@ -56,7 +56,17 @@ public class EmpresaCrear extends Fragment {
         tvLoginLink.setOnClickListener(v ->
                 ((InicioHelper) requireActivity()).mostrarIniciarSesion()
         );
-    }
+    
+        // Botón flecha de regreso
+        try {
+            android.widget.ImageButton btnRegresarFlecha = view.findViewById(R.id.btnRegresarFlecha);
+            if (btnRegresarFlecha != null) {
+                btnRegresarFlecha.setOnClickListener(v -> {
+                    if (getActivity() != null) getActivity().finish();
+                });
+            }
+        } catch (Exception ignored) {}
+}
 
     private void registrarEmpresa() {
         String nombreEmpresa    = etNombreEmpresa.getText().toString().trim();

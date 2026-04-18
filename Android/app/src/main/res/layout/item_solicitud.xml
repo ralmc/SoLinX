@@ -52,7 +52,7 @@
             android:textSize="14sp"
             android:textColor="?attr/colorSecondary"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="12dp" />
 
         <View
             android:layout_width="match_parent"
@@ -64,7 +64,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="end">
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/btn_enviar_correo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="✉ Correo"
+                android:textSize="14sp"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackground" />
 
             <Button
                 android:id="@+id/btn_rechazar"

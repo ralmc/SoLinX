@@ -13,7 +13,6 @@ import androidx.cardview.widget.CardView;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.SupervisorResponse;
-import com.example.solinx.Supervisor;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import retrofit2.Call;
@@ -31,6 +30,7 @@ public class MenuSupervisorActivity extends AppCompatActivity {
 
     private Supervisor supervisor;
     private ApiService apiService;
+    private int idUsuarioActual = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +54,27 @@ public class MenuSupervisorActivity extends AppCompatActivity {
     }
 
     private void cargarDatosSupervisor() {
-        int idUsuario = getIntent().getIntExtra("idUsuario", -1);
+        idUsuarioActual = getIntent().getIntExtra("idUsuario", -1);
 
-        if (idUsuario == -1) {
+        // Si no viene en el intent, intentar de SharedPreferences
+        if (idUsuarioActual == -1) {
+            idUsuarioActual = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                    .getInt("idUsuario", -1);
+        }
+
+        if (idUsuarioActual == -1) {
             Toast.makeText(this, "Error: No se recibió ID de usuario", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        Call<SupervisorResponse> call = apiService.getSupervisorData(idUsuario);
+        // Guardar idUsuario en SharedPreferences para que SupervisorVistaCuenta lo lea
+        getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                .edit()
+                .putInt("idUsuario", idUsuarioActual)
+                .apply();
+
+        Call<SupervisorResponse> call = apiService.getSupervisorData(idUsuarioActual);
 
         call.enqueue(new Callback<SupervisorResponse>() {
             @Override
@@ -102,11 +114,6 @@ public class MenuSupervisorActivity extends AppCompatActivity {
         });
     }
 
-    private void abrirActivity(Class<?> targetActivity) {
-        Intent intent = new Intent(MenuSupervisorActivity.this, targetActivity);
-        startActivity(intent);
-    }
-
     private void setupListeners() {
         cardAprobarSolicitudAlumno.setOnClickListener(v -> {
             if (supervisor != null) {
@@ -129,12 +136,10 @@ public class MenuSupervisorActivity extends AppCompatActivity {
             }
         });
 
+        // Abrir el perfil del supervisor al picar el ícono
         ivProfileMenu.setOnClickListener(v -> {
-            if (supervisor != null) {
-                Toast.makeText(this,
-                        "Perfil: " + supervisor.getNombre(),
-                        Toast.LENGTH_SHORT).show();
-            }
+            Intent intent = new Intent(this, SupervisorVistaCuenta.class);
+            startActivity(intent);
         });
     }
 }

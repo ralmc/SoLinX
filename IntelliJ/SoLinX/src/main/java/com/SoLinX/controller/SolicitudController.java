@@ -4,6 +4,10 @@ import com.SoLinX.dto.SolicitudDto;
 import com.SoLinX.model.Estudiante;
 import com.SoLinX.model.Proyecto;
 import com.SoLinX.model.Solicitud;
+import com.SoLinX.model.Usuario;
+import com.SoLinX.model.UsuarioEstudiante;
+import com.SoLinX.repository.UsuarioEstudianteRepository;
+import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.SolicitudService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequestMapping("/SoLinX/api")
@@ -22,6 +27,9 @@ import java.util.stream.Collectors;
 public class SolicitudController {
 
     private final SolicitudService solicitudService;
+    private final UsuarioEstudianteRepository usuarioEstudianteRepository;
+    private final UsuarioRepository usuarioRepository;
+
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private String formatDate(Date date) {
@@ -40,20 +48,43 @@ public class SolicitudController {
         }
     }
 
+    private String[] obtenerDatosUsuarioEstudiante(Integer boleta) {
+        try {
+            UsuarioEstudiante ue = usuarioEstudianteRepository.findByBoleta(boleta).orElse(null);
+            if (ue == null) return new String[]{null, null};
+
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(ue.getIdUsuario());
+            if (usuarioOpt.isEmpty()) return new String[]{null, null};
+
+            Usuario u = usuarioOpt.get();
+            return new String[]{u.getNombre(), u.getCorreo()};
+        } catch (Exception e) {
+            return new String[]{null, null};
+        }
+    }
+
     @GetMapping("/solicitud/empresa/{idEmpresa}")
     public ResponseEntity<List<SolicitudDto>> listarPorEmpresa(@PathVariable("idEmpresa") Integer idEmpresa) {
         List<Solicitud> solicitudes = solicitudService.obtenerPorEmpresa(idEmpresa);
         if (solicitudes.isEmpty()) return ResponseEntity.noContent().build();
+
         List<SolicitudDto> dtos = solicitudes.stream()
-                .map(s -> SolicitudDto.builder()
-                        .idSolicitud(s.getIdSolicitud())
-                        .fechaSolicitud(formatDate(s.getFechaSolicitud()))
-                        .estadoSolicitud(s.getEstadoSolicitud())
-                        .nombreProyecto(s.getProyecto() != null ? s.getProyecto().getNombreProyecto() : "Sin Nombre")
-                        .carreraAlumno(s.getEstudiante() != null ? s.getEstudiante().getCarrera() : "Sin Carrera")
-                        .boletaAlumno(s.getEstudiante() != null ? s.getEstudiante().getBoleta() : 0)
-                        .idProyecto(s.getProyecto() != null ? s.getProyecto().getIdProyecto() : 0)
-                        .build())
+                .map(s -> {
+                    Integer boleta = s.getEstudiante() != null ? s.getEstudiante().getBoleta() : 0;
+                    String[] datosUsuario = obtenerDatosUsuarioEstudiante(boleta);
+
+                    return SolicitudDto.builder()
+                            .idSolicitud(s.getIdSolicitud())
+                            .fechaSolicitud(formatDate(s.getFechaSolicitud()))
+                            .estadoSolicitud(s.getEstadoSolicitud())
+                            .nombreProyecto(s.getProyecto() != null ? s.getProyecto().getNombreProyecto() : "Sin Nombre")
+                            .carreraAlumno(s.getEstudiante() != null ? s.getEstudiante().getCarrera() : "Sin Carrera")
+                            .boletaAlumno(boleta)
+                            .nombreEstudiante(datosUsuario[0])
+                            .correoEstudiante(datosUsuario[1])
+                            .idProyecto(s.getProyecto() != null ? s.getProyecto().getIdProyecto() : 0)
+                            .build();
+                })
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
@@ -66,8 +97,8 @@ public class SolicitudController {
                 .idSolicitud(s.getIdSolicitud())
                 .fechaSolicitud(formatDate(s.getFechaSolicitud()))
                 .estadoSolicitud(s.getEstadoSolicitud())
-                .boletaAlumno(s.getEstudiante().getBoleta())
-                .idProyecto(s.getProyecto().getIdProyecto())
+                .boletaAlumno(s.getEstudiante() != null ? s.getEstudiante().getBoleta() : null)
+                .idProyecto(s.getProyecto() != null ? s.getProyecto().getIdProyecto() : null)
                 .build()).collect(Collectors.toList()));
     }
 
@@ -79,8 +110,8 @@ public class SolicitudController {
                 .idSolicitud(s.getIdSolicitud())
                 .fechaSolicitud(formatDate(s.getFechaSolicitud()))
                 .estadoSolicitud(s.getEstadoSolicitud())
-                .boletaAlumno(s.getEstudiante().getBoleta())
-                .idProyecto(s.getProyecto().getIdProyecto())
+                .boletaAlumno(s.getEstudiante() != null ? s.getEstudiante().getBoleta() : null)
+                .idProyecto(s.getProyecto() != null ? s.getProyecto().getIdProyecto() : null)
                 .build());
     }
 
@@ -145,14 +176,9 @@ public class SolicitudController {
     @GetMapping("/solicitudes/estudiante/{boleta}")
     public ResponseEntity<List<SolicitudDto>> obtenerSolicitudesEstudiante(@PathVariable("boleta") Integer boleta) {
         try {
-            System.out.println("============================================");
-            System.out.println("Endpoint: /solicitudes/estudiante/" + boleta);
             List<SolicitudDto> solicitudes = solicitudService.obtenerSolicitudesPorBoleta(boleta);
-            System.out.println("Solicitudes encontradas: " + solicitudes.size());
-            System.out.println("============================================");
             return ResponseEntity.ok(solicitudes);
         } catch (Exception e) {
-            System.err.println("❌ ERROR al obtener solicitudes: " + e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }

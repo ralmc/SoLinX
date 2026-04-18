@@ -9,7 +9,7 @@ import com.SoLinX.service.NotificacionService;
 import com.SoLinX.service.SolicitudAcceptService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.sql.Timestamp;
 
 @Service
 public class SolicitudAcceptServiceImpl implements SolicitudAcceptService {
@@ -18,53 +18,74 @@ public class SolicitudAcceptServiceImpl implements SolicitudAcceptService {
     private final NotificacionService notificacionService;
 
     public SolicitudAcceptServiceImpl(SolicitudRepository solicitudRepository,
-                                      ProyectoRepository proyectoRepository, NotificacionService notificacionService) {
+                                      ProyectoRepository proyectoRepository,
+                                      NotificacionService notificacionService) {
         this.solicitudRepository = solicitudRepository;
-        this.proyectoRepository  = proyectoRepository;
-        this.notificacionService  = notificacionService;
+        this.proyectoRepository = proyectoRepository;
+        this.notificacionService = notificacionService;
     }
 
+    /**
+     * La EMPRESA acepta o rechaza una solicitud.
+     * - Acepta: pasa a 'aceptada' (esperando visto bueno final del supervisor)
+     * - Rechaza: pasa a 'rechazada_empresa'
+     *
+     * En ambos casos se notifica al alumno.
+     */
     @Override
     public Solicitud aceptar(SolicitudAcceptDto dto) {
         Solicitud solicitud = solicitudRepository.findById(dto.getIdSolicitud())
                 .orElseThrow(() -> new RuntimeException("La solicitud no existe"));
 
-        if (Boolean.TRUE.equals(dto.getAceptado())) {
-            Proyecto proyecto = solicitud.getProyecto();
-            System.out.println("============================================");
-            System.out.println("Vacantes antes: " + proyecto.getVacantes());
-            proyecto.setVacantes(proyecto.getVacantes() - 1);
-            proyectoRepository.save(proyecto);
-            System.out.println("Vacantes después: " + proyecto.getVacantes());
-            System.out.println("============================================");
+        String nombreProyecto = solicitud.getProyecto() != null
+                ? solicitud.getProyecto().getNombreProyecto()
+                : "proyecto";
 
+        Integer idUsuarioAlumno = null;
+        try {
+            idUsuarioAlumno = solicitud.getEstudiante().getUsuarioEstudiante().getIdUsuario();
+        } catch (Exception e) {
+            System.out.println("No se pudo obtener idUsuario del alumno: " + e.getMessage());
+        }
+
+        if (Boolean.TRUE.equals(dto.getAceptado())) {
+            // ─── EMPRESA ADMITE ───
             solicitud.setEstadoSolicitud("aceptada");
+            solicitud.setFechaAceptacion(new Timestamp(System.currentTimeMillis()));
             solicitudRepository.save(solicitud);
 
-            Integer boleta = solicitud.getEstudiante().getBoleta();
-            List<Solicitud> pendientes = solicitudRepository
-                    .findSolicitudesPendientesByBoletaExcluding(boleta, dto.getIdSolicitud());
-
             System.out.println("============================================");
-            System.out.println("Solicitudes a rechazar automáticamente: " + pendientes.size());
-            for (Solicitud pendiente : pendientes) {
-                pendiente.setEstadoSolicitud("rechazada");
-                System.out.println("Rechazando solicitud ID: " + pendiente.getIdSolicitud());
+            System.out.println("Empresa admitió solicitud ID: " + solicitud.getIdSolicitud());
+            System.out.println("Estado: aceptada (esperando visto bueno del supervisor)");
+            System.out.println("============================================");
+
+            // Notificar al alumno
+            if (idUsuarioAlumno != null) {
+                notificacionService.crear(
+                        idUsuarioAlumno,
+                        "Empresa aceptó tu solicitud",
+                        "La empresa aceptó tu solicitud al proyecto \"" + nombreProyecto +
+                                "\". Esperando visto bueno final del supervisor."
+                );
             }
-            solicitudRepository.saveAll(pendientes);
-            System.out.println("============================================");
-
-            Integer idUsuario = solicitud.getEstudiante().getUsuarioEstudiante().getIdUsuario();
-            notificacionService.crear(
-                    idUsuario,
-                    "¡Felicidades! Solicitud aceptada 🎉",
-                    "Tu solicitud al proyecto \"" + solicitud.getProyecto().getNombreProyecto() +
-                            "\" ha sido aceptada."
-            );
 
         } else {
-            solicitud.setEstadoSolicitud("rechazada");
+            // ─── EMPRESA RECHAZA ───
+            solicitud.setEstadoSolicitud("rechazada_empresa");
             solicitudRepository.save(solicitud);
+
+            System.out.println("============================================");
+            System.out.println("Empresa rechazó solicitud ID: " + solicitud.getIdSolicitud());
+            System.out.println("============================================");
+
+            // Notificar al alumno
+            if (idUsuarioAlumno != null) {
+                notificacionService.crear(
+                        idUsuarioAlumno,
+                        "Solicitud rechazada por la empresa",
+                        "La empresa rechazó tu solicitud al proyecto \"" + nombreProyecto + "\"."
+                );
+            }
         }
 
         return solicitud;

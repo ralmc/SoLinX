@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.solinx.API.ApiClient;
@@ -60,8 +61,20 @@ public class IniciarSesion extends Fragment {
 
         TextView tvRegistroLink = view.findViewById(R.id.tvRegistroLink);
         btnEnviar.setOnClickListener(v -> hacerLogin());
+
+        // Uso del método correcto del compañero para crear cuenta
         tvRegistroLink.setOnClickListener(v ->
                 ((InicioHelper) requireActivity()).mostrarCrearCuenta());
+
+        // Botón flecha de regreso (de tu código)
+        try {
+            android.widget.ImageButton btnRegresarFlecha = view.findViewById(R.id.btnRegresarFlecha);
+            if (btnRegresarFlecha != null) {
+                btnRegresarFlecha.setOnClickListener(v -> {
+                    if (getActivity() != null) getActivity().finish();
+                });
+            }
+        } catch (Exception ignored) {}
     }
 
     // ─── Validación ────────────────────────────────────────────────────────────
@@ -98,13 +111,32 @@ public class IniciarSesion extends Fragment {
                     public void onResponse(@NonNull Call<LoginResponseDTO> call,
                                            @NonNull Response<LoginResponseDTO> response) {
                         setLoading(false);
-                        if (response.code() == 401) { showToast("Correo o contraseña incorrectos"); return; }
-                        if (!response.isSuccessful() || response.body() == null) { showToast("Error al conectar con el servidor"); return; }
-                        manejarLoginExitoso(response.body());
+
+                        if (response.code() == 401) {
+                            String motivo = response.headers().get("X-Login-Error");
+                            if ("NO_VERIFICADO".equals(motivo)) {
+                                mostrarDialogoNoVerificado(correo);
+                            } else {
+                                showToast("Correo o contraseña incorrectos");
+                            }
+                            return;
+                        }
+
+                        if (!response.isSuccessful() || response.body() == null) {
+                            showToast("Error al conectar con el servidor");
+                            return;
+                        }
+
+                        // En lugar de navegar directo, primero cargamos el tema
+                        LoginResponseDTO loginResponse = response.body();
+                        Log.d(TAG, "Login exitoso - Usuario: " + loginResponse.getNombre() + " | Rol: " + loginResponse.getRol());
+                        guardarSesionBasica(loginResponse);
+                        cargarYAplicarTema(loginResponse);
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<LoginResponseDTO> call, @NonNull Throwable t) {
+                    public void onFailure(@NonNull Call<LoginResponseDTO> call,
+                                          @NonNull Throwable t) {
                         setLoading(false);
                         Log.e(TAG, "Error de red", t);
                         showToast("Sin conexión: " + t.getMessage());
@@ -112,10 +144,74 @@ public class IniciarSesion extends Fragment {
                 });
     }
 
-    private void manejarLoginExitoso(LoginResponseDTO resp) {
-        Log.d(TAG, "Login OK — usuario: " + resp.getNombre() + " | rol: " + resp.getRol());
-        guardarSesionBasica(resp);
+    // ─── Diálogo cuenta no verificada ──────────────────────────────────────────
+    private void mostrarDialogoNoVerificado(String correo) {
+        if (getContext() == null) return;
 
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Cuenta no verificada")
+                .setMessage("Tu cuenta aún no ha sido verificada.\n\nRevisa tu bandeja de entrada (y spam) o solicita un nuevo enlace.")
+                .setPositiveButton("Reenviar correo", (dialog, which) ->
+                        reenviarCorreoVerificacion(correo))
+                .setNegativeButton("Cerrar", null)
+                .show();
+    }
+
+    private void reenviarCorreoVerificacion(String correo) {
+        setLoading(true);
+
+        ApiClient.getClient().create(ApiService.class)
+                .reenviarVerificacion(correo)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(@NonNull Call<String> call,
+                                           @NonNull Response<String> response) {
+                        setLoading(false);
+                        if (response.isSuccessful()) {
+                            showToast("Correo de verificación enviado");
+                        } else {
+                            showToast("No se pudo reenviar el correo");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call,
+                                          @NonNull Throwable t) {
+                        setLoading(false);
+                        showToast("Sin conexión: " + t.getMessage());
+                    }
+                });
+    }
+
+    // ─── Aplicar Tema y Navegar (Tu lógica fusionada con la suya) ─────────────
+    private void cargarYAplicarTema(LoginResponseDTO loginResponse) {
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        api.obtenerPerfil(loginResponse.getIdUsuario()).enqueue(new Callback<com.example.solinx.DTO.PerfilDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<com.example.solinx.DTO.PerfilDTO> call,
+                                   @NonNull Response<com.example.solinx.DTO.PerfilDTO> response) {
+                if (response.isSuccessful() && response.body() != null
+                        && response.body().getTema() != null) {
+                    String tema = response.body().getTema();
+                    Log.d(TAG, "Tema recibido de la BD: " + tema);
+                    com.example.solinx.UTIL.ThemeUtils.applyThemeFromBackend(requireContext(), tema);
+                } else {
+                    Log.d(TAG, "Sin tema en BD, usando claro por defecto");
+                    com.example.solinx.UTIL.ThemeUtils.forceLightModeLocal(requireContext());
+                }
+                manejarLoginExitoso(loginResponse);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<com.example.solinx.DTO.PerfilDTO> call, @NonNull Throwable t) {
+                Log.e(TAG, "Error al cargar tema: " + t.getMessage());
+                // Navegar igual con tema default
+                manejarLoginExitoso(loginResponse);
+            }
+        });
+    }
+
+    private void manejarLoginExitoso(LoginResponseDTO resp) {
         switch (resp.getRol().toLowerCase()) {
             case "estudiante":
                 guardarDatosEstudiante(resp);
@@ -150,6 +246,9 @@ public class IniciarSesion extends Fragment {
         String boleta = r.getBoleta() != null ? r.getBoleta().toString() : "N/A";
         prefs(PREFS_SOLINX).edit()
                 .putString("boleta",   boleta)
+                // Se agregan los datos completos de ambas versiones
+                .putString("nombre",   orNA(r.getNombre()))
+                .putString("correo",   orNA(r.getCorreo()))
                 .putString("carrera",  orNA(r.getCarrera()))
                 .putString("escuela",  orNA(r.getEscuela()))
                 .putString("telefono", orNA(r.getTelefono()))

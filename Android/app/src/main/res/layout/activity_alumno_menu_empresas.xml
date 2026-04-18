@@ -8,7 +8,6 @@
     android:fitsSystemWindows="true"
     tools:context=".AlumnoMenuEmpresas">
 
-    <!-- Encabezado -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,17 +34,23 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/tvBoleta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="BOLETA"
-                android:textSize="14sp"
-                android:textColor="?attr/colorPrimary"
+                android:text="Hola, "
+                android:textSize="16sp"
+                android:textColor="?attr/colorOnBackground"
                 android:textStyle="bold"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="12dp"
-                android:background="?attr/selectableItemBackground" />
+                android:fontFamily="@font/molgan"/>
+            <TextView
+                android:id="@+id/tvNombreAlumnoHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre Alumno"
+                android:textSize="16sp"
+                android:textColor="?attr/colorOnBackground"
+                android:textStyle="bold"
+                android:fontFamily="@font/molgan"
+                android:layout_marginEnd="12dp" />
 
             <ImageView
                 android:id="@+id/fotoperfil"
@@ -53,13 +58,11 @@
                 android:layout_height="50dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/imagen_prederterminada"
-                android:contentDescription="Foto de perfil"
-                android:layout_marginStart="8dp" />
+                android:contentDescription="Foto de perfil" />
 
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Barra AZUL -->
     <View
         android:layout_width="match_parent"
         android:layout_height="4dp"
@@ -67,7 +70,6 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp" />
 
-    <!-- Botones de sección -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -164,7 +166,6 @@
 
     </LinearLayout>
 
-    <!-- Contenedor de Fragments -->
     <FrameLayout
         android:id="@+id/frameAlumno"
         android:layout_width="match_parent"

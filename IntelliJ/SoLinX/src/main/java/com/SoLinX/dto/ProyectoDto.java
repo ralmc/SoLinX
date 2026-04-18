@@ -24,7 +24,7 @@ public class ProyectoDto {
     private String ubicacion;
     private Date fechaTermino;
     private String telefonoEmpresa;
-
+    private String fotoEmpresa;
     private Integer idEmpresa;
 
 }

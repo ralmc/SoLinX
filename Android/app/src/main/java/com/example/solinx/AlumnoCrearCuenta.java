@@ -49,15 +49,15 @@ public class AlumnoCrearCuenta extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        etNombreUsuario = view.findViewById(R.id.etNombreUsuario);
-        etBoleta = view.findViewById(R.id.etBoleta);
-        etCorreo = view.findViewById(R.id.etCorreo);
-        etConfirmarCorreo = view.findViewById(R.id.etConfirmarCorreo);
-        etContrasena = view.findViewById(R.id.etContrasena);
+        etNombreUsuario       = view.findViewById(R.id.etNombreUsuario);
+        etBoleta              = view.findViewById(R.id.etBoleta);
+        etCorreo              = view.findViewById(R.id.etCorreo);
+        etConfirmarCorreo     = view.findViewById(R.id.etConfirmarCorreo);
+        etContrasena          = view.findViewById(R.id.etContrasena);
         etConfirmarContrasena = view.findViewById(R.id.etConfirmarContrasena);
-        spEscuela = view.findViewById(R.id.spEscuela);
-        spCarrera = view.findViewById(R.id.spCarrera);
-        btnEnviar = view.findViewById(R.id.btnEnviar);
+        spEscuela             = view.findViewById(R.id.spEscuela);
+        spCarrera             = view.findViewById(R.id.spCarrera);
+        btnEnviar             = view.findViewById(R.id.btnEnviar);
 
         TextView tvLoginLink = view.findViewById(R.id.tvLoginLink);
         tvLoginLink.setOnClickListener(v ->
@@ -68,6 +68,16 @@ public class AlumnoCrearCuenta extends Fragment {
                 android.R.layout.simple_dropdown_item_1line, ESCUELAS));
         spCarrera.setAdapter(new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_dropdown_item_1line, CARRERAS));
+
+        // Botón flecha de regreso (en fragments, regresa al activity anterior)
+        try {
+            android.widget.ImageButton btnRegresarFlecha = view.findViewById(R.id.btnRegresarFlecha);
+            if (btnRegresarFlecha != null) {
+                btnRegresarFlecha.setOnClickListener(v -> {
+                    if (getActivity() != null) getActivity().finish();
+                });
+            }
+        } catch (Exception ignored) {}
     }
 
     private void validarYContinuar() {
@@ -94,26 +104,40 @@ public class AlumnoCrearCuenta extends Fragment {
 
         if (escuela.isEmpty()) { showToast("Selecciona una escuela"); spEscuela.requestFocus(); return; }
         if (carrera.isEmpty()) { showToast("Selecciona una carrera"); spCarrera.requestFocus(); return; }
+
         if (correo.isEmpty()) { showError(etCorreo, "Ingresa tu correo"); return; }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) { showError(etCorreo, "Ingresa un correo válido"); return; }
         if (confirmarCorreo.isEmpty()) { showError(etConfirmarCorreo, "Confirma tu correo"); return; }
         if (!correo.equals(confirmarCorreo)) { showError(etConfirmarCorreo, "Los correos no coinciden"); return; }
+
         if (contrasena.isEmpty()) { showError(etContrasena, "Ingresa tu contraseña"); return; }
-        if (contrasena.length() < 4) { showError(etContrasena, "Mínimo 4 caracteres"); return; }
+        if (!esPasswordSeguro(contrasena)) {
+            showError(etContrasena, "Mínimo 8 caracteres, una mayúscula, minúscula, número y símbolo (@$!%*?&)");
+            return;
+        }
         if (confirmarContrasena.isEmpty()) { showError(etConfirmarContrasena, "Confirma tu contraseña"); return; }
         if (!contrasena.equals(confirmarContrasena)) { showError(etConfirmarContrasena, "Las contraseñas no coinciden"); return; }
 
         Bundle bundle = new Bundle();
-        bundle.putString("nombreUsuario", nombreUsuario);
-        bundle.putInt   ("boleta", boleta);
-        bundle.putString("carrera", carrera);
-        bundle.putString("escuela", escuela);
-        bundle.putString("correo", correo);
-        bundle.putString("confirmarCorreo", confirmarCorreo);
-        bundle.putString("contrasena", contrasena);
+        bundle.putString("nombreUsuario",       nombreUsuario);
+        bundle.putInt   ("boleta",              boleta);
+        bundle.putString("carrera",             carrera);
+        bundle.putString("escuela",             escuela);
+        bundle.putString("correo",              correo);
+        bundle.putString("confirmarCorreo",     confirmarCorreo);
+        bundle.putString("contrasena",          contrasena);
         bundle.putString("confirmarContrasena", confirmarContrasena);
 
         ((InicioHelper) requireActivity()).mostrarHorarioConDatos(bundle);
+    }
+
+    private boolean esPasswordSeguro(String password) {
+        if (password == null) return false;
+        return password.length() >= 8 &&
+                password.matches(".*[A-Z].*") &&
+                password.matches(".*[a-z].*") &&
+                password.matches(".*\\d.*") &&
+                password.matches(".*[@$!%*?&].*");
     }
 
     private void showError(TextInputEditText campo, String mensaje) {

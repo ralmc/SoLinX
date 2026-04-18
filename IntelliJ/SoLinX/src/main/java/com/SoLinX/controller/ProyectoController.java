@@ -1,10 +1,11 @@
 package com.SoLinX.controller;
 
+import com.SoLinX.dto.ProyectoAlumnoResponseDto;
 import com.SoLinX.dto.ProyectoDto;
-import com.SoLinX.model.Empresa;
-import com.SoLinX.model.Proyecto;
-import com.SoLinX.model.Usuario;
+import com.SoLinX.model.*;
 import com.SoLinX.repository.EmpresaRepository;
+import com.SoLinX.repository.PerfilRepository;
+import com.SoLinX.repository.SolicitudRepository;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.ProyectoService;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +27,8 @@ public class ProyectoController {
     private final ProyectoService proyectoService;
     private final UsuarioRepository usuarioRepository;
     private final EmpresaRepository empresaRepository;
+    private final SolicitudRepository solicitudRepository;
+    private final PerfilRepository perfilRepository;
 
     @PostMapping("/proyecto")
     public ResponseEntity<ProyectoDto> save(@RequestBody ProyectoDto dto) {
@@ -36,7 +40,7 @@ public class ProyectoController {
     @GetMapping("/proyecto")
     public ResponseEntity<List<ProyectoDto>> lista() {
         List<Proyecto> proyectos = proyectoService.getAll();
-        if (proyectos.isEmpty()) return ResponseEntity.noContent().build();
+        if (proyectos.isEmpty()) return ResponseEntity.ok(new ArrayList<>());
 
         List<ProyectoDto> dtos = proyectos.stream()
                 .map(this::convertToDto)
@@ -47,12 +51,65 @@ public class ProyectoController {
     @GetMapping("/proyecto/empresa/{idEmpresa}")
     public ResponseEntity<List<ProyectoDto>> listarPorEmpresa(@PathVariable("idEmpresa") Integer idEmpresa) {
         List<Proyecto> proyectos = proyectoService.obtenerPorEmpresa(idEmpresa);
-        if (proyectos.isEmpty()) return ResponseEntity.noContent().build();
+        if (proyectos.isEmpty()) return ResponseEntity.ok(new ArrayList<>());
 
         List<ProyectoDto> dtos = proyectos.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/proyecto/alumno/{boleta}")
+    public ResponseEntity<ProyectoAlumnoResponseDto> listarParaAlumno(
+            @PathVariable("boleta") Integer boleta) {
+        try {
+            List<Solicitud> aprobadas = solicitudRepository.findSolicitudAprobadaByBoleta(boleta);
+
+            if (!aprobadas.isEmpty()) {
+                Solicitud sol = aprobadas.get(0);
+                Proyecto proyecto = sol.getProyecto();
+                ProyectoDto proyectoDto = convertToDto(proyecto);
+
+                String correoEmpresa = null;
+                try {
+                    if (proyecto.getEmpresa() != null) {
+                        Usuario u = usuarioRepository.findByEmpresaId(proyecto.getEmpresa().getIdEmpresa()).orElse(null);
+                        if (u != null) correoEmpresa = u.getCorreo();
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error obteniendo correo empresa: " + e.getMessage());
+                }
+
+                return ResponseEntity.ok(ProyectoAlumnoResponseDto.builder()
+                        .enProyecto(true)
+                        .proyectoAsignado(proyectoDto)
+                        .correoEmpresa(correoEmpresa)
+                        .proyectos(new ArrayList<>())
+                        .build());
+            }
+
+            List<Integer> idsEnProceso = solicitudRepository.findIdProyectosEnProcesoPorBoleta(boleta);
+
+            List<Proyecto> todosProyectos = proyectoService.getAll();
+            List<ProyectoDto> dtos = todosProyectos.stream()
+                    .filter(p -> !idsEnProceso.contains(p.getIdProyecto()))
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(ProyectoAlumnoResponseDto.builder()
+                    .enProyecto(false)
+                    .proyectoAsignado(null)
+                    .correoEmpresa(null)
+                    .proyectos(dtos)
+                    .build());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(ProyectoAlumnoResponseDto.builder()
+                    .enProyecto(false)
+                    .proyectos(new ArrayList<>())
+                    .build());
+        }
     }
 
     @GetMapping("/proyecto/{id}")
@@ -76,26 +133,45 @@ public class ProyectoController {
         return ResponseEntity.noContent().build();
     }
 
-    // Endpoint para subir/actualizar imagen del proyecto como Base64
     @PutMapping("/proyecto/{id}/imagen")
     public ResponseEntity<String> actualizarImagenProyecto(
             @PathVariable("id") Integer id,
             @RequestBody java.util.Map<String, String> body) {
         Proyecto proyecto = proyectoService.getById(id);
         if (proyecto == null) return ResponseEntity.notFound().build();
+
         proyecto.setImagenProyecto(body.get("imagenProyecto"));
+
         proyectoService.save(proyecto);
         return ResponseEntity.ok("Imagen del proyecto actualizada correctamente.");
     }
 
     private String obtenerTelefonoEmpresa(Integer idEmpresa) {
         try {
+            Empresa empresa = empresaRepository.findById(idEmpresa).orElse(null);
+            if (empresa != null && empresa.getTelefono() != null) {
+                return empresa.getTelefono();
+            }
             Usuario usuario = usuarioRepository.findByEmpresaId(idEmpresa).orElse(null);
-            if (usuario != null && usuario.getTelefono() != null) return usuario.getTelefono();
+            if (usuario != null && usuario.getTelefono() != null) {
+                return usuario.getTelefono();
+            }
         } catch (Exception e) {
             log.warn("Error obteniendo teléfono de empresa {}: {}", idEmpresa, e.getMessage());
         }
         return "No disponible";
+    }
+
+    private String obtenerFotoEmpresa(Integer idEmpresa) {
+        try {
+            Usuario u = usuarioRepository.findByEmpresaId(idEmpresa).orElse(null);
+            if (u == null) return null;
+            return perfilRepository.findByIdUsuario(u.getIdUsuario())
+                    .map(Perfil::getFoto)
+                    .orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private ProyectoDto convertToDto(Proyecto proyecto) {
@@ -113,6 +189,7 @@ public class ProyectoController {
                 .imagenRef(proyecto.getImagenRef())
                 .imagenProyecto(proyecto.getImagenProyecto())
                 .idEmpresa(idEmpresa)
+                .fotoEmpresa(obtenerFotoEmpresa(idEmpresa))
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
                 .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible")
                 .build();

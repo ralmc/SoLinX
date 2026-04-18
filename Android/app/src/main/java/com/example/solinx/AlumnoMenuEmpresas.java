@@ -25,7 +25,6 @@ import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.UTIL.ThemeUtils;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,7 +35,8 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     private static final String TAG = "AlumnoMenuEmpresas";
 
     ImageView fotoperfil;
-    TextView tvBoleta, btnTabEmpresas, btnTabDocumentos, btnTabNotificaciones;
+    TextView tvNombreAlumnoHeader;
+    TextView btnTabEmpresas, btnTabDocumentos, btnTabNotificaciones;
     View lineaTabEmpresas, lineaTabDocumentos, lineaTabNotificaciones;
 
     private Integer idUsuario;
@@ -59,27 +59,51 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
 
         recibirDatosDelUsuario();
 
-        fotoperfil         = findViewById(R.id.fotoperfil);
-        tvBoleta           = findViewById(R.id.tvBoleta);
-        btnTabEmpresas     = findViewById(R.id.btnTabEmpresas);
-        btnTabDocumentos   = findViewById(R.id.btnTabDocumentos);
+        tvNombreAlumnoHeader = findViewById(R.id.tvNombreAlumnoHeader);
+        fotoperfil           = findViewById(R.id.fotoperfil);
+        btnTabEmpresas       = findViewById(R.id.btnTabEmpresas);
+        btnTabDocumentos     = findViewById(R.id.btnTabDocumentos);
         btnTabNotificaciones = findViewById(R.id.btnTabNotificaciones);
-        lineaTabEmpresas   = findViewById(R.id.lineaTabEmpresas);
-        lineaTabDocumentos = findViewById(R.id.lineaTabDocumentos);
+        lineaTabEmpresas     = findViewById(R.id.lineaTabEmpresas);
+        lineaTabDocumentos   = findViewById(R.id.lineaTabDocumentos);
         lineaTabNotificaciones = findViewById(R.id.lineaTabNotificaciones);
+
+        mostrarNombreEnHeader();
 
         fotoperfil.setOnClickListener(this);
         btnTabEmpresas.setOnClickListener(this);
         btnTabDocumentos.setOnClickListener(this);
         btnTabNotificaciones.setOnClickListener(this);
 
-        if (nombreUsuario != null) {
-            tvBoleta.setText("Hola, " + nombreUsuario);
-        }
-
         cargarFotoPerfil();
         mostrarTabEmpresas();
         verificarSiAlumnoAceptado();
+    }
+
+    // ─── Mostrar el nombre del alumno en el header ────────────────────────────
+    private void mostrarNombreEnHeader() {
+        String nombreAMostrar = "Alumno";
+
+        // 1. Intentar con la variable de clase (viene del Intent si se pasó)
+        if (nombreUsuario != null && !nombreUsuario.isEmpty() && !nombreUsuario.equals("N/A")) {
+            nombreAMostrar = nombreUsuario;
+        } else {
+            // 2. Fallback a SoLinXPrefs (donde IniciarSesion sí guarda los datos del alumno)
+            SharedPreferences prefsSolinx = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
+            String nombreSolinx = prefsSolinx.getString("nombre", null);
+            if (nombreSolinx != null && !nombreSolinx.isEmpty() && !nombreSolinx.equals("N/A")) {
+                nombreAMostrar = nombreSolinx;
+            } else {
+                // 3. Fallback adicional a sesion_usuario (datos básicos de sesión)
+                SharedPreferences prefsSesion = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
+                String nombreSesion = prefsSesion.getString("nombre", null);
+                if (nombreSesion != null && !nombreSesion.isEmpty()) {
+                    nombreAMostrar = nombreSesion;
+                }
+            }
+        }
+
+        tvNombreAlumnoHeader.setText(nombreAMostrar);
     }
 
     // ─── Verificar si el alumno tiene solicitud aceptada ─────────────────────
@@ -239,11 +263,11 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
     private void navegarAVistaCuenta() {
         Intent intent = new Intent(this, AlumnoVistaCuenta.class);
         SharedPreferences prefs = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
-        intent.putExtra("nombre", nombreUsuario);
-        intent.putExtra("correo", correoUsuario);
-        intent.putExtra("boleta", prefs.getString("boleta", "N/A"));
-        intent.putExtra("carrera", prefs.getString("carrera", "N/A"));
-        intent.putExtra("escuela", prefs.getString("escuela", "N/A"));
+        intent.putExtra("nombre",   prefs.getString("nombre", "N/A"));
+        intent.putExtra("correo",   prefs.getString("correo", "N/A"));
+        intent.putExtra("boleta",   prefs.getString("boleta", "N/A"));
+        intent.putExtra("carrera",  prefs.getString("carrera", "N/A"));
+        intent.putExtra("escuela",  prefs.getString("escuela", "N/A"));
         intent.putExtra("telefono", prefs.getString("telefono", "N/A"));
         startActivity(intent);
     }
@@ -254,6 +278,7 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         super.onResume();
         cargarFotoPerfil();
         verificarSiAlumnoAceptado();
+        mostrarNombreEnHeader();
         if (empresasFragment != null && empresasFragment.isVisible()) {
             empresasFragment.cargarProyectos();
         }

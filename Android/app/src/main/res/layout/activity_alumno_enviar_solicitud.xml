@@ -32,7 +32,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:contentDescription="regresar"
-                android:padding="8dp" />
+                android:padding="8dp"
+                app:tint="@color/flecha_color"/>
 
             <ImageView
                 android:layout_width="60dp"
@@ -207,6 +208,21 @@
                     android:paddingVertical="16dp"
                     android:clickable="true"
                     android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/btnEnviarCorreo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="✉  Enviar Correo a Empresa"
+                    android:textSize="15sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:paddingVertical="14dp"
+                    android:layout_marginTop="10dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

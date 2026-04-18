@@ -24,6 +24,10 @@ public class Solicitud {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaSolicitud;
 
+    @Column(name = "fechaAceptacion")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaAceptacion;
+
     @Column(name = "estadoSolicitud")
     private String estadoSolicitud;
 

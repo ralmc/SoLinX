@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_vcalumno"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -36,10 +36,11 @@
                     android:id="@+id/regresar"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icono_salida"
+                    android:src="@drawable/flechaizq"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
-                    android:contentDescription="Regresar"/>
+                    android:contentDescription="Regresar"
+                    app:tint="@color/flecha_color"/>
 
                 <ImageView
                     android:id="@+id/imgLogoAve"
@@ -66,7 +67,7 @@
                         android:id="@+id/tvBoleta"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2023XXXX"
+                        android:text="2023XXXXXX"
                         android:textSize="18sp"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold"/>
@@ -489,6 +490,47 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <!-- CONTACTAR SOPORTE -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="24dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorPrimary"
+            android:alpha="0.2"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/btnContactarSoporte"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="✉  Contactar Soporte"
+            android:textSize="16sp"
+            android:textColor="?attr/colorSecondary"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingVertical="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="¿Necesitas ayuda? Envía un correo al supervisor"
+            android:textSize="12sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+    </LinearLayout>
 
     <!-- FOOTER: CERRAR SESIÓN -->
     <LinearLayout

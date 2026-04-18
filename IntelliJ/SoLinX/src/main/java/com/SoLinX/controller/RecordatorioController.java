@@ -31,8 +31,8 @@ public class RecordatorioController {
             @PathVariable("boleta") Integer boleta,
             @RequestBody Map<String, String> body) {
 
-        Estudiante estudiante = estudianteRepository.findById(boleta)
-                .orElseThrow(() -> new RuntimeException("Alumno no encontrado"));
+        Estudiante estudiante = estudianteRepository.findById(boleta).orElse(null);
+        if (estudiante == null) return ResponseEntity.notFound().build();
 
         Integer idUsuario = estudiante.getUsuarioEstudiante().getIdUsuario();
         String titulo = body.get("titulo");
