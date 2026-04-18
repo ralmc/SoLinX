@@ -2,11 +2,9 @@ package com.SoLinX.controller;
 
 import com.SoLinX.dto.ProyectoAlumnoResponseDto;
 import com.SoLinX.dto.ProyectoDto;
-import com.SoLinX.model.Empresa;
-import com.SoLinX.model.Proyecto;
-import com.SoLinX.model.Solicitud;
-import com.SoLinX.model.Usuario;
+import com.SoLinX.model.*;
 import com.SoLinX.repository.EmpresaRepository;
+import com.SoLinX.repository.PerfilRepository;
 import com.SoLinX.repository.SolicitudRepository;
 import com.SoLinX.repository.UsuarioRepository;
 import com.SoLinX.service.ProyectoService;
@@ -30,6 +28,7 @@ public class ProyectoController {
     private final UsuarioRepository usuarioRepository;
     private final EmpresaRepository empresaRepository;
     private final SolicitudRepository solicitudRepository;
+    private final PerfilRepository perfilRepository;
 
     @PostMapping("/proyecto")
     public ResponseEntity<ProyectoDto> save(@RequestBody ProyectoDto dto) {
@@ -60,19 +59,10 @@ public class ProyectoController {
         return ResponseEntity.ok(dtos);
     }
 
-    /**
-     * NUEVO: Devuelve los proyectos que el alumno debe ver en su pantalla.
-     *
-     * 1. Si ya tiene una solicitud en estado 'aprobada' → devuelve enProyecto=true
-     * con la info del proyecto al que pertenece y el correo de la empresa.
-     * 2. Si no → devuelve la lista de proyectos DISPONIBLES, excluyendo los que
-     * el alumno ya tiene en estados 'enviada', 'aprobada_supervisor', 'aceptada'.
-     */
     @GetMapping("/proyecto/alumno/{boleta}")
     public ResponseEntity<ProyectoAlumnoResponseDto> listarParaAlumno(
             @PathVariable("boleta") Integer boleta) {
         try {
-            // 1. Ver si el alumno ya fue aprobado finalmente en algún proyecto
             List<Solicitud> aprobadas = solicitudRepository.findSolicitudAprobadaByBoleta(boleta);
 
             if (!aprobadas.isEmpty()) {
@@ -80,7 +70,6 @@ public class ProyectoController {
                 Proyecto proyecto = sol.getProyecto();
                 ProyectoDto proyectoDto = convertToDto(proyecto);
 
-                // Obtener correo de la empresa
                 String correoEmpresa = null;
                 try {
                     if (proyecto.getEmpresa() != null) {
@@ -99,10 +88,8 @@ public class ProyectoController {
                         .build());
             }
 
-            // 2. Obtener IDs de proyectos que el alumno ya tiene en proceso
             List<Integer> idsEnProceso = solicitudRepository.findIdProyectosEnProcesoPorBoleta(boleta);
 
-            // 3. Obtener todos los proyectos y filtrar
             List<Proyecto> todosProyectos = proyectoService.getAll();
             List<ProyectoDto> dtos = todosProyectos.stream()
                     .filter(p -> !idsEnProceso.contains(p.getIdProyecto()))
@@ -153,7 +140,7 @@ public class ProyectoController {
         Proyecto proyecto = proyectoService.getById(id);
         if (proyecto == null) return ResponseEntity.notFound().build();
 
-        proyecto.setImagenRef(body.get("imagenProyecto"));
+        proyecto.setImagenProyecto(body.get("imagenProyecto"));
 
         proyectoService.save(proyecto);
         return ResponseEntity.ok("Imagen del proyecto actualizada correctamente.");
@@ -175,6 +162,18 @@ public class ProyectoController {
         return "No disponible";
     }
 
+    private String obtenerFotoEmpresa(Integer idEmpresa) {
+        try {
+            Usuario u = usuarioRepository.findByEmpresaId(idEmpresa).orElse(null);
+            if (u == null) return null;
+            return perfilRepository.findByIdUsuario(u.getIdUsuario())
+                    .map(Perfil::getFoto)
+                    .orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private ProyectoDto convertToDto(Proyecto proyecto) {
         Integer idEmpresa = proyecto.getEmpresa() != null ? proyecto.getEmpresa().getIdEmpresa() : null;
 
@@ -190,6 +189,7 @@ public class ProyectoController {
                 .imagenRef(proyecto.getImagenRef())
                 .imagenProyecto(proyecto.getImagenProyecto())
                 .idEmpresa(idEmpresa)
+                .fotoEmpresa(obtenerFotoEmpresa(idEmpresa))
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
                 .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible")
                 .build();

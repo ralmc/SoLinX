@@ -45,7 +45,7 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
 
     private static final String TAG = "GestionProyecto";
     private static final int PERMISSION_REQUEST_CODE = 200;
-    private static final long MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+    private static final long MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
 
     EditText etCarrera, etNombreProyecto, etObjetivo, etVacantes, etUbicacion;
     Button btnGuardar, btnSeleccionarImagen;
@@ -151,7 +151,6 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     }
 
     // ─── Imagen del Proyecto ──────────────────────────────────────────────────
-
     private void seleccionarImagen() {
         String permiso = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 ? Manifest.permission.READ_MEDIA_IMAGES
@@ -183,7 +182,6 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
 
     private void procesarImagenProyecto(Uri uri) {
         try {
-            // Verificar tamaño del archivo original
             InputStream checkStream = getContentResolver().openInputStream(uri);
             if (checkStream != null) {
                 int fileSize = checkStream.available();
@@ -204,15 +202,12 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
                 return;
             }
 
-            // Redimensionar a máximo 800x800
             Bitmap escalado = redimensionar(original, 800, 800);
 
-            // Comprimir y verificar tamaño
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int calidad = 85;
             escalado.compress(Bitmap.CompressFormat.JPEG, calidad, baos);
 
-            // Si sigue siendo mayor a 2MB, bajar calidad progresivamente
             while (baos.toByteArray().length > MAX_IMAGE_SIZE_BYTES && calidad > 20) {
                 baos.reset();
                 calidad -= 10;
@@ -228,7 +223,6 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
 
             imagenBase64 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
 
-            // Mostrar preview
             imgPreview.setImageBitmap(escalado);
             imgPreview.setVisibility(View.VISIBLE);
 
@@ -259,7 +253,6 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     }
 
     // ─── Clicks ───────────────────────────────────────────────────────────────
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -322,10 +315,8 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
         p.setObjetivo(etObjetivo.getText().toString().trim());
         p.setUbicacion(etUbicacion.getText().toString().trim());
 
-        // imagenRef siempre es el default, la imagen real va en imagenProyecto
         p.setImagenRef("img_default_proyecto");
 
-        // Incluir la imagen Base64 si se seleccionó una
         if (imagenBase64 != null && !imagenBase64.isEmpty()) {
             p.setImagenProyecto(imagenBase64);
         }
@@ -360,7 +351,6 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
                 if (response.isSuccessful() && response.body() != null) {
                     int idCreado = response.body().getIdProyecto();
 
-                    // Si hay imagen, subirla por separado
                     if (imagenBase64 != null && !imagenBase64.isEmpty()) {
                         subirImagenAlProyecto(idCreado);
                     } else {

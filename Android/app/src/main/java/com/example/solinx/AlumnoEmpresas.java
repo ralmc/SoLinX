@@ -46,14 +46,12 @@ public class AlumnoEmpresas extends Fragment {
 
     private static final String TAG = "AlumnoEmpresas";
 
-    // Vista lista
     private LinearLayout layoutListaProyectos;
     private RecyclerView recyclerViewProyectos;
     private TextView txtNoProyectos;
     private ProgressBar progressBar;
     private ProyectoAdapter proyectoAdapter;
 
-    // Vista "ya perteneces"
     private FrameLayout containerProyectoAsignado;
     private ImageView imgProyectoAsignado;
     private TextView tvNombreProyectoAsignado, tvEmpresaAsignado, tvCarreraAsignado,
@@ -77,13 +75,11 @@ public class AlumnoEmpresas extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Vista lista
         layoutListaProyectos  = view.findViewById(R.id.layoutListaProyectos);
         recyclerViewProyectos = view.findViewById(R.id.recyclerViewProyectos);
         txtNoProyectos        = view.findViewById(R.id.txtNoProyectos);
         progressBar           = view.findViewById(R.id.progressBar);
 
-        // Vista ya perteneces
         containerProyectoAsignado = view.findViewById(R.id.containerProyectoAsignado);
         imgProyectoAsignado       = view.findViewById(R.id.imgProyectoAsignado);
         tvNombreProyectoAsignado  = view.findViewById(R.id.tvNombreProyectoAsignado);
@@ -196,7 +192,6 @@ public class AlumnoEmpresas extends Fragment {
         tvTelefonoAsignado.setText("Teléfono: " + (p.getTelefonoEmpresa() != null ? p.getTelefonoEmpresa() : "No disponible"));
         tvObjetivoAsignado.setText(p.getObjetivo() != null ? p.getObjetivo() : "Sin descripción");
 
-        // Pintar imagen Base64 si existe
         if (p.getImagenProyecto() != null && !p.getImagenProyecto().isEmpty()) {
             try {
                 byte[] bytes = Base64.decode(p.getImagenProyecto(), Base64.DEFAULT);
@@ -236,7 +231,6 @@ public class AlumnoEmpresas extends Fragment {
                 return;
             }
 
-            // Obtener datos del alumno de SharedPreferences
             SharedPreferences prefs = requireActivity()
                     .getSharedPreferences("SoLinXPrefs", android.content.Context.MODE_PRIVATE);
             String nombreAlumno = prefs.getString("nombre", "N/A");

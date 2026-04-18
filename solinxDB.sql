@@ -296,7 +296,6 @@ SELECT * FROM Proyecto;
 SELECT * FROM Perfil;
 SELECT * FROM Usuario;
 SELECT * FROM Solicitud;
-
 /* ===========================================================
 TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
 ===========================================================
@@ -318,6 +317,5 @@ TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
  [ SUPERVISORES / ADMIN ]
  ---------------------------------------------------
  Correo: carlos@technova.com  | Password: sup123
-
 ===========================================================
 */

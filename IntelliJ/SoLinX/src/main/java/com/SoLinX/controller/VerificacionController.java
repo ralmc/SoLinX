@@ -17,7 +17,7 @@ public class VerificacionController {
 
     // Abre el navegador cuando el usuario hace clic en el correo
     @GetMapping("/auth/verificar")
-    public ResponseEntity<String> verificar(@RequestParam String token) {
+    public ResponseEntity<String> verificar(@RequestParam("token") String token) {
         String resultado = verificacionService.verificarToken(token);
 
         String html = """
@@ -40,7 +40,7 @@ public class VerificacionController {
 
     // Android llama este endpoint desde el diálogo "Reenviar correo"
     @PostMapping("/auth/verificar/reenviar")
-    public ResponseEntity<String> reenviar(@RequestParam String correo) {
+    public ResponseEntity<String> reenviar(@RequestParam("correo") String correo) {
         Usuario usuario = usuarioRepository.findByCorreo(correo).orElse(null);
 
         if (usuario == null)

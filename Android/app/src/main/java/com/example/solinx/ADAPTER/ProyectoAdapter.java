@@ -52,16 +52,12 @@ public class ProyectoAdapter extends RecyclerView.Adapter<ProyectoAdapter.Proyec
 
         holder.txtVacantes.setText("Vacantes disponibles: " + proyecto.getVacantes());
 
-        // Pintar imagen Base64 si existe, si no usar el logo
-        if (proyecto.getImagenProyecto() != null && !proyecto.getImagenProyecto().isEmpty()) {
+        if (proyecto.getFotoEmpresa() != null && !proyecto.getFotoEmpresa().isEmpty()) {
             try {
-                byte[] bytes = Base64.decode(proyecto.getImagenProyecto(), Base64.DEFAULT);
+                byte[] bytes = Base64.decode(proyecto.getFotoEmpresa(), Base64.DEFAULT);
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                if (bmp != null) {
-                    holder.imgLogoEmpresa.setImageBitmap(bmp);
-                } else {
-                    holder.imgLogoEmpresa.setImageResource(R.drawable.solinx_logo);
-                }
+                if (bmp != null) holder.imgLogoEmpresa.setImageBitmap(bmp);
+                else holder.imgLogoEmpresa.setImageResource(R.drawable.solinx_logo);
             } catch (Exception e) {
                 holder.imgLogoEmpresa.setImageResource(R.drawable.solinx_logo);
             }

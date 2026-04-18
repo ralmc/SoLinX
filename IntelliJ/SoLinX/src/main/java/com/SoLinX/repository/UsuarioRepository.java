@@ -17,5 +17,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
             "JOIN UsuarioEmpresa ue ON u.idUsuario = ue.idUsuario " +
             "WHERE ue.idEmpresa = :idEmpresa", nativeQuery = true)
     Optional<Usuario> findByEmpresaId(@Param("idEmpresa") Integer idEmpresa);
-
 }

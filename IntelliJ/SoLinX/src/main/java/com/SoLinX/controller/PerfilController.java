@@ -16,23 +16,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PerfilController {
     private final PerfilService perfilService;
-    private List<PerfilDto> PerfilDtos;
 
-    public void loadList() {
-        PerfilDtos = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            PerfilDtos.add(
-                    PerfilDto.builder()
-                            .idPerfil(i++)
-                            .foto("Foto " + i)
-                            .tema("Tema " + i)
-                            .idUsuario(i)
-                            .build()
-            );
-        }
-    }
-
-    @RequestMapping("/perfil")
+    @GetMapping("/perfil")
     public ResponseEntity<List<PerfilDto>> lista() {
         List<Perfil> perfils = perfilService.getAll();
         if (perfils == null || perfils.size() == 0) {
@@ -48,7 +33,7 @@ public class PerfilController {
                 .collect(Collectors.toList()));
     }
 
-    @RequestMapping("/perfil/{id}")
+    @GetMapping("/perfil/{id}")
     public ResponseEntity<PerfilDto> getById(@PathVariable("id") Integer id) {
         Perfil u = perfilService.getById(id);
         if (u == null) {
@@ -120,14 +105,12 @@ public class PerfilController {
         return ResponseEntity.ok("Foto actualizada correctamente.");
     }
 
-    // NUEVO: Actualizar tema en la BD
     @PutMapping("/perfil/usuario/{idUsuario}/tema")
     public ResponseEntity<String> actualizarTema(@PathVariable("idUsuario") Integer idUsuario,
                                                  @RequestBody java.util.Map<String, String> body) {
         Perfil p = perfilService.getByIdUsuario(idUsuario);
         if (p == null) return ResponseEntity.notFound().build();
         String tema = body.get("tema");
-        // Validar que el tema sea uno de los permitidos
         if (tema == null || (!tema.equalsIgnoreCase("claro") && !tema.equalsIgnoreCase("oscuro"))) {
             return ResponseEntity.badRequest().body("Tema inválido. Use 'claro' u 'oscuro'.");
         }

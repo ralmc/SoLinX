@@ -17,6 +17,7 @@ public class ProyectoResponse implements Serializable {
     private Integer idEmpresa;
     private String nombreEmpresa;
     private String telefonoEmpresa;
+    private String fotoEmpresa;
 
     public ProyectoResponse() {}
 
@@ -33,6 +34,7 @@ public class ProyectoResponse implements Serializable {
     public Integer getIdEmpresa() { return idEmpresa; }
     public String getNombreEmpresa() { return nombreEmpresa; }
     public String getTelefonoEmpresa() { return telefonoEmpresa; }
+    public String getFotoEmpresa() { return fotoEmpresa; }
 
     public void setIdProyecto(Integer idProyecto) { this.idProyecto = idProyecto; }
     public void setCarreraEnfocada(String carreraEnfocada) { this.carreraEnfocada = carreraEnfocada; }
@@ -47,6 +49,7 @@ public class ProyectoResponse implements Serializable {
     public void setIdEmpresa(Integer idEmpresa) { this.idEmpresa = idEmpresa; }
     public void setNombreEmpresa(String nombreEmpresa) { this.nombreEmpresa = nombreEmpresa; }
     public void setTelefonoEmpresa(String telefonoEmpresa) { this.telefonoEmpresa = telefonoEmpresa; }
+    public void setFotoEmpresa(String fotoEmpresa) { this.fotoEmpresa = fotoEmpresa; }
 
     public String getFechasFormateadas() {
         if (fechaInicio != null && fechaTermino != null) {

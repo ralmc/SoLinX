@@ -145,12 +145,10 @@ public class EmpresaVistaCuenta extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (isFinishing() || isDestroyed()) return;
 
-                        // Leer el nombre de la PERSONA que maneja la empresa desde prefs
                         android.content.SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
                         String nombrePersona = prefs.getString("nombre", "");
 
                         if (tvNombre != null) {
-                            // Mostrar el nombre completo de la persona (con apellidos)
                             if (nombrePersona != null && !nombrePersona.isEmpty()) {
                                 tvNombre.setText(nombrePersona);
                             } else {
@@ -414,21 +412,16 @@ public class EmpresaVistaCuenta extends AppCompatActivity {
                 .setTitle("Cerrar sesión")
                 .setMessage("¿Seguro que quieres salir?")
                 .setPositiveButton("Sí", (d, w) -> {
-                    // 1. Primero forzar modo claro (puede disparar recreate si estaba en oscuro)
                     try {
                         ThemeUtils.forceLightModeLocal(this);
                     } catch (Exception ignored) {}
 
-                    // 2. Lanzar MainActivity con CLEAR_TASK ANTES de limpiar las prefs.
-                    //    Esto destruye esta activity y toda la pila.
                     try {
                         Intent intent = new Intent(this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     } catch (Exception ignored) {}
 
-                    // 3. Limpiar las prefs con un pequeño retardo para que cualquier
-                    //    recreate ya haya terminado y no lea prefs vacías.
                     new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
                         try {
                             getSharedPreferences("sesion_usuario", MODE_PRIVATE).edit().clear().apply();

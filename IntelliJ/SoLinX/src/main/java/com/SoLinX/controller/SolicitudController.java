@@ -48,10 +48,6 @@ public class SolicitudController {
         }
     }
 
-    /**
-     * Busca el nombre y correo del usuario asociado a un estudiante por su boleta.
-     * Devuelve [nombre, correo] o [null, null] si no se encuentra.
-     */
     private String[] obtenerDatosUsuarioEstudiante(Integer boleta) {
         try {
             UsuarioEstudiante ue = usuarioEstudianteRepository.findByBoleta(boleta).orElse(null);
@@ -101,8 +97,8 @@ public class SolicitudController {
                 .idSolicitud(s.getIdSolicitud())
                 .fechaSolicitud(formatDate(s.getFechaSolicitud()))
                 .estadoSolicitud(s.getEstadoSolicitud())
-                .boletaAlumno(s.getEstudiante().getBoleta())
-                .idProyecto(s.getProyecto().getIdProyecto())
+                .boletaAlumno(s.getEstudiante() != null ? s.getEstudiante().getBoleta() : null)
+                .idProyecto(s.getProyecto() != null ? s.getProyecto().getIdProyecto() : null)
                 .build()).collect(Collectors.toList()));
     }
 
@@ -114,8 +110,8 @@ public class SolicitudController {
                 .idSolicitud(s.getIdSolicitud())
                 .fechaSolicitud(formatDate(s.getFechaSolicitud()))
                 .estadoSolicitud(s.getEstadoSolicitud())
-                .boletaAlumno(s.getEstudiante().getBoleta())
-                .idProyecto(s.getProyecto().getIdProyecto())
+                .boletaAlumno(s.getEstudiante() != null ? s.getEstudiante().getBoleta() : null)
+                .idProyecto(s.getProyecto() != null ? s.getProyecto().getIdProyecto() : null)
                 .build());
     }
 

@@ -60,7 +60,13 @@ public class VerificacionServiceImpl implements VerificacionService {
                 .findByUsuarioAndUsadoFalseAndFechaExpiraAfter(usuario, LocalDateTime.now());
 
         if (activo.isPresent()) {
-            log.info("Token activo ya existe para: {}", usuario.getCorreo());
+            log.info("Token activo ya existe para: {}, reenviando correo...", usuario.getCorreo());
+            TokenVerificacion tv = activo.get();
+            mailService.enviarCorreoVerificacion(
+                    usuario.getCorreo(),
+                    usuario.getNombre(),
+                    tv.getToken()
+            );
             return;
         }
 
