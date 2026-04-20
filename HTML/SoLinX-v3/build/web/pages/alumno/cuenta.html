@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoLinX — Mi Perfil</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <style>
+    .perfil-header { display:flex; align-items:center; gap:1.5rem; padding:1.5rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1.5rem; }
+    .perfil-foto-wrap { position:relative; cursor:pointer; }
+    .perfil-foto-wrap:hover .foto-overlay { opacity:1; }
+    .foto-overlay { position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:.2s; color:#fff; font-size:.7rem; text-align:center; }
+    .horario-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:.75rem; }
+    .horario-dia { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:.75rem; text-align:center; }
+    .horario-dia-nombre { font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--text-3); margin-bottom:.25rem; }
+    .horario-dia-hora { font-size:.85rem; color:var(--text-2); font-weight:500; }
+    .tema-btns { display:flex; gap:.75rem; }
+    .tema-btn { flex:1; padding:.75rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; text-align:center; transition:all .2s; font-size:.85rem; font-weight:600; background:var(--surface); color:var(--text-2); }
+    .tema-btn:hover { border-color:var(--brand); color:var(--brand); }
+    .tema-btn.active { border-color:var(--brand); background:var(--brand-light); color:var(--brand); }
+    .solicitud-item { padding:.85rem 1rem; background:var(--surface-2); border-radius:var(--radius-sm); margin-bottom:.5rem; font-size:.875rem; }
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">SL</div>
+      <span class="sidebar-logo-text">SoLinX</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Alumno</div>
+      <a class="sidebar-link" href="dashboard.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Proyectos
+      </a>
+      <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
+      <a class="sidebar-link active" href="cuenta.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mi Perfil
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn btn-outline w-full" id="btn-logout" style="font-size:.8rem">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <header class="app-topbar">
+      <div class="topbar-title">Mi Perfil</div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="themeBtn">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-content">
+      <!-- Header de perfil -->
+      <div class="perfil-header">
+        <div class="perfil-foto-wrap" id="fotowrap">
+          <div class="avatar avatar-xl" id="avatarEl" style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem">?</div>
+          <div class="foto-overlay">📷<br>Cambiar</div>
+        </div>
+        <div>
+          <h2 id="ph-nombre">Cargando...</h2>
+          <p class="text-muted" id="ph-correo">—</p>
+          <div style="display:flex;gap:.5rem;margin-top:.5rem;flex-wrap:wrap">
+            <span class="badge badge-blue" id="ph-carrera">—</span>
+            <span class="badge badge-gray" id="ph-escuela">—</span>
+            <span class="badge badge-gray">Boleta: <strong id="ph-boleta">—</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <!-- Mis solicitudes -->
+        <div class="card">
+          <div class="card-header"><h3>Mis Solicitudes</h3></div>
+          <div class="card-body" id="solicitudesContainer"><div class="loader-wrap"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- Horario -->
+        <div class="card">
+          <div class="card-header"><h3>Mi Horario</h3></div>
+          <div class="card-body">
+            <div class="horario-grid" id="horarioContainer"><div class="loader-wrap"><div class="spinner"></div></div></div>
+          </div>
+        </div>
+
+        <!-- Tema -->
+        <div class="card">
+          <div class="card-header"><h3>Apariencia</h3></div>
+          <div class="card-body">
+            <p class="text-sm text-muted mb-4">Selecciona el modo de visualización</p>
+            <div class="tema-btns">
+              <div class="tema-btn" id="btnTemaClaro" onclick="setTema('light')">☀️ Claro</div>
+              <div class="tema-btn" id="btnTemaOscuro" onclick="setTema('dark')">🌙 Oscuro</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contactar soporte -->
+        <div class="card">
+          <div class="card-header"><h3>Soporte</h3></div>
+          <div class="card-body">
+            <p class="text-sm text-muted mb-4">¿Tienes algún problema o duda? Contáctanos.</p>
+            <button class="btn btn-outline w-full" id="btnSoporte">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Contactar Supervisor
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal soporte -->
+<div class="modal-overlay" id="modalSoporte">
+  <div class="modal">
+    <div class="modal-header"><h3>Contactar Soporte</h3></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tu mensaje</label>
+        <textarea class="form-textarea" id="msgSoporte" placeholder="Describe tu problema o consulta..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('modalSoporte').classList.remove('active')">Cancelar</button>
+      <button class="btn btn-primary" id="btnEnviarSoporte">Enviar por correo</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { Api } from '../../js/api.js';
+  import { Session, requireAuth, logout } from '../../js/auth.js';
+  import { toast, initTheme, toggleTheme } from '../../js/utils.js';
+
+  requireAuth('estudiante');
+  initTheme();
+
+  const boleta    = Session.boleta;
+  const idUsuario = Session.idUsuario;
+  const nombre    = Session.nombre;
+  const correo    = Session.correo;
+  const carrera   = Session.carrera;
+  const escuela   = Session.escuela;
+
+  document.getElementById('btn-logout').onclick = () => logout();
+  document.getElementById('themeBtn').onclick   = () => { toggleTheme(); actualizarBtnsTheme(); };
+
+  // ─── Info básica ──────────────────────────────────────
+  document.getElementById('ph-nombre').textContent  = nombre;
+  document.getElementById('ph-correo').textContent  = correo;
+  document.getElementById('ph-carrera').textContent = carrera || 'N/A';
+  document.getElementById('ph-escuela').textContent = escuela || 'N/A';
+  document.getElementById('ph-boleta').textContent  = boleta || 'N/A';
+
+  const initials = nombre?.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase() ?? '?';
+  document.getElementById('avatarEl').textContent = initials;
+
+  // ─── Foto ─────────────────────────────────────────────
+  async function cargarFoto() {
+    if (!idUsuario) return;
+    try {
+      const res = await Api.getPerfil(idUsuario);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.foto) {
+        const img = document.createElement('img');
+        img.src = `data:image/jpeg;base64,${data.foto}`;
+        img.style.cssText = 'width:110px;height:110px;border-radius:50%;object-fit:cover';
+        const av = document.getElementById('avatarEl');
+        av.innerHTML = '';
+        av.appendChild(img);
+      }
+    } catch {}
+  }
+
+  document.getElementById('fotowrap').onclick = () => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async e => {
+        const b64 = e.target.result.split(',')[1];
+        try {
+          const res = await Api.actualizarFoto(idUsuario, b64);
+          if (res.ok) { toast('Foto actualizada ✓', 'success'); cargarFoto(); }
+          else toast('Error al guardar foto', 'error');
+        } catch (ex) { toast('Error de red', 'error'); }
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
+  // ─── Solicitudes ──────────────────────────────────────
+  async function cargarSolicitudes() {
+    const container = document.getElementById('solicitudesContainer');
+    try {
+      const res = await Api.getSolicitudesEstudiante(boleta);
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const lista = await res.json();
+      if (!lista.length) { container.innerHTML = '<p class="text-muted text-sm">No tienes solicitudes enviadas.</p>'; return; }
+
+      const estadoLabel = e => {
+        if (!e) return 'Desconocido';
+        const m = {aceptada:'✅ Admitido', rechazada:'❌ Rechazado', enviada:'⏳ Pendiente', pendiente:'⏳ Pendiente'};
+        return m[e.toLowerCase()] ?? e;
+      };
+      container.innerHTML = lista.map(s => `
+        <div class="solicitud-item">
+          <strong>${s.nombreProyecto ?? 'Proyecto'}</strong>
+          <div class="text-muted text-xs">${s.nombreEmpresa ?? ''}</div>
+          <div style="margin-top:.25rem;font-size:.8rem">${estadoLabel(s.estadoSolicitud)}</div>
+        </div>`).join('');
+    } catch (e) { container.innerHTML = `<p class="text-muted text-sm">Error: ${e.message}</p>`; }
+  }
+
+  // ─── Horario ──────────────────────────────────────────
+  const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+
+  async function cargarHorario() {
+    const container = document.getElementById('horarioContainer');
+    try {
+      const res = await Api.getHorario(boleta);
+      if (!res.ok) { container.innerHTML = '<p class="text-muted text-sm">Sin horario registrado.</p>'; return; }
+      const h = await res.json();
+      const pares = [
+        [h.lunInicio, h.lunFinal], [h.marInicio, h.marFinal], [h.mierInicio, h.mierFinal],
+        [h.jueInicio, h.jueFinal], [h.vieInicio, h.vieFinal], [h.sabInicio, h.sabFinal],
+        [h.domInicio, h.domFinal]
+      ];
+      container.innerHTML = DIAS.map((dia, i) => {
+        const [ini, fin] = pares[i];
+        const hora = ini && fin ? `${ini.substring(0,5)} – ${fin.substring(0,5)}` : 'Sin clase';
+        return `<div class="horario-dia">
+          <div class="horario-dia-nombre">${dia.substring(0,3)}</div>
+          <div class="horario-dia-hora">${hora}</div>
+        </div>`;
+      }).join('');
+    } catch (e) { container.innerHTML = `<p class="text-muted text-sm">Error: ${e.message}</p>`; }
+  }
+
+  // ─── Tema ─────────────────────────────────────────────
+  function actualizarBtnsTheme() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.getElementById('btnTemaClaro').classList.toggle('active', !dark);
+    document.getElementById('btnTemaOscuro').classList.toggle('active', dark);
+  }
+
+  window.setTema = function(modo) {
+    document.documentElement.setAttribute('data-theme', modo);
+    localStorage.setItem('sl_theme', modo);
+    actualizarBtnsTheme();
+  };
+
+  actualizarBtnsTheme();
+
+  // ─── Soporte ──────────────────────────────────────────
+  const CORREO_SOPORTE = 'solinx.soporte@gmail.com';
+  document.getElementById('btnSoporte').onclick = () => document.getElementById('modalSoporte').classList.add('active');
+  document.getElementById('btnEnviarSoporte').onclick = () => {
+    const msg = document.getElementById('msgSoporte').value.trim();
+    if (!msg) { toast('Escribe un mensaje', 'error'); return; }
+    const cuerpo = `Alumno: ${nombre}\nBoleta: ${boleta}\nCarrera: ${carrera}\n\nMensaje:\n${msg}`;
+    const subject = encodeURIComponent(`SoLinX - Soporte Alumno: ${nombre}`);
+    const body = encodeURIComponent(cuerpo);
+    window.open(`mailto:${CORREO_SOPORTE}?subject=${subject}&body=${body}`, '_blank');
+    document.getElementById('modalSoporte').classList.remove('active');
+  };
+
+  // ─── Init ─────────────────────────────────────────────
+  cargarFoto();
+  cargarSolicitudes();
+  cargarHorario();
+</script>
+</body>
+</html>

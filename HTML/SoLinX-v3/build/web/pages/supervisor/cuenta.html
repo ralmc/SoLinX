@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoLinX — Perfil Supervisor</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <style>
+    .perfil-header { display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.5rem; }
+    .info-row { display:flex;align-items:center;gap:.75rem;padding:.85rem 0;border-bottom:1px solid var(--border);font-size:.9rem; }
+    .info-row:last-child{border-bottom:none;}
+    .info-label{font-weight:600;color:var(--text-2);width:100px;flex-shrink:0;}
+    .tema-btns{display:flex;gap:.75rem;}
+    .tema-btn{flex:1;padding:.75rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:all .2s;font-size:.85rem;font-weight:600;background:var(--surface);color:var(--text-2);}
+    .tema-btn:hover{border-color:var(--brand);color:var(--brand);}
+    .tema-btn.active{border-color:var(--brand);background:var(--brand-light);color:var(--brand);}
+  </style>
+</head>
+<body>
+<div class="app-layout">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">SL</div>
+      <span class="sidebar-logo-text">SoLinX</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Supervisor</div>
+      <a class="sidebar-link" href="dashboard.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Solicitudes
+      </a>
+      <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
+      <a class="sidebar-link active" href="cuenta.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mi Perfil
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn btn-outline w-full" id="btn-logout" style="font-size:.8rem">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <header class="app-topbar">
+      <div class="topbar-title">Mi Perfil</div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="themeBtn">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-content">
+      <div class="perfil-header">
+        <div class="avatar avatar-xl" id="avatarEl" style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem">?</div>
+        <div>
+          <h2 id="ph-nombre">Cargando...</h2>
+          <p class="text-muted" id="ph-correo">—</p>
+          <span class="badge badge-blue" style="margin-top:.5rem">Supervisor</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <div class="card">
+          <div class="card-header"><h3>Mis Datos</h3></div>
+          <div class="card-body" id="datosContainer"><div class="loader-wrap"><div class="spinner"></div></div></div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1.25rem">
+          <div class="card">
+            <div class="card-header"><h3>Apariencia</h3></div>
+            <div class="card-body">
+              <div class="tema-btns">
+                <div class="tema-btn" id="btnTemaClaro" onclick="setTema('light')">☀️ Claro</div>
+                <div class="tema-btn" id="btnTemaOscuro" onclick="setTema('dark')">🌙 Oscuro</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Soporte</h3></div>
+            <div class="card-body">
+              <p class="text-sm text-muted mb-4">Contacta al equipo de soporte.</p>
+              <button class="btn btn-outline w-full" id="btnSoporte">Contactar Soporte</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modalSoporte">
+  <div class="modal">
+    <div class="modal-header"><h3>Contactar Soporte</h3></div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tu mensaje</label>
+        <textarea class="form-textarea" id="msgSoporte" placeholder="Describe tu problema..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="document.getElementById('modalSoporte').classList.remove('active')">Cancelar</button>
+      <button class="btn btn-primary" id="btnEnviarSoporte">Enviar por correo</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { Api } from '../../js/api.js';
+  import { Session, requireAuth, logout } from '../../js/auth.js';
+  import { toast, initTheme, toggleTheme } from '../../js/utils.js';
+
+  requireAuth('supervisor');
+  initTheme();
+
+  const idUsuario = Session.idUsuario;
+  const nombre    = Session.nombre;
+
+  document.getElementById('btn-logout').onclick = () => logout();
+  document.getElementById('themeBtn').onclick   = () => { toggleTheme(); actualizarBtnsTheme(); };
+  document.getElementById('avatarEl').textContent = Session.initials();
+
+  async function cargarDatos() {
+    const container = document.getElementById('datosContainer');
+    try {
+      const res = await Api.getSupervisorData(idUsuario);
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const data = await res.json();
+      const s = data.supervisor ?? data;
+      document.getElementById('ph-nombre').textContent = s.nombre ?? nombre;
+      document.getElementById('ph-correo').textContent = s.correo ?? '—';
+      container.innerHTML = `
+        <div class="info-row"><span class="info-label">Nombre</span><span>${s.nombre ?? 'N/A'}</span></div>
+        <div class="info-row"><span class="info-label">Correo</span><span>${s.correo ?? 'N/A'}</span></div>
+        <div class="info-row"><span class="info-label">Teléfono</span><span>${s.telefono ?? 'N/A'}</span></div>`;
+    } catch (e) { container.innerHTML = `<p class="text-muted text-sm">Error: ${e.message}</p>`; }
+  }
+
+  function actualizarBtnsTheme() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.getElementById('btnTemaClaro').classList.toggle('active', !dark);
+    document.getElementById('btnTemaOscuro').classList.toggle('active', dark);
+  }
+  window.setTema = function(modo) {
+    document.documentElement.setAttribute('data-theme', modo);
+    localStorage.setItem('sl_theme', modo);
+    actualizarBtnsTheme();
+  };
+  actualizarBtnsTheme();
+
+  const CORREO_SOPORTE = 'solinx.soporte@gmail.com';
+  document.getElementById('btnSoporte').onclick = () => document.getElementById('modalSoporte').classList.add('active');
+  document.getElementById('btnEnviarSoporte').onclick = () => {
+    const msg = document.getElementById('msgSoporte').value.trim();
+    if (!msg) { toast('Escribe un mensaje', 'error'); return; }
+    const cuerpo = `Supervisor: ${nombre}\n\nMensaje:\n${msg}`;
+    window.open(`mailto:${CORREO_SOPORTE}?subject=${encodeURIComponent('SoLinX - Soporte Supervisor: '+nombre)}&body=${encodeURIComponent(cuerpo)}`, '_blank');
+    document.getElementById('modalSoporte').classList.remove('active');
+  };
+
+  cargarDatos();
+</script>
+</body>
+</html>

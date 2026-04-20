@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoLinX — Alumno</title>
+  <link rel="stylesheet" href="../../css/main.css">
+</head>
+<body>
+<div class="app-layout">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">SL</div>
+      <span class="sidebar-logo-text">SoLinX</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Alumno</div>
+      <a class="sidebar-link active" href="dashboard.html" id="link-empresas">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Proyectos
+      </a>
+      <a class="sidebar-link" href="#" id="link-docs">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentos
+      </a>
+      <a class="sidebar-link" href="#" id="link-notif">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notificaciones
+        <span class="badge badge-red" id="notif-count" style="margin-left:auto;display:none"></span>
+      </a>
+      <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
+      <a class="sidebar-link" href="cuenta.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mi Perfil
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm" id="sidebarAvatar" style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700;width:36px;height:36px;flex-shrink:0">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebarNombre">Cargando...</div>
+          <div class="sidebar-user-role">Alumno · <span id="sidebarBoleta">—</span></div>
+        </div>
+      </div>
+      <button class="btn btn-outline w-full" id="btn-logout" style="margin-top:.5rem;font-size:.8rem">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="app-main">
+    <header class="app-topbar">
+      <button class="btn-icon" id="sidebarToggle" style="display:none">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-title" id="topbarTitle">Proyectos disponibles</div>
+      <div class="topbar-actions">
+        <button class="btn-icon" id="themeBtn" title="Tema">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-content">
+      <div class="tabs" id="mainTabs">
+        <button class="tab-btn active" id="tabEmpresas">Proyectos</button>
+        <button class="tab-btn" id="tabDocs" disabled title="Debes ser aceptado primero">Documentos</button>
+        <button class="tab-btn" id="tabNotif">Notificaciones</button>
+      </div>
+
+      <!-- Tab: Proyectos -->
+      <div id="tab-empresas">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h2>Proyectos disponibles</h2>
+            <p class="text-muted text-sm mt-1">Explora proyectos y postúlate</p>
+          </div>
+        </div>
+        <div id="proyectosContainer"><div class="loader-wrap"><div class="spinner"></div></div></div>
+      </div>
+
+      <!-- Tab: Documentos -->
+      <div id="tab-docs" style="display:none">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h2>Mis Documentos</h2>
+            <p class="text-muted text-sm mt-1">Sube tus reportes de cada período (PDF, máx. 1.5 MB)</p>
+          </div>
+        </div>
+        <div class="card"><div class="card-body">
+          <div class="periodo-list" id="periodosContainer"><div class="loader-wrap"><div class="spinner"></div></div></div>
+        </div></div>
+      </div>
+
+      <!-- Tab: Notificaciones -->
+      <div id="tab-notif" style="display:none">
+        <div class="flex justify-between items-center mb-4">
+          <h2>Notificaciones</h2>
+          <button class="btn btn-outline btn-sm" id="btn-leer-todas">Marcar todas como leídas</button>
+        </div>
+        <div class="card"><div class="card-body" id="notifContainer"><div class="loader-wrap"><div class="spinner"></div></div></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Detalle y solicitud de proyecto -->
+<div class="modal-overlay" id="modalProyecto">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header">
+      <h3 id="modal-proyecto-titulo">Proyecto</h3>
+      <button class="btn-icon" onclick="cerrarModal()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-proyecto-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="btnCorreoEmpresa" style="display:none">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Contactar empresa
+      </button>
+      <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" id="btnPostular">Postularme</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { Api } from '../../js/api.js';
+  import { Session, requireAuth, logout } from '../../js/auth.js';
+  import { toast, initTheme, toggleTheme, showLoader, badgeEstado, fmtFecha, confirmDialog } from '../../js/utils.js';
+
+  requireAuth('estudiante');
+  initTheme();
+
+  const boleta    = Session.boleta;
+  const idUsuario = Session.idUsuario;
+  const nombre    = Session.nombre;
+
+  document.getElementById('sidebarNombre').textContent = nombre;
+  document.getElementById('sidebarBoleta').textContent = boleta || '—';
+  document.getElementById('sidebarAvatar').textContent = Session.initials();
+  document.getElementById('btn-logout').onclick = () => logout();
+  document.getElementById('themeBtn').onclick   = () => toggleTheme();
+
+  // Mobile sidebar
+  if (window.innerWidth <= 768) document.getElementById('sidebarToggle').style.display = 'flex';
+  document.getElementById('sidebarToggle').onclick = () => document.getElementById('sidebar').classList.toggle('open');
+
+  // ─── Estado de solicitud del alumno ───────────────────
+  let alumnoAceptado = false;
+  let correoEmpresaActual = null;
+
+  async function verificarAceptacion() {
+    try {
+      const res = await Api.getSolicitudesEstudiante(boleta);
+      if (!res.ok) return;
+      const lista = await res.json();
+      alumnoAceptado = lista.some(s => s.estadoSolicitud?.toLowerCase() === 'aceptada');
+      const tabDocs = document.getElementById('tabDocs');
+      tabDocs.disabled = !alumnoAceptado;
+      tabDocs.title = alumnoAceptado ? '' : 'Debes ser aceptado primero';
+    } catch {}
+  }
+
+  // ─── Tabs ─────────────────────────────────────────────
+  const tabs = [
+    { btn: 'tabEmpresas', panel: 'tab-empresas', title: 'Proyectos disponibles', link: 'link-empresas', load: cargarProyectos },
+    { btn: 'tabDocs',     panel: 'tab-docs',     title: 'Documentos',            link: 'link-docs',    load: cargarDocumentos },
+    { btn: 'tabNotif',    panel: 'tab-notif',    title: 'Notificaciones',         link: 'link-notif',   load: cargarNotificaciones },
+  ];
+
+  tabs.forEach((t, i) => {
+    document.getElementById(t.btn).onclick = () => {
+      if (t.btn === 'tabDocs' && !alumnoAceptado) { toast('Debes ser aceptado en un proyecto primero', 'error'); return; }
+      tabs.forEach(x => {
+        document.getElementById(x.btn).classList.remove('active');
+        document.getElementById(x.panel).style.display = 'none';
+        document.getElementById(x.link)?.classList.remove('active');
+      });
+      document.getElementById(t.btn).classList.add('active');
+      document.getElementById(t.panel).style.display = '';
+      document.getElementById(t.link)?.classList.add('active');
+      document.getElementById('topbarTitle').textContent = t.title;
+      t.load();
+    };
+  });
+
+  document.getElementById('link-docs').onclick  = e => { e.preventDefault(); document.getElementById('tabDocs').click(); };
+  document.getElementById('link-notif').onclick = e => { e.preventDefault(); document.getElementById('tabNotif').click(); };
+
+  // ─── Proyectos ────────────────────────────────────────
+  async function cargarProyectos() {
+    const container = document.getElementById('proyectosContainer');
+    showLoader(container);
+    try {
+      const res = await Api.getProyectos();
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const lista = await res.json();
+      window._proyectos = lista;
+      renderProyectos(lista, container);
+    } catch (e) {
+      container.innerHTML = `<div class="empty-state"><h3>Error al cargar proyectos</h3><p>${e.message}</p></div>`;
+    }
+  }
+
+  function renderProyectos(lista, container) {
+    if (!lista.length) {
+      container.innerHTML = `<div class="empty-state"><svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg><h3>Sin proyectos disponibles</h3></div>`;
+      return;
+    }
+    const colores = ['#1497B9','#0e7a97','#38a169','#d69e2e','#6b46c1'];
+    container.innerHTML = `<div class="proyectos-grid">${lista.map((p, i) => `
+      <div class="proyecto-card" onclick="abrirProyecto(${i})">
+        <div class="proyecto-card-img" style="background:linear-gradient(135deg,${colores[i%5]}22,${colores[i%5]})">
+          <svg width="40" height="40" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24" opacity=".7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        </div>
+        <div class="proyecto-card-body">
+          <div class="proyecto-card-title">${p.nombreProyecto}</div>
+          <div class="proyecto-card-empresa">${p.nombreEmpresa ?? 'Empresa'}</div>
+          <div class="proyecto-card-meta">
+            <span class="badge badge-blue">${p.carreraEnfocada}</span>
+            <span class="badge badge-gray">${p.vacantes} vacante${p.vacantes !== 1?'s':''}</span>
+          </div>
+          <p class="text-sm text-muted">${(p.objetivo??'').substring(0,100)}${p.objetivo?.length>100?'...':''}</p>
+          <div class="proyecto-card-actions"><button class="btn btn-primary btn-sm w-full">Ver detalles</button></div>
+        </div>
+      </div>`).join('')}</div>`;
+  }
+
+  window.abrirProyecto = async function(idx) {
+    const p = window._proyectos[idx];
+    document.getElementById('modal-proyecto-titulo').textContent = p.nombreProyecto;
+    document.getElementById('modal-proyecto-body').innerHTML = `
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+        <span class="badge badge-blue">${p.carreraEnfocada}</span>
+        <span class="badge badge-gray">${p.vacantes} vacantes</span>
+      </div>
+      <p style="margin-bottom:1rem;color:var(--text-2)">${p.objetivo ?? ''}</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.85rem;color:var(--text-2)">
+        <div><strong>Empresa:</strong> ${p.nombreEmpresa ?? 'N/A'}</div>
+        <div><strong>Ubicación:</strong> ${p.ubicacion ?? 'N/A'}</div>
+        <div><strong>Inicio:</strong> ${fmtFecha(p.fechaInicio)}</div>
+        <div><strong>Fin:</strong> ${fmtFecha(p.fechaTermino)}</div>
+        <div><strong>Teléfono:</strong> ${p.telefonoEmpresa ?? 'N/A'}</div>
+      </div>`;
+
+    document.getElementById('btnPostular').dataset.idx = idx;
+
+    // Buscar correo empresa
+    correoEmpresaActual = null;
+    const btnCorreo = document.getElementById('btnCorreoEmpresa');
+    btnCorreo.style.display = 'none';
+    if (p.idEmpresa) {
+      try {
+        const res = await Api.obtenerEmpresaPorId(p.idEmpresa);
+        if (res.ok) {
+          const emp = await res.json();
+          correoEmpresaActual = emp.correo;
+          if (correoEmpresaActual) btnCorreo.style.display = '';
+        }
+      } catch {}
+    }
+
+    document.getElementById('modalProyecto').classList.add('active');
+  };
+
+  window.cerrarModal = () => document.getElementById('modalProyecto').classList.remove('active');
+
+  document.getElementById('btnCorreoEmpresa').onclick = () => {
+    const p = window._proyectos[document.getElementById('btnPostular').dataset.idx];
+    const subject = encodeURIComponent(`SoLinX - Consulta sobre proyecto: ${p.nombreProyecto}`);
+    window.open(`mailto:${correoEmpresaActual || ''}?subject=${subject}`, '_blank');
+  };
+
+  document.getElementById('btnPostular').onclick = async () => {
+    const idx = parseInt(document.getElementById('btnPostular').dataset.idx);
+    const p = window._proyectos[idx];
+    const btn = document.getElementById('btnPostular');
+    btn.disabled = true; btn.textContent = 'Enviando...';
+    try {
+      const dto = {
+        boletaAlumno: boleta,
+        idProyecto: p.idProyecto,
+        estadoSolicitud: 'enviada'
+      };
+      const res = await Api.enviarSolicitud(dto);
+      if (res.ok) { toast('¡Solicitud enviada con éxito!', 'success'); cerrarModal(); }
+      else toast('Error al enviar solicitud: ' + res.status, 'error');
+    } catch (e) { toast('Error de red: ' + e.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Postularme'; }
+  };
+
+  // ─── Documentos ───────────────────────────────────────
+  async function cargarDocumentos() {
+    const container = document.getElementById('periodosContainer');
+    showLoader(container);
+    try {
+      const res = await Api.getDocumentos(boleta);
+      const docs = res.ok ? await res.json() : [];
+      const periodos = Array(8).fill(null);
+      docs.forEach(d => { if (d.periodo >= 1 && d.periodo <= 8) periodos[d.periodo - 1] = d; });
+      let primerDisponible = 1;
+      for (let i = 0; i < 8; i++) { if (periodos[i] !== null) primerDisponible = i + 2; else break; }
+      renderPeriodos(periodos, primerDisponible, container);
+    } catch (e) {
+      container.innerHTML = `<p class="text-muted">Error: ${e.message}</p>`;
+    }
+  }
+
+  function renderPeriodos(periodos, primerDisponible, container) {
+    container.innerHTML = periodos.map((doc, i) => {
+      const num = i + 1;
+      const locked = num > primerDisponible;
+      const subido = doc !== null;
+      return `<div class="periodo-item ${locked?'locked':''} ${subido?'uploaded':''}"
+        ${!locked && !subido ? `onclick="subirDoc(${num})" style="cursor:pointer"` : ''}>
+        <div class="periodo-num">${subido ? '✓' : num}</div>
+        <div class="periodo-info">
+          <div class="periodo-nombre">Período ${num}</div>
+          <div class="periodo-estado">${
+            subido  ? `Subido: ${doc.nombreArchivo ?? 'documento.pdf'}` :
+            locked  ? 'Bloqueado — sube el período anterior primero' :
+                      'Haz clic para subir PDF (máx. 1.5 MB)'}</div>
+        </div>
+        ${subido ? '<span class="badge badge-green">✓ Subido</span>' :
+          locked  ? '<svg width="16" height="16" fill="none" stroke="var(--text-3)" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' :
+                    '<span class="badge badge-yellow">Pendiente</span>'}
+      </div>`;
+    }).join('');
+  }
+
+  window.subirDoc = function(periodo) {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'application/pdf';
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 1_500_000) { toast('El PDF no puede superar 1.5 MB', 'error'); return; }
+      toast('Subiendo documento...', 'info');
+      try {
+        const res = await Api.subirDocumento(boleta, periodo, file);
+        if (res.ok) { toast(`Período ${periodo} subido correctamente`, 'success'); cargarDocumentos(); }
+        else if (res.status === 409) toast(`Ya existe documento para el Período ${periodo}`, 'error');
+        else toast('Error al subir: ' + res.status, 'error');
+      } catch (e) { toast('Error de red: ' + e.message, 'error'); }
+    };
+    input.click();
+  };
+
+  // ─── Notificaciones ───────────────────────────────────
+  async function cargarNotificaciones() {
+    const container = document.getElementById('notifContainer');
+    showLoader(container);
+    try {
+      const res = await Api.getNotificaciones(idUsuario);
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const notifs = await res.json();
+      if (!notifs.length) { container.innerHTML = `<div class="empty-state"><h3>Sin notificaciones</h3></div>`; return; }
+      container.innerHTML = `<div class="notif-list">${notifs.map(n => `
+        <div class="notif-item ${!n.leida ? 'unread' : ''}" onclick="marcarLeida(${n.idNotificacion}, this)">
+          <div class="notif-dot"></div>
+          <div>
+            <div class="notif-text">${n.mensaje ?? n.titulo ?? 'Sin mensaje'}</div>
+            <div class="notif-time">${n.fechaCreacion ? fmtFecha(n.fechaCreacion) : ''}</div>
+          </div>
+        </div>`).join('')}</div>`;
+    } catch (e) { container.innerHTML = `<p class="text-muted">Error: ${e.message}</p>`; }
+  }
+
+  window.marcarLeida = async function(id, el) {
+    el.classList.remove('unread');
+    try { await Api.marcarLeida(id); } catch {}
+  };
+
+  document.getElementById('btn-leer-todas').onclick = async () => {
+    try {
+      await Api.marcarTodasLeidas(idUsuario);
+      document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+      document.getElementById('notif-count').style.display = 'none';
+      toast('Todas marcadas como leídas', 'success');
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
+  };
+
+  async function cargarBadgeNotif() {
+    try {
+      const res = await Api.contarNoLeidas(idUsuario);
+      if (!res.ok) return;
+      const count = await res.json();
+      if (count > 0) { const b = document.getElementById('notif-count'); b.textContent = count; b.style.display = ''; }
+    } catch {}
+  }
+
+  // ─── Init ─────────────────────────────────────────────
+  cargarProyectos();
+  verificarAceptacion();
+  cargarBadgeNotif();
+</script>
+</body>
+</html>
