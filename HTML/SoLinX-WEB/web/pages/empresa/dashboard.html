@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoLinX — Empresa</title>
+  <link rel="stylesheet" href="../../css/main.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- ── Sidebar ─────────────────────────────────────────── -->
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon" style="background:transparent;padding:0;"><img src="../../img/logo_sf.png" alt="SoLinX" style="width:36px;height:36px;object-fit:contain;border-radius:6px;"></div>
+      <span class="sidebar-logo-text">SoLinX</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Empresa</div>
+      <a class="sidebar-link active" href="dashboard.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Mis Proyectos
+      </a>
+      <a class="sidebar-link" href="solicitudes.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Solicitudes
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="avatar avatar-sm" id="sidebarAvatar" style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700">?</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebarNombre">Cargando...</div>
+          <div class="sidebar-user-role">Empresa</div>
+        </div>
+      </div>
+      <button class="btn btn-outline w-full" id="btn-logout" style="margin-top:.5rem;font-size:.8rem">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- ── Main ────────────────────────────────────────────── -->
+  <main class="app-main">
+    <header class="app-topbar">
+      <div class="topbar-title">Mis Proyectos</div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary btn-sm" id="btn-nuevo">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo proyecto
+        </button>
+        <button class="btn-icon" id="themeBtn">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="app-content">
+      <div id="proyectosContainer">
+        <div class="loader-wrap"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Crear / Editar Proyecto -->
+<div class="modal-overlay" id="modalProyecto">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-header">
+      <h3 id="modal-titulo">Nuevo Proyecto</h3>
+      <button class="btn-icon" onclick="cerrarModal()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="p-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre del proyecto</label>
+          <input class="form-input" type="text" id="p-nombre" placeholder="Nombre">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Carrera enfocada</label>
+          <select class="form-select" id="p-carrera">
+            <option value="">Selecciona...</option>
+            <option>Ingeniería en Sistemas Computacionales</option>
+            <option>Ingeniería en Software</option>
+            <option>Ingeniería Industrial</option>
+            <option>Ingeniería Mecatrónica</option>
+            <option>Ingeniería Informática</option>
+            <option>Ingeniería en Inteligencia Artificial</option>
+            <option>Ingeniería Aeronáutica</option>
+            <option>Ingeniería Biónica</option>
+            <option>Programación</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Objetivo / Descripción</label>
+        <textarea class="form-textarea" id="p-objetivo" placeholder="Describe el objetivo del proyecto..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Vacantes</label>
+          <input class="form-input" type="number" id="p-vacantes" placeholder="1" min="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ubicación</label>
+          <input class="form-input" type="text" id="p-ubicacion" placeholder="Ciudad, Estado">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fecha inicio</label>
+          <input class="form-input" type="date" id="p-inicio">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Fecha término</label>
+          <input class="form-input" type="date" id="p-termino">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { Api }   from '../../js/api.js';
+  import { Session, requireAuth, logout } from '../../js/auth.js';
+  import { toast, initTheme, toggleTheme, showLoader, fmtFecha, confirmDialog } from '../../js/utils.js';
+
+  requireAuth('empresa');
+  initTheme();
+
+  const idEmpresa = Session.idEmpresa;
+  const nombre    = Session.nombre;
+
+  document.getElementById('sidebarNombre').textContent = nombre;
+  document.getElementById('sidebarAvatar').textContent = Session.initials();
+  document.getElementById('btn-logout').onclick  = () => logout();
+  document.getElementById('themeBtn').onclick    = () => toggleTheme();
+  document.getElementById('btn-nuevo').onclick   = () => abrirModalCrear();
+
+  window.cerrarModal = () => document.getElementById('modalProyecto').classList.remove('active');
+
+  // ─── Cargar proyectos ─────────────────────────────────────
+  async function cargarProyectos() {
+    const container = document.getElementById('proyectosContainer');
+    showLoader(container);
+    try {
+      const res = await Api.getProyectosPorEmpresa(idEmpresa);
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const lista = await res.json();
+      renderProyectos(lista, container);
+    } catch (e) {
+      container.innerHTML = `<div class="empty-state"><h3>Error al cargar</h3><p>${e.message}</p></div>`;
+    }
+  }
+
+  function renderProyectos(lista, container) {
+    if (!lista.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          <h3>Sin proyectos aún</h3>
+          <p>Crea tu primer proyecto para empezar a recibir solicitudes</p>
+          <button class="btn btn-primary" onclick="abrirModalCrear()" style="margin-top:1rem">Crear proyecto</button>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = `<div class="proyectos-grid">${
+      lista.map((p, i) => `
+        <div class="proyecto-card">
+          <div class="proyecto-card-img" style="background:linear-gradient(135deg,#1497B922,#1497B9)">
+            <svg width="36" height="36" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24" opacity=".7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          </div>
+          <div class="proyecto-card-body">
+            <div class="flex justify-between items-center" style="margin-bottom:.25rem">
+              <span class="text-muted text-xs">#${i+1}</span>
+              <span class="badge badge-blue">${p.carreraEnfocada}</span>
+            </div>
+            <div class="proyecto-card-title">${p.nombreProyecto}</div>
+            <div class="proyecto-card-meta" style="margin:.5rem 0">
+              <span class="badge badge-gray">${p.vacantes} vacante${p.vacantes !== 1?'s':''}</span>
+              <span class="badge badge-gray">${p.ubicacion}</span>
+            </div>
+            <p class="text-sm text-muted">${(p.objetivo??'').substring(0,90)}${p.objetivo?.length>90?'...':''}</p>
+            <div style="font-size:.75rem;color:var(--text-3);margin:.5rem 0">
+              ${fmtFecha(p.fechaInicio)} → ${fmtFecha(p.fechaTermino)}
+            </div>
+            <div class="proyecto-card-actions">
+              <button class="btn btn-outline btn-sm" onclick='editarProyecto(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Editar</button>
+              <button class="btn btn-danger btn-sm" onclick="eliminar(${p.idProyecto})">Eliminar</button>
+            </div>
+          </div>
+        </div>`
+      ).join('')
+    }</div>`;
+  }
+
+  // ─── Modal Crear ──────────────────────────────────────────
+  window.abrirModalCrear = function() {
+    document.getElementById('modal-titulo').textContent = 'Nuevo Proyecto';
+    document.getElementById('p-id').value = '';
+    ['nombre','carrera','objetivo','vacantes','ubicacion','inicio','termino'].forEach(f =>
+      document.getElementById('p-'+f).value = '');
+    document.getElementById('modalProyecto').classList.add('active');
+    document.getElementById('btn-guardar').onclick = guardarProyecto;
+  };
+
+  window.editarProyecto = function(p) {
+    document.getElementById('modal-titulo').textContent = 'Editar Proyecto';
+    document.getElementById('p-id').value       = p.idProyecto;
+    document.getElementById('p-nombre').value   = p.nombreProyecto ?? '';
+    document.getElementById('p-carrera').value  = p.carreraEnfocada ?? '';
+    document.getElementById('p-objetivo').value = p.objetivo ?? '';
+    document.getElementById('p-vacantes').value = p.vacantes ?? '';
+    document.getElementById('p-ubicacion').value= p.ubicacion ?? '';
+    document.getElementById('p-inicio').value   = (p.fechaInicio ?? '').substring(0,10);
+    document.getElementById('p-termino').value  = (p.fechaTermino ?? '').substring(0,10);
+    document.getElementById('modalProyecto').classList.add('active');
+    document.getElementById('btn-guardar').onclick = () => actualizarProyecto(p.idProyecto);
+  };
+
+  async function guardarProyecto() {
+    const dto = construirDTO();
+    if (!dto) return;
+    dto.idEmpresa = idEmpresa;
+
+    const btn = document.getElementById('btn-guardar');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    try {
+      const res = await Api.crearProyecto(dto);
+      if (res.ok) { toast('Proyecto creado', 'success'); cerrarModal(); cargarProyectos(); }
+      else toast('Error: ' + res.status, 'error');
+    } catch (e) { toast(e.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+  }
+
+  async function actualizarProyecto(id) {
+    const dto = construirDTO();
+    if (!dto) return;
+    dto.idEmpresa = idEmpresa;
+
+    const btn = document.getElementById('btn-guardar');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    try {
+      const res = await Api.actualizarProyecto(id, dto);
+      if (res.ok) { toast('Proyecto actualizado', 'success'); cerrarModal(); cargarProyectos(); }
+      else toast('Error: ' + res.status, 'error');
+    } catch (e) { toast(e.message, 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Guardar'; }
+  }
+
+  function construirDTO() {
+    const nombre   = document.getElementById('p-nombre').value.trim();
+    const carrera  = document.getElementById('p-carrera').value;
+    const objetivo = document.getElementById('p-objetivo').value.trim();
+    const vacantes = parseInt(document.getElementById('p-vacantes').value);
+    const ubicacion= document.getElementById('p-ubicacion').value.trim();
+    const inicio   = document.getElementById('p-inicio').value;
+    const termino  = document.getElementById('p-termino').value;
+
+    if (!nombre)   { toast('Ingresa el nombre del proyecto', 'error'); return null; }
+    if (!carrera)  { toast('Selecciona una carrera', 'error'); return null; }
+    if (!objetivo) { toast('Ingresa el objetivo', 'error'); return null; }
+    if (!vacantes) { toast('Ingresa las vacantes', 'error'); return null; }
+
+    return { nombreProyecto: nombre, carreraEnfocada: carrera, objetivo, vacantes, ubicacion, fechaInicio: inicio, fechaTermino: termino };
+  }
+
+  window.eliminar = async function(id) {
+    const ok = await confirmDialog('Eliminar proyecto', '¿Estás seguro de eliminar este proyecto? Esta acción no se puede deshacer.');
+    if (!ok) return;
+    try {
+      const res = await Api.eliminarProyecto(id);
+      if (res.ok) { toast('Proyecto eliminado', 'success'); cargarProyectos(); }
+      else toast('Error al eliminar', 'error');
+    } catch (e) { toast(e.message, 'error'); }
+  };
+
+  cargarProyectos();
+</script>
+</body>
+</html>

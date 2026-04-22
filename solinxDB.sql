@@ -296,6 +296,9 @@ SELECT * FROM Proyecto;
 SELECT * FROM Perfil;
 SELECT * FROM Usuario;
 SELECT * FROM Solicitud;
+
+UPDATE Usuario SET verificado = 0 WHERE idUsuario = 11;
+
 /* ===========================================================
 TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
 ===========================================================

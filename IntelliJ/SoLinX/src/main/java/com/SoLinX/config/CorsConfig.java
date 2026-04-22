@@ -16,7 +16,8 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .exposedHeaders("X-Login-Error");
             }
         };
     }

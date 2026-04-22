@@ -257,6 +257,14 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         return i + " – " + f;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarFotoPerfil();
+        cargarSolicitudes();
+        cargarHorario();
+    }
+
     private void setupListeners() {
         btnRegresar.setOnClickListener(v -> finish());
 

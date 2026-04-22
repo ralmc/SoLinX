@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SoLinX — Registrar Horario</title>
+  <link rel="stylesheet" href="../../css/main.css">
+  <style>
+    body { min-height:100vh; background:var(--bg); }
+    .horario-wrap { max-width:700px; margin:0 auto; padding:2rem 1rem; }
+    .horario-header { text-align:center; margin-bottom:2rem; }
+    .horario-header .logo { font-family:var(--font-display); font-weight:800; font-size:1.5rem; color:var(--brand); margin-bottom:.5rem; }
+    .dia-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.25rem; margin-bottom:.75rem; }
+    .dia-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:.75rem; }
+    .dia-nombre { font-weight:700; font-size:.95rem; }
+    .dia-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.75rem; align-items:center; }
+    .dia-row.disabled { opacity:.35; pointer-events:none; }
+    .sin-clase-label { display:flex; align-items:center; gap:.4rem; font-size:.82rem; color:var(--text-2); cursor:pointer; }
+    .sin-clase-label input { width:16px; height:16px; cursor:pointer; accent-color:var(--brand); }
+    .total-horas { background:var(--brand-light); border:1px solid var(--brand); border-radius:var(--radius-sm);
+      padding:.85rem 1.25rem; display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:1.5rem; font-size:.9rem; }
+    .total-horas strong { color:var(--brand); font-size:1.1rem; }
+    .horas-ok   { color:var(--success); }
+    .horas-warn { color:var(--danger); }
+  </style>
+</head>
+<body>
+<div class="horario-wrap">
+  <div class="horario-header">
+    <div class="logo"><img src="../../img/logo_sf.png" alt="SoLinX" style="height:48px;object-fit:contain;"></div>
+    <h2>Registra tu horario disponible</h2>
+    <p class="text-muted text-sm" style="margin-top:.35rem">Mínimo 20 horas semanales. Marca "Sin clase" si no tienes disponibilidad ese día.</p>
+  </div>
+
+  <div class="total-horas">
+    <span>Total semanal acumulado:</span>
+    <strong id="totalHoras" class="horas-warn">0h 0min</strong>
+  </div>
+
+  <div id="diasContainer"></div>
+
+  <button class="btn btn-primary w-full btn-lg" id="btnGuardar" style="margin-top:1rem">
+    Guardar Horario y Continuar
+  </button>
+  <p class="text-muted text-sm" style="text-align:center;margin-top:.75rem">
+    Este horario se puede actualizar después desde tu perfil.
+  </p>
+</div>
+
+<script type="module">
+  import { Api } from '../../js/api.js';
+  import { toast, initTheme } from '../../js/utils.js';
+
+  initTheme();
+
+  // Recuperar boleta del sessionStorage (puesta al registrar)
+  const boleta = parseInt(sessionStorage.getItem('sl_reg_boleta') ?? '0');
+  if (!boleta) {
+    toast('Sesión de registro expirada. Vuelve a registrarte.', 'error');
+    setTimeout(() => window.location.href = '../../index.html', 2000);
+  }
+
+  const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+  const HORAS = [];
+  for (let h = 0; h < 24; h++) {
+    HORAS.push(`${String(h).padStart(2,'0')}:00`);
+    HORAS.push(`${String(h).padStart(2,'0')}:30`);
+  }
+
+  function opcionesHTML(selected = '07:00') {
+    return HORAS.map(h => `<option value="${h}" ${h === selected ? 'selected' : ''}>${h}</option>`).join('');
+  }
+
+  const container = document.getElementById('diasContainer');
+  DIAS.forEach((dia, i) => {
+    container.innerHTML += `
+      <div class="dia-card" id="card-${i}">
+        <div class="dia-header">
+          <span class="dia-nombre">${dia}</span>
+          <label class="sin-clase-label">
+            <input type="checkbox" id="sc-${i}" onchange="toggleDia(${i})"> Sin clase / libre
+          </label>
+        </div>
+        <div class="dia-row" id="row-${i}">
+          <div>
+            <label class="form-label" style="font-size:.75rem">Desde</label>
+            <select class="form-select" id="ini-${i}" onchange="recalcular()">${opcionesHTML('07:00')}</select>
+          </div>
+          <div>
+            <label class="form-label" style="font-size:.75rem">Hasta</label>
+            <select class="form-select" id="fin-${i}" onchange="recalcular()">${opcionesHTML('15:00')}</select>
+          </div>
+          <div style="font-size:.8rem;color:var(--text-3);padding-top:1.4rem" id="dur-${i}">8h 0min</div>
+        </div>
+      </div>`;
+  });
+
+  window.toggleDia = function(i) {
+    const checked = document.getElementById(`sc-${i}`).checked;
+    document.getElementById(`row-${i}`).classList.toggle('disabled', checked);
+    recalcular();
+  };
+
+  window.recalcular = function() {
+    let totalMin = 0;
+    DIAS.forEach((_, i) => {
+      const sc = document.getElementById(`sc-${i}`).checked;
+      if (sc) { document.getElementById(`dur-${i}`).textContent = '—'; return; }
+      const ini = document.getElementById(`ini-${i}`).value;
+      const fin = document.getElementById(`fin-${i}`).value;
+      const [ih, im] = ini.split(':').map(Number);
+      const [fh, fm] = fin.split(':').map(Number);
+      const mins = Math.max(0, (fh*60+fm) - (ih*60+im));
+      totalMin += mins;
+      document.getElementById(`dur-${i}`).textContent = `${Math.floor(mins/60)}h ${mins%60}min`;
+    });
+    const el = document.getElementById('totalHoras');
+    el.textContent = `${Math.floor(totalMin/60)}h ${totalMin%60}min`;
+    el.className = totalMin >= 1200 ? 'horas-ok' : 'horas-warn';
+  };
+
+  recalcular();
+
+  document.getElementById('btnGuardar').onclick = async () => {
+    // Validar mínimo 20h
+    let totalMin = 0;
+    DIAS.forEach((_, i) => {
+      if (document.getElementById(`sc-${i}`).checked) return;
+      const ini = document.getElementById(`ini-${i}`).value;
+      const fin = document.getElementById(`fin-${i}`).value;
+      const [ih,im] = ini.split(':').map(Number);
+      const [fh,fm] = fin.split(':').map(Number);
+      totalMin += Math.max(0, (fh*60+fm)-(ih*60+im));
+    });
+
+    if (totalMin < 1200) {
+      toast(`Mínimo 20 horas semanales. Tienes: ${Math.floor(totalMin/60)}h ${totalMin%60}min`, 'error');
+      return;
+    }
+
+    const getVal = (id) => {
+      const sc = document.getElementById(`sc-${id}`).checked;
+      if (sc) return null;
+      return document.getElementById(`ini-${id}`).value + ':00';
+    };
+    const getFin = (id) => {
+      const sc = document.getElementById(`sc-${id}`).checked;
+      if (sc) return null;
+      return document.getElementById(`fin-${id}`).value + ':00';
+    };
+
+    const dto = {
+      lunInicio:  getVal(0), lunFinal:  getFin(0),
+      marInicio:  getVal(1), marFinal:  getFin(1),
+      mierInicio: getVal(2), mierFinal: getFin(2),
+      jueInicio:  getVal(3), jueFinal:  getFin(3),
+      vieInicio:  getVal(4), vieFinal:  getFin(4),
+      sabInicio:  getVal(5), sabFinal:  getFin(5),
+      domInicio:  getVal(6), domFinal:  getFin(6),
+    };
+
+    const btn = document.getElementById('btnGuardar');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    try {
+      const res = await Api.crearHorario(boleta, dto);
+      if (res.ok) {
+        toast('¡Horario guardado! Ahora inicia sesión.', 'success');
+        sessionStorage.removeItem('sl_reg_boleta');
+        setTimeout(() => window.location.href = '../../index.html', 1500);
+      } else {
+        toast('Error al guardar horario: ' + res.status, 'error');
+      }
+    } catch (e) {
+      toast('Error de red: ' + e.message, 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Guardar Horario y Continuar';
+    }
+  };
+</script>
+</body>
+</html>

@@ -32,6 +32,7 @@ public class RegistroEmpresaServiceImpl implements RegistroEmpresaService {
                     .telefono(dto.getTelefono())
                     .userPassword(passwordEncoder.encode(dto.getUserPassword()))
                     .rol("empresa")
+                    .verificado(false)
                     .build());
 
             Empresa empresaGuardada = empresaRepository.save(Empresa.builder()
