@@ -1,7 +1,5 @@
 package com.example.solinx;
 
-import static android.content.Intent.getIntent;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +29,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.solinx.ADAPTER.ProyectoAdapter;
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
-import com.example.solinx.DTO.EmpresaDTO;
+import com.example.solinx.DTO.SolicitudDTO;
 import com.example.solinx.RESPONSE.ProyectoAlumnoResponse;
 import com.example.solinx.RESPONSE.ProyectoResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,6 +61,10 @@ public class AlumnoEmpresas extends Fragment {
     private ApiService apiService;
     private String correoEmpresaAsignada;
     private String nombreProyectoAsignadoStr;
+
+    private Map<Integer, String> estadosSolicitudes = new HashMap<>();
+    private boolean alumnoAceptado = false;
+    private Integer idProyectoAceptado = null;
 
     @Nullable
     @Override
@@ -100,16 +103,16 @@ public class AlumnoEmpresas extends Fragment {
 
         btnContactarEmpresa.setOnClickListener(v -> contactarEmpresa());
 
-        cargarProyectos();
+        cargarSolicitudesYProyectos();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        cargarProyectos();
+        cargarSolicitudesYProyectos();
     }
 
-    public void cargarProyectos() {
+    private void cargarSolicitudesYProyectos() {
         int boleta = obtenerBoletaDelAlumno();
         if (boleta == -1) {
             mostrarError("No se pudo obtener la boleta del alumno");
@@ -118,6 +121,36 @@ public class AlumnoEmpresas extends Fragment {
 
         mostrarCargando(true);
 
+        apiService.obtenerSolicitudesEstudiante(boleta).enqueue(new Callback<List<SolicitudDTO>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<SolicitudDTO>> call,
+                                   @NonNull Response<List<SolicitudDTO>> response) {
+
+                estadosSolicitudes.clear();
+                alumnoAceptado = false;
+
+                if (response.isSuccessful() && response.body() != null) {
+                    for (SolicitudDTO s : response.body()) {
+                        if (s.getIdProyecto() != null && s.getEstadoSolicitud() != null) {
+                            estadosSolicitudes.put(s.getIdProyecto(), s.getEstadoSolicitud());
+                        }
+                        if ("aceptada".equalsIgnoreCase(s.getEstadoSolicitud())) {
+                            alumnoAceptado = true;
+                            idProyectoAceptado = s.getIdProyecto();
+                        }
+                    }
+                }
+                cargarProyectos(boleta);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<SolicitudDTO>> call, @NonNull Throwable t) {
+                cargarProyectos(boleta);
+            }
+        });
+    }
+
+    public void cargarProyectos(int boleta) {
         apiService.obtenerProyectosParaAlumno(boleta).enqueue(new Callback<ProyectoAlumnoResponse>() {
             @Override
             public void onResponse(@NonNull Call<ProyectoAlumnoResponse> call,
@@ -127,11 +160,16 @@ public class AlumnoEmpresas extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     ProyectoAlumnoResponse r = response.body();
 
-                    if (r.isEnProyecto() && r.getProyectoAsignado() != null) {
-                        mostrarVistaProyectoAsignado(r.getProyectoAsignado(), r.getCorreoEmpresa());
-                    } else {
-                        mostrarVistaLista(r.getProyectos());
+                    // LOG TEMPORAL
+                    android.util.Log.d("PROYECTOS", "Total proyectos recibidos: " +
+                            (r.getProyectos() != null ? r.getProyectos().size() : "null"));
+                    if (r.getProyectos() != null) {
+                        for (ProyectoResponse p : r.getProyectos()) {
+                            android.util.Log.d("PROYECTOS", "  → id: " + p.getIdProyecto() + " | " + p.getNombreProyecto());
+                        }
                     }
+
+                    mostrarVistaLista(r.getProyectos());
                 } else {
                     mostrarError("Error al cargar proyectos: " + response.code());
                 }
@@ -145,15 +183,18 @@ public class AlumnoEmpresas extends Fragment {
         });
     }
 
+    public void cargarProyectos() {
+        int boleta = obtenerBoletaDelAlumno();
+        if (boleta != -1) cargarProyectos(boleta);
+    }
+
     private int obtenerBoletaDelAlumno() {
-        SharedPreferences prefs = requireActivity().getSharedPreferences("SoLinXPrefs", android.content.Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireActivity()
+                .getSharedPreferences("SoLinXPrefs", android.content.Context.MODE_PRIVATE);
         String boletaStr = prefs.getString("boleta", null);
         if (boletaStr == null) return -1;
-        try {
-            return Integer.parseInt(boletaStr);
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+        try { return Integer.parseInt(boletaStr); }
+        catch (NumberFormatException e) { return -1; }
     }
 
     private void mostrarVistaLista(List<ProyectoResponse> proyectos) {
@@ -166,6 +207,7 @@ public class AlumnoEmpresas extends Fragment {
         } else {
             txtNoProyectos.setVisibility(View.GONE);
             recyclerViewProyectos.setVisibility(View.VISIBLE);
+            proyectoAdapter.setEstadosSolicitudes(estadosSolicitudes, alumnoAceptado, idProyectoAceptado);
             proyectoAdapter.setProyectos(proyectos);
         }
     }
@@ -196,11 +238,8 @@ public class AlumnoEmpresas extends Fragment {
             try {
                 byte[] bytes = Base64.decode(p.getImagenProyecto(), Base64.DEFAULT);
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                if (bmp != null) {
-                    imgProyectoAsignado.setImageBitmap(bmp);
-                } else {
-                    imgProyectoAsignado.setImageResource(R.drawable.img_default_proyecto);
-                }
+                if (bmp != null) imgProyectoAsignado.setImageBitmap(bmp);
+                else imgProyectoAsignado.setImageResource(R.drawable.img_default_proyecto);
             } catch (Exception e) {
                 imgProyectoAsignado.setImageResource(R.drawable.img_default_proyecto);
             }
@@ -233,8 +272,8 @@ public class AlumnoEmpresas extends Fragment {
 
             SharedPreferences prefs = requireActivity()
                     .getSharedPreferences("SoLinXPrefs", android.content.Context.MODE_PRIVATE);
-            String nombreAlumno = prefs.getString("nombre", "N/A");
-            String boletaAlumno = prefs.getString("boleta", "N/A");
+            String nombreAlumno  = prefs.getString("nombre", "N/A");
+            String boletaAlumno  = prefs.getString("boleta", "N/A");
             String carreraAlumno = prefs.getString("carrera", "N/A");
             String escuelaAlumno = prefs.getString("escuela", "N/A");
 
@@ -266,12 +305,12 @@ public class AlumnoEmpresas extends Fragment {
     }
 
     private void mostrarCargando(boolean mostrar) {
-        if (progressBar != null) {
+        if (progressBar != null)
             progressBar.setVisibility(mostrar ? View.VISIBLE : View.GONE);
-        }
     }
 
     private void mostrarError(String mensaje) {
-        Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
+        if (getContext() != null)
+            Toast.makeText(requireContext(), mensaje, Toast.LENGTH_LONG).show();
     }
 }

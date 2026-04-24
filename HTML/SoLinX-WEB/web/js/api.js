@@ -1,9 +1,9 @@
 /**
  * SoLinX Web — api.js
- * Cambia BASE_URL por la IP de tu servidor Spring Boot
+ * Cambia BASE_URL por la IP de tu computadora
  */
  
-const BASE_URL = 'http://10.0.0.2:8080/SoLinX/api';
+const BASE_URL = 'http://192.168.1.81:8080/SoLinX/api';
  
 async function request(method, endpoint, body = null, isMultipart = false) {
   const headers = {};
@@ -25,7 +25,7 @@ const postForm = (ep,f) => request('POST',   ep, f, true);
  
 export const Api = {
   // ─── Auth ────────────────────────────────────────────────
-  login: (correo, password) => post('login', { correo, password }),
+  login: (correo, password) => post('login', { correo, userPassword: password }),
   reenviarVerificacion: (correo) => post(`auth/verificar/reenviar?correo=${encodeURIComponent(correo)}`),
  
   // ─── Registro ────────────────────────────────────────────

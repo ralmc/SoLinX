@@ -126,7 +126,7 @@
 <script type="module">
   import { Api } from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
-  import { toast, initTheme, toggleTheme, showLoader, badgeEstado, fmtFecha, confirmDialog } from '../../js/utils.js';
+  import { toast, initTheme, toggleTheme, showLoader, fmtFecha } from '../../js/utils.js';
 
   requireAuth('estudiante');
   initTheme();
@@ -137,25 +137,6 @@
 
   document.getElementById('sidebarNombre').textContent = nombre;
   document.getElementById('sidebarBoleta').textContent = boleta || '—';
-  
-  async function cargarFotoSidebar() {
-  try {
-    const res = await Api.getPerfil(idUsuario);
-    if (!res.ok) return;
-    const data = await res.json();
-    const av = document.getElementById('sidebarAvatar');
-    if (data.foto) {
-        av.innerHTML = `<img src="data:image/jpeg;base64,${data.foto}" 
-            style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`;
-    } else {
-        av.textContent = Session.initials();
-    }
-    } catch {
-        document.getElementById('sidebarAvatar').textContent = Session.initials();
-    }
-    }
-  cargarFotoSidebar();
-
   document.getElementById('btn-logout').onclick = () => logout();
   document.getElementById('themeBtn').onclick   = () => toggleTheme();
 
@@ -163,30 +144,52 @@
   if (window.innerWidth <= 768) document.getElementById('sidebarToggle').style.display = 'flex';
   document.getElementById('sidebarToggle').onclick = () => document.getElementById('sidebar').classList.toggle('open');
 
-  // ─── Estado de solicitud del alumno ───────────────────
+  // ─── Foto sidebar ──────────────────────────────────────
+  async function cargarFotoSidebar() {
+    try {
+      const res = await Api.getPerfil(idUsuario);
+      if (!res.ok) return;
+      const data = await res.json();
+      const av = document.getElementById('sidebarAvatar');
+      if (data.foto) {
+        av.innerHTML = `<img src="data:image/jpeg;base64,${data.foto}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`;
+      } else {
+        av.textContent = Session.initials();
+      }
+    } catch {
+      document.getElementById('sidebarAvatar').textContent = Session.initials();
+    }
+  }
+
+  // ─── Solicitudes del alumno ────────────────────────────
+  let misSolicitudes = [];
   let alumnoAceptado = false;
   let correoEmpresaActual = null;
 
-  async function verificarAceptacion() {
+  async function cargarMisSolicitudes() {
     try {
       const res = await Api.getSolicitudesEstudiante(boleta);
       if (!res.ok) return;
-      const lista = await res.json();
-      alumnoAceptado = lista.some(s => s.estadoSolicitud?.toLowerCase() === 'aceptada');
+      misSolicitudes = await res.json();
+      alumnoAceptado = misSolicitudes.some(s => s.estadoSolicitud?.toLowerCase() === 'aceptada');
       const tabDocs = document.getElementById('tabDocs');
       tabDocs.disabled = !alumnoAceptado;
       tabDocs.title = alumnoAceptado ? '' : 'Debes ser aceptado primero';
     } catch {}
   }
 
+  function yaPostulado(idProyecto) {
+    return misSolicitudes.some(s => s.idProyecto === idProyecto);
+  }
+
   // ─── Tabs ─────────────────────────────────────────────
   const tabs = [
     { btn: 'tabEmpresas', panel: 'tab-empresas', title: 'Proyectos disponibles', link: 'link-empresas', load: cargarProyectos },
     { btn: 'tabDocs',     panel: 'tab-docs',     title: 'Documentos',            link: 'link-docs',    load: cargarDocumentos },
-    { btn: 'tabNotif',    panel: 'tab-notif',    title: 'Notificaciones',         link: 'link-notif',   load: cargarNotificaciones },
+    { btn: 'tabNotif',    panel: 'tab-notif',    title: 'Notificaciones',        link: 'link-notif',   load: cargarNotificaciones },
   ];
 
-  tabs.forEach((t, i) => {
+  tabs.forEach(t => {
     document.getElementById(t.btn).onclick = () => {
       if (t.btn === 'tabDocs' && !alumnoAceptado) { toast('Debes ser aceptado en un proyecto primero', 'error'); return; }
       tabs.forEach(x => {
@@ -226,9 +229,36 @@
       return;
     }
     const colores = ['#1497B9','#0e7a97','#38a169','#d69e2e','#6b46c1'];
-    container.innerHTML = `<div class="proyectos-grid">${lista.map((p, i) => `
+    container.innerHTML = `<div class="proyectos-grid">${lista.map((p, i) => {
+      const postulado = yaPostulado(p.idProyecto);
+      let btnLabel, btnClass;
+      const solCard = misSolicitudes.find(s => s.idProyecto === p.idProyecto);
+      const estadoCard = solCard?.estadoSolicitud?.toLowerCase();
+      if (estadoCard === 'aceptada') {
+        btnLabel = '✅ Aceptado';
+        btnClass = 'btn btn-sm w-full' ;
+        // estilo verde inline se aplica abajo
+      } else if (estadoCard === 'rechazada' || estadoCard === 'rechazada_empresa' || estadoCard === 'rechazada_supervisor') {
+        btnLabel = '❌ No seleccionado';
+        btnClass = 'btn btn-sm w-full';
+      } else if (alumnoAceptado) {
+        btnLabel = 'Ya fuiste aceptado ✅';
+        btnClass = 'btn btn-outline btn-sm w-full';
+      } else if (postulado) {
+        btnLabel = '⏳ En proceso';
+        btnClass = 'btn btn-outline btn-sm w-full';
+      } else {
+        btnLabel = 'Ver detalles';
+        btnClass = 'btn btn-primary btn-sm w-full';
+      }
+      const btnStyle = estadoCard === 'aceptada'
+        ? 'background:#38a169;color:#fff;border:none;'
+        : estadoCard === 'rechazada' || estadoCard === 'rechazada_empresa' || estadoCard === 'rechazada_supervisor'
+        ? 'background:#e53e3e;color:#fff;border:none;'
+        : '';
+      return `
       <div class="proyecto-card" onclick="abrirProyecto(${i})">
-        <div class="proyecto-card-img" style="background:linear-gradient(135deg,${colores[i%5]}22,${colores[i%5]})">
+        <div class="proyecto-card-img" style="background:linear-gradient(135deg,${alumnoAceptado || postulado ? '#9ca3af22' : colores[i%5]+'22'},${alumnoAceptado || postulado ? '#6b7280' : colores[i%5]});filter:${alumnoAceptado || postulado ? 'grayscale(1)' : 'none'};transition:filter .3s;">
           <svg width="40" height="40" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24" opacity=".7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
         </div>
         <div class="proyecto-card-body">
@@ -237,20 +267,33 @@
           <div class="proyecto-card-meta">
             <span class="badge badge-blue">${p.carreraEnfocada}</span>
             <span class="badge badge-gray">${p.vacantes} vacante${p.vacantes !== 1?'s':''}</span>
+            ${(() => {
+              const sol = misSolicitudes.find(s => s.idProyecto === p.idProyecto);
+              if (!sol) return '';
+              const estado = sol.estadoSolicitud?.toLowerCase();
+              if (estado === 'aceptada') return '<span class="badge badge-green">✅ Aceptado</span>';
+              if (estado === 'rechazada' || estado === 'rechazada_empresa' || estado === 'rechazada_supervisor') return '<span class="badge badge-red">❌ No seleccionado</span>';
+              if (estado === 'aprobada_supervisor') return '<span class="badge badge-blue">🔄 En revisión</span>';
+              return '<span class="badge badge-yellow">⏳ En proceso</span>';
+            })()}
           </div>
-          <p class="text-sm text-muted">${(p.objetivo??'').substring(0,100)}${p.objetivo?.length>100?'...':''}</p>
-          <div class="proyecto-card-actions"><button class="btn btn-primary btn-sm w-full">Ver detalles</button></div>
+          <p class="text-sm text-muted">${(p.objetivo??'').substring(0,100)}${(p.objetivo?.length??0)>100?'...':''}</p>
+          <div class="proyecto-card-actions"><button class="${btnClass}" style="${btnStyle}">${btnLabel}</button></div>
         </div>
-      </div>`).join('')}</div>`;
+      </div>`;
+    }).join('')}</div>`;
   }
 
   window.abrirProyecto = async function(idx) {
     const p = window._proyectos[idx];
+    const postulado = yaPostulado(p.idProyecto);
+
     document.getElementById('modal-proyecto-titulo').textContent = p.nombreProyecto;
     document.getElementById('modal-proyecto-body').innerHTML = `
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
         <span class="badge badge-blue">${p.carreraEnfocada}</span>
         <span class="badge badge-gray">${p.vacantes} vacantes</span>
+        ${alumnoAceptado ? '<span class="badge badge-green">✅ Ya fuiste aceptado en un proyecto</span>' : postulado ? '<span class="badge badge-yellow">⏳ Ya te postulaste</span>' : ''}
       </div>
       <p style="margin-bottom:1rem;color:var(--text-2)">${p.objetivo ?? ''}</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.85rem;color:var(--text-2)">
@@ -261,9 +304,24 @@
         <div><strong>Teléfono:</strong> ${p.telefonoEmpresa ?? 'N/A'}</div>
       </div>`;
 
-    document.getElementById('btnPostular').dataset.idx = idx;
+    // Botón postular:
+    const btnPostular = document.getElementById('btnPostular');
+    btnPostular.dataset.idx = idx;
+    if (alumnoAceptado) {
+      btnPostular.disabled = true;
+      btnPostular.textContent = 'Ya fuiste aceptado ✅';
+      btnPostular.className = 'btn btn-outline';
+    } else if (postulado) {
+      btnPostular.disabled = true;
+      btnPostular.textContent = 'En proceso ⏳';
+      btnPostular.className = 'btn btn-outline';
+    } else {
+      btnPostular.disabled = false;
+      btnPostular.textContent = 'Postularme';
+      btnPostular.className = 'btn btn-primary';
+    }
 
-    // Buscar correo empresa
+    // Correo empresa
     correoEmpresaActual = null;
     const btnCorreo = document.getElementById('btnCorreoEmpresa');
     btnCorreo.style.display = 'none';
@@ -281,7 +339,14 @@
     document.getElementById('modalProyecto').classList.add('active');
   };
 
-  window.cerrarModal = () => document.getElementById('modalProyecto').classList.remove('active');
+  window.cerrarModal = () => {
+    document.getElementById('modalProyecto').classList.remove('active');
+    // Resetear botón postular
+    const btn = document.getElementById('btnPostular');
+    btn.disabled = false;
+    btn.textContent = 'Postularme';
+    btn.className = 'btn btn-primary';
+  };
 
   document.getElementById('btnCorreoEmpresa').onclick = () => {
     const p = window._proyectos[document.getElementById('btnPostular').dataset.idx];
@@ -292,19 +357,26 @@
   document.getElementById('btnPostular').onclick = async () => {
     const idx = parseInt(document.getElementById('btnPostular').dataset.idx);
     const p = window._proyectos[idx];
+    if (alumnoAceptado || yaPostulado(p.idProyecto)) return; // doble check seguridad
     const btn = document.getElementById('btnPostular');
     btn.disabled = true; btn.textContent = 'Enviando...';
     try {
-      const dto = {
-        boletaAlumno: boleta,
-        idProyecto: p.idProyecto,
-        estadoSolicitud: 'enviada'
-      };
+      const dto = { boletaAlumno: boleta, idProyecto: p.idProyecto, estadoSolicitud: 'enviada' };
       const res = await Api.enviarSolicitud(dto);
-      if (res.ok) { toast('¡Solicitud enviada con éxito!', 'success'); cerrarModal(); }
-      else toast('Error al enviar solicitud: ' + res.status, 'error');
-    } catch (e) { toast('Error de red: ' + e.message, 'error'); }
-    finally { btn.disabled = false; btn.textContent = 'Postularme'; }
+      if (res.ok) {
+        toast('¡Solicitud enviada con éxito!', 'success');
+        // Actualizar lista local y re-renderizar
+        misSolicitudes.push({ idProyecto: p.idProyecto, estadoSolicitud: 'enviada' });
+        cerrarModal();
+        renderProyectos(window._proyectos, document.getElementById('proyectosContainer'));
+      } else {
+        toast('Error al enviar solicitud: ' + res.status, 'error');
+        btn.disabled = false; btn.textContent = 'Postularme';
+      }
+    } catch (e) {
+      toast('Error de red: ' + e.message, 'error');
+      btn.disabled = false; btn.textContent = 'Postularme';
+    }
   };
 
   // ─── Documentos ───────────────────────────────────────
@@ -408,9 +480,10 @@
   }
 
   // ─── Init ─────────────────────────────────────────────
+  await cargarMisSolicitudes();
   cargarProyectos();
-  verificarAceptacion();
   cargarBadgeNotif();
+  cargarFotoSidebar();
 </script>
 </body>
 </html>
