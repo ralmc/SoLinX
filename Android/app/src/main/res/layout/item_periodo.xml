@@ -2,43 +2,99 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
+    android:orientation="vertical"
     android:padding="16dp"
     android:layout_marginBottom="8dp"
     android:background="@drawable/bg_card_horario">
 
-    <TextView
-        android:id="@+id/tvPeriodo"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Periodo 1"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="?attr/colorOnBackground"
-        android:fontFamily="@font/molgan"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/tvEstado"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="documento.pdf"
-        android:textSize="13sp"
-        android:textColor="#1497B9"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:visibility="gone"/>
+        <TextView
+            android:id="@+id/tvPeriodo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Periodo 1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnBackground"
+            android:fontFamily="@font/molgan"/>
 
-    <Button
-        android:id="@+id/btnSubir"
-        android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tvEstado"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="documento.pdf"
+            android:textSize="13sp"
+            android:textColor="#1497B9"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/btnSubir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subir PDF"
+            android:textSize="13sp"
+            android:textAllCaps="false"
+            android:backgroundTint="?attr/colorSecondary"
+            android:textColor="?attr/colorOnSecondary"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <!-- Preview del archivo seleccionado -->
+    <LinearLayout
+        android:id="@+id/layoutPrevia"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Subir PDF"
-        android:textSize="13sp"
-        android:textAllCaps="false"
-        android:backgroundTint="?attr/colorSecondary"
-        android:textColor="?attr/colorOnSecondary"
-        android:visibility="gone"/>
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tvNombreArchivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📄 archivo.pdf"
+            android:textSize="13sp"
+            android:textColor="?attr/colorOnBackground"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="start">
+
+            <Button
+                android:id="@+id/btnConfirmar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirmar"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:backgroundTint="#1497B9"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnCambiar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cambiar"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:backgroundTint="?attr/colorSurfaceVariant"
+                android:textColor="?attr/colorOnSurface"/>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -344,7 +344,7 @@ SELECT * FROM Proyecto;
 SELECT * FROM Perfil;
 SELECT * FROM Usuario;
 SELECT * FROM Solicitud;
-
+SELECT * FROM Documento;
 /* ===========================================================
 TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
 ===========================================================
