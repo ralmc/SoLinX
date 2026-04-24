@@ -1,20 +1,6 @@
 -- ============================================
 -- BASE DE DATOS SOLINX
 -- ============================================
--- Plataforma de vinculación entre estudiantes,
--- empresas y supervisores para prácticas profesionales
--- y proyectos académicos.
---
--- Incluye:
---   * Esquema completo de tablas
---   * Datos seed de prueba (usuarios, empresas, proyectos, solicitudes)
---
--- Para ejecutar:
---   1. Asegúrate de tener MySQL corriendo (puerto 3306 por defecto)
---   2. Conéctate como root o un usuario con permisos CREATE DATABASE
---   3. Corre este script completo: source solinxDB.sql
--- ============================================
-
 DROP DATABASE IF EXISTS solinx;
 CREATE DATABASE IF NOT EXISTS solinx;
 USE solinx;
@@ -22,7 +8,6 @@ USE solinx;
 -- ============================================
 -- 1. TABLAS PRINCIPALES
 -- ============================================
-
 CREATE TABLE Estudiante (
     boleta INT NOT NULL PRIMARY KEY,
     carrera VARCHAR(100) NOT NULL DEFAULT '',
@@ -82,7 +67,6 @@ CREATE TABLE Horario (
 -- ============================================
 -- 2. TABLAS DE RELACIÓN (Usuario - Rol)
 -- ============================================
-
 CREATE TABLE UsuarioEstudiante (
     idUsuario INT NOT NULL,
     boleta INT NOT NULL,
@@ -126,9 +110,8 @@ CREATE TABLE Notificacion (
 );
 
 -- ============================================
--- 3. TABLAS DE NEGOCIO (Proyectos, Solicitudes, Perfiles)
+-- 3. TABLAS DE NEGOCIO
 -- ============================================
-
 CREATE TABLE Proyecto (
     idProyecto INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     carreraEnfocada VARCHAR(150) NOT NULL DEFAULT '',
@@ -183,66 +166,119 @@ CREATE TABLE Documento (
 );
 
 -- ============================================
--- DATOS SEED (DATOS DE PRUEBA)
+-- DATOS SEED
 -- ============================================
-
 -- ─── 1. ESTUDIANTES ────────────────────────────────────
 INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
-(2023000001, 'Ingeniería en Software',   'ESCOM'),
-(2023000002, 'Ingeniería Industrial',    'UPIICSA'),
-(2023000003, 'Ingeniería Mecatrónica',   'UPIITA'),
-(2023000004, 'Ingeniería Informática',   'UPIICSA'),
-(2023000005, 'Ingeniería Aeronáutica',   'ESIA Ticomán');
+(2023000001, 'Ingeniería en Software',              'ESCOM'),
+(2023000002, 'Ingeniería Industrial',               'UPIICSA'),
+(2023000003, 'Ingeniería Mecatrónica',              'UPIITA'),
+(2023000004, 'Ingeniería Informática',              'UPIICSA'),
+(2023000005, 'Ingeniería Aeronáutica',              'ESIA Ticomán'),
+(2023000006, 'Ingeniería en Inteligencia Artificial','ESCOM'),
+(2023000007, 'Ingeniería Biónica',                  'UPIBI');
 
--- ─── 2. EMPRESAS (Con teléfonos de tu versión) ─────────
+-- ─── 2. EMPRESAS (con teléfonos y direcciones falsas) ──
 INSERT INTO Empresa (nombreEmpresa, telefono) VALUES
-('TechNova', '5588991122'),
-('AeroDynamics MX', '5544556677'),
-('SoftSolutions', '5533445566'),
-('ElectroCorp', '5522334455'),
-('Aa', '5511111111'),
-('Ooo', '5522222222');
+('TechNova Solutions',   '5512348765'),   -- idEmpresa 1
+('AeroDynamics MX',      '5598761234'),   -- idEmpresa 2
+('SoftSolutions Corp',   '5534129876'),   -- idEmpresa 3
+('ElectroCorp SA',       '5567893412');   -- idEmpresa 4
 
 -- ─── 3. SUPERVISORES ───────────────────────────────────
 INSERT INTO Supervisor (area, idEmpresa) VALUES
 ('Recursos Humanos', 1);
 
--- ─── 4. USUARIOS (Con verificación TRUE por defecto) ───
+-- ─── 4. USUARIOS ───────────────────────────────────────
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol, verificado) VALUES
-('Mauro López', 'mauro@correo.com', '5512345678', 'pass123', 'estudiante', TRUE),
-('Laura Tech', 'laura@technova.com', '5588991122', 'empresa123', 'empresa', TRUE),
-('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123', 'supervisor', TRUE),
-('Sofía Ramírez', 'sofia@correo.com', '5544332211', 'pass123', 'estudiante', TRUE),
-('Empresa Aa', 'aa@gmail.com', '5511111111', '111', 'empresa', TRUE),
-('Empresa Ooo', 'oo@gmail.com', '5522222222', '222', 'empresa', TRUE),
-('Luis Herrera', 'luis@correo.com', '5533334444', 'pass123', 'estudiante', TRUE),
-('Ana Martínez', 'ana@correo.com', '5555556666', 'pass123', 'estudiante', TRUE),
-('Pedro Jiménez', 'pedro@correo.com', '5577778888', 'pass123', 'estudiante', TRUE);
+-- Estudiantes
+('Mauro López',       'mauro@correo.com',    '5512345678', 'pass123',    'estudiante', TRUE),  -- id 1 → ACEPTADO
+('Sofía Ramírez',     'sofia@correo.com',    '5544332211', 'pass123',    'estudiante', TRUE),  -- id 4 → PENDIENTE
+('Luis Herrera',      'luis@correo.com',     '5533334444', 'pass123',    'estudiante', TRUE),  -- id 7 → RECHAZADO
+('Ana Martínez',      'ana@correo.com',      '5555556666', 'pass123',    'estudiante', TRUE),  -- id 8 → sin solicitud
+('Pedro Jiménez',     'pedro@correo.com',    '5577778888', 'pass123',    'estudiante', TRUE),  -- id 9 → sin solicitud
+('Carlos Mendoza',    'carlos@correo.com',   '5511223344', 'pass123',    'estudiante', TRUE),  -- id 10 → sin solicitud
+('Diana Torres',      'diana@correo.com',    '5599887766', 'pass123',    'estudiante', TRUE),  -- id 11 → sin solicitud
+-- Empresas
+('Laura Tech',        'laura@technova.com',  '5588991122', 'empresa123', 'empresa',    TRUE),  -- id 2
+('Empresa Aero',      'aero@aero.com',       '5598761234', 'empresa123', 'empresa',    TRUE),  -- id 5
+('Empresa Soft',      'soft@soft.com',       '5534129876', 'empresa123', 'empresa',    TRUE),  -- id 6
+('Empresa Electro',   'electro@electro.com', '5567893412', 'empresa123', 'empresa',    TRUE),  -- id 12
+-- Supervisor
+('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123',     'supervisor', TRUE);  -- id 3
 
 -- ─── 5. VINCULACIÓN USUARIOS ↔ ROLES ───────────────────
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
-(1, 2023000001),
-(4, 2023000005),
-(7, 2023000002),
-(8, 2023000003),
-(9, 2023000004);
+(1,  2023000001),
+(2,  2023000005),
+(3,  2023000002),
+(4,  2023000003),
+(5,  2023000004),
+(6,  2023000006),
+(7,  2023000007);
 
 INSERT INTO UsuarioEmpresa (idUsuario, idEmpresa) VALUES
-(2, 1),
-(5, 2),
-(6, 3);
+(8,  1),
+(9,  2),
+(10, 3),
+(11, 4);
 
 INSERT INTO UsuarioSupervisor (idUsuario, idSupervisor) VALUES
-(3, 1);
+(12, 1);
 
--- ─── 6. PROYECTOS ──────────────────────────────────────
-INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, imagenRef, idEmpresa) VALUES
-('Ingeniería en Software',  'Sistema de Gestión Escolar v2.0', 'Crear un sistema web.',          3, 'CDMX',      'img_gestion',          1),
-('Ingeniería Aeronáutica',  'Proyecto Icarus',                 'Desarrollo de un dron.',         2, 'Querétaro', 'img_dron',             1),
-('Logística Industrial',    'App Inventarios FastTrack',       'App móvil para inventarios.',    4, 'CDMX',      'img_inventario',       2),
-('Ingeniería Eléctrica',    'EcoMonitor Inteligente',          'Monitoreo de consumo.',          2, 'Edomex',    'img_energia',          3),
-('Desarrollo Backend',      'Sistema de Pagos Aa',             'Crear API segura.',              2, 'Remoto',    'img_default_proyecto', 2),
-('Inteligencia Artificial', 'Chatbot Ooo V2',                  'Asistente virtual.',             3, 'CDMX',      'img_default_proyecto', 3);
+-- ─── 6. PROYECTOS (2 por empresa, inicio 23/04/2026, fin 31/07/2026) ──
+INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, fechaInicio, fechaTermino, imagenRef, idEmpresa) VALUES
+-- TechNova (2 proyectos)
+('Ingeniería en Software',
+ 'Sistema de Gestión Escolar v2.0',
+ 'Crear un sistema web moderno para la gestión de datos escolares.',
+ 3, 'Av. IPN 2508, Zacatenco, CDMX',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_gestion', 1),
+
+('Ingeniería Aeronáutica',
+ 'Proyecto Icarus',
+ 'Desarrollo e implementación de un dron de uso académico.',
+ 2, 'Blvd. Miguel de Cervantes 120, Querétaro',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_dron', 1),
+
+-- AeroDynamics (2 proyectos)
+('Logística Industrial',
+ 'App Inventarios FastTrack',
+ 'App móvil para gestión de inventarios en tiempo real.',
+ 4, 'Calz. Vallejo 1003, Gustavo A. Madero, CDMX',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_inventario', 2),
+
+('Ingeniería Mecatrónica',
+ 'Robot Ensamblador v3',
+ 'Diseño y programación de brazo robótico para línea de ensamble.',
+ 2, 'Periférico Sur 4349, Jardines del Pedregal, CDMX',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 2),
+
+-- SoftSolutions (2 proyectos)
+('Ingeniería Eléctrica',
+ 'EcoMonitor Inteligente',
+ 'Sistema de monitoreo de consumo eléctrico con alertas automáticas.',
+ 2, 'Av. Insurgentes Sur 800, Del Valle, Edomex',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_energia', 3),
+
+('Ingeniería en Inteligencia Artificial',
+ 'Chatbot SoftAssist V2',
+ 'Asistente virtual con procesamiento de lenguaje natural para soporte técnico.',
+ 3, 'Calle Tokio 35, Juárez, CDMX',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 3),
+
+-- ElectroCorp (2 proyectos)
+('Desarrollo Backend',
+ 'API de Pagos Seguros',
+ 'Crear una API segura para procesamiento de pagos en línea.',
+ 2, 'Lago Zurich 245, Ampliación Granada, CDMX',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 4),
+
+('Ingeniería Informática',
+ 'Dashboard Analytics Pro',
+ 'Panel de análisis de datos en tiempo real para toma de decisiones empresariales.',
+ 3, 'Av. Santa Fe 505, Cuajimalpa, CDMX',
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 4);
 
 -- ─── 7. PERFILES ───────────────────────────────────────
 INSERT INTO Perfil (tema, idUsuario) VALUES
@@ -254,7 +290,10 @@ INSERT INTO Perfil (tema, idUsuario) VALUES
 ('claro',  6),
 ('claro',  7),
 ('claro',  8),
-('claro',  9);
+('claro',  9),
+('claro', 10),
+('claro', 11),
+('claro', 12);
 
 -- ─── 8. HORARIOS ───────────────────────────────────────
 INSERT INTO Horario (lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierFinal, jueInicio, jueFinal, vieInicio, vieFinal) VALUES
@@ -272,21 +311,30 @@ INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES
 (2023000002, 2),
 (2023000003, 3),
 (2023000004, 1),
-(2023000005, 2);
+(2023000005, 2),
+(2023000006, 1),
+(2023000007, 3);
 
 -- ─── 10. SOLICITUDES ───────────────────────────────────
-INSERT INTO Solicitud (estadoSolicitud, boleta, idProyecto) VALUES
-('enviada', 2023000001, 1),
-('enviada', 2023000002, 3),
-('enviada', 2023000003, 5),
-('enviada', 2023000004, 6),
-('enviada', 2023000005, 2);
+INSERT INTO Solicitud (estadoSolicitud, fechaAceptacion, boleta, idProyecto) VALUES
+('aceptada',        '2026-04-23 10:00:00', 2023000001, 1),
+('enviada',          NULL,                 2023000005, 2),
+('rechazada_empresa',NULL,                 2023000002, 3);
 
 -- ─── 11. NOTIFICACIONES ────────────────────────────────
 INSERT INTO Notificacion (titulo, mensaje, leida, idUsuario) VALUES
-('Recordatorio: Documentos pendientes',
- 'Han pasado más de 5 días sin que subas tu documentación del periodo. Por favor ingresa a la plataforma y sube tus documentos.',
- FALSE, 1);
+-- Mauro: fue aceptado
+('¡Solicitud aceptada!',
+ 'Tu solicitud para el proyecto "Sistema de Gestión Escolar v2.0" de TechNova Solutions ha sido aceptada. Bienvenido al equipo. Por favor sube tu documentación del período 1 para continuar.',
+ FALSE, 1),
+-- Sofía: solicitud en revisión
+('Solicitud en proceso',
+ 'Tu solicitud para el proyecto "Proyecto Icarus" está siendo revisada. Te notificaremos cuando haya una actualización.',
+ FALSE, 2),
+-- Luis: solicitud rechazada
+('Solicitud no aceptada',
+ 'Lamentablemente tu solicitud para el proyecto "App Inventarios FastTrack" no fue aceptada en esta ocasión. Puedes postularte a otros proyectos disponibles.',
+ FALSE, 3);
 
 -- ============================================
 -- VERIFICACIÓN
@@ -296,10 +344,10 @@ SELECT * FROM Proyecto;
 SELECT * FROM Perfil;
 SELECT * FROM Usuario;
 SELECT * FROM Solicitud;
+SELECT * FROM Documento;
 /* ===========================================================
 TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
 ===========================================================
-
  [ ESTUDIANTES ]
  ---------------------------------------------------
  Correo: mauro@correo.com     | Password: pass123
@@ -307,14 +355,15 @@ TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
  Correo: luis@correo.com      | Password: pass123
  Correo: ana@correo.com       | Password: pass123
  Correo: pedro@correo.com     | Password: pass123
-
+ Correo: carlos@correo.com    | Password: pass123
+ Correo: diana@correo.com     | Password: pass123
  [ EMPRESAS ]
  ---------------------------------------------------
  Correo: laura@technova.com   | Password: empresa123
- Correo: aa@gmail.com         | Password: 111
- Correo: oo@gmail.com         | Password: 222
-
- [ SUPERVISORES / ADMIN ]
+ Correo: aero@aero.com        | Password: empresa123
+ Correo: soft@soft.com        | Password: empresa123
+ Correo: electro@electro.com  | Password: empresa123
+ [ SUPERVISORES ]
  ---------------------------------------------------
  Correo: carlos@technova.com  | Password: sup123
 ===========================================================

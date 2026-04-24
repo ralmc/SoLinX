@@ -24,7 +24,6 @@ public class SolicitudDto {
     private String carreraAlumno;
     private String escuela;
 
-    // Campos del proyecto / empresa
     private Integer idProyecto;
     private String nombreProyecto;
     private String nombreEmpresa;

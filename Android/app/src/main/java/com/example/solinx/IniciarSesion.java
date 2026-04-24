@@ -62,11 +62,9 @@ public class IniciarSesion extends Fragment {
         TextView tvRegistroLink = view.findViewById(R.id.tvRegistroLink);
         btnEnviar.setOnClickListener(v -> hacerLogin());
 
-        // Uso del método correcto del compañero para crear cuenta
         tvRegistroLink.setOnClickListener(v ->
                 ((InicioHelper) requireActivity()).mostrarCrearCuenta());
 
-        // Botón flecha de regreso (de tu código)
         try {
             android.widget.ImageButton btnRegresarFlecha = view.findViewById(R.id.btnRegresarFlecha);
             if (btnRegresarFlecha != null) {
@@ -127,7 +125,6 @@ public class IniciarSesion extends Fragment {
                             return;
                         }
 
-                        // En lugar de navegar directo, primero cargamos el tema
                         LoginResponseDTO loginResponse = response.body();
                         Log.d(TAG, "Login exitoso - Usuario: " + loginResponse.getNombre() + " | Rol: " + loginResponse.getRol());
                         guardarSesionBasica(loginResponse);
@@ -183,7 +180,7 @@ public class IniciarSesion extends Fragment {
                 });
     }
 
-    // ─── Aplicar Tema y Navegar (Tu lógica fusionada con la suya) ─────────────
+    // ─── Aplicar Tema y Navegar  ───────────────────────────────────────────────
     private void cargarYAplicarTema(LoginResponseDTO loginResponse) {
         ApiService api = ApiClient.getClient().create(ApiService.class);
         api.obtenerPerfil(loginResponse.getIdUsuario()).enqueue(new Callback<com.example.solinx.DTO.PerfilDTO>() {
@@ -215,7 +212,7 @@ public class IniciarSesion extends Fragment {
         switch (resp.getRol().toLowerCase()) {
             case "estudiante":
                 guardarDatosEstudiante(resp);
-                navegarA(AlumnoMenuEmpresas.class, resp, false);
+                navegarA(AlumnoMenuEmpresas.class, resp, true);
                 break;
             case "empresa":
                 if (!idValido(resp.getIdEmpresa())) { showToast("Error crítico: ID de empresa no encontrado"); return; }

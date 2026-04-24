@@ -1,10 +1,12 @@
 package com.example.solinx.ADAPTER;
 
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.solinx.DTO.DocumentoDTO;
 import com.example.solinx.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoViewHolder> {
 
@@ -21,16 +25,40 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
         void onSubir(int periodo);
     }
 
+    public interface OnConfirmarClickListener {
+        void onConfirmar(int periodo, Uri uri);
+    }
+
     private final List<DocumentoDTO> periodos;
-    private final OnSubirClickListener listener;
+    private final OnSubirClickListener listenerSubir;
+    private OnConfirmarClickListener listenerConfirmar;
     private final int periodoDesbloqueado;
+
+    private final Map<Integer, Uri> urisTemp = new HashMap<>();
+    private final Map<Integer, String> nombresTemp = new HashMap<>();
 
     public PeriodoAdapter(List<DocumentoDTO> periodos,
                           int periodoDesbloqueado,
-                          OnSubirClickListener listener) {
-        this.periodos             = periodos;
-        this.periodoDesbloqueado  = periodoDesbloqueado;
-        this.listener             = listener;
+                          OnSubirClickListener listenerSubir) {
+        this.periodos            = periodos;
+        this.periodoDesbloqueado = periodoDesbloqueado;
+        this.listenerSubir       = listenerSubir;
+    }
+
+    public void setOnConfirmarClickListener(OnConfirmarClickListener listener) {
+        this.listenerConfirmar = listener;
+    }
+
+    public void mostrarPrevia(int periodo, Uri uri, String nombreArchivo) {
+        urisTemp.put(periodo, uri);
+        nombresTemp.put(periodo, nombreArchivo);
+        notifyDataSetChanged();
+    }
+
+    public void limpiarPrevia(int periodo) {
+        urisTemp.remove(periodo);
+        nombresTemp.remove(periodo);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -45,29 +73,52 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
     public void onBindViewHolder(@NonNull PeriodoViewHolder holder, int position) {
         int numeroPeriodo = position + 1;
         DocumentoDTO doc  = periodos.get(position);
+        Uri uriTemp       = urisTemp.get(numeroPeriodo);
+        String nombreTemp = nombresTemp.get(numeroPeriodo);
 
         holder.tvPeriodo.setText("Periodo " + numeroPeriodo);
 
+        // ─── Ya subido ─────────────────────────────────────
         if (doc != null) {
             holder.tvEstado.setText(doc.getNombreArchivo());
             holder.tvEstado.setVisibility(View.VISIBLE);
             holder.btnSubir.setVisibility(View.GONE);
-
+            holder.layoutPrevia.setVisibility(View.GONE);
             setCardEstado(holder, true);
 
+            // ─── Tiene previa pendiente de confirmar ───────────
+        } else if (uriTemp != null) {
+            holder.tvEstado.setVisibility(View.GONE);
+            holder.btnSubir.setVisibility(View.GONE);
+            holder.layoutPrevia.setVisibility(View.VISIBLE);
+            holder.tvNombreArchivo.setText("📄 " + (nombreTemp != null ? nombreTemp : "archivo.pdf"));
+            setCardEstado(holder, true);
+
+            holder.btnConfirmar.setOnClickListener(v -> {
+                if (listenerConfirmar != null) {
+                    listenerConfirmar.onConfirmar(numeroPeriodo, uriTemp);
+                }
+            });
+
+            holder.btnCambiar.setOnClickListener(v -> {
+                listenerSubir.onSubir(numeroPeriodo);
+            });
+
+            // ─── Período desbloqueado sin archivo ──────────────
         } else if (numeroPeriodo == periodoDesbloqueado) {
             holder.tvEstado.setVisibility(View.GONE);
+            holder.layoutPrevia.setVisibility(View.GONE);
             holder.btnSubir.setVisibility(View.VISIBLE);
             holder.btnSubir.setEnabled(true);
-            holder.btnSubir.setOnClickListener(v -> listener.onSubir(numeroPeriodo));
-
+            holder.btnSubir.setOnClickListener(v -> listenerSubir.onSubir(numeroPeriodo));
             setCardEstado(holder, true);
 
+            // ─── Período bloqueado ─────────────────────────────
         } else {
             holder.tvEstado.setVisibility(View.GONE);
+            holder.layoutPrevia.setVisibility(View.GONE);
             holder.btnSubir.setVisibility(View.VISIBLE);
             holder.btnSubir.setEnabled(false);
-
             setCardEstado(holder, false);
         }
     }
@@ -88,14 +139,19 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
     }
 
     static class PeriodoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvPeriodo, tvEstado;
-        Button   btnSubir;
+        TextView    tvPeriodo, tvEstado, tvNombreArchivo;
+        Button      btnSubir, btnConfirmar, btnCambiar;
+        LinearLayout layoutPrevia;
 
         PeriodoViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvPeriodo = itemView.findViewById(R.id.tvPeriodo);
-            tvEstado  = itemView.findViewById(R.id.tvEstado);
-            btnSubir  = itemView.findViewById(R.id.btnSubir);
+            tvPeriodo       = itemView.findViewById(R.id.tvPeriodo);
+            tvEstado        = itemView.findViewById(R.id.tvEstado);
+            btnSubir        = itemView.findViewById(R.id.btnSubir);
+            layoutPrevia    = itemView.findViewById(R.id.layoutPrevia);
+            tvNombreArchivo = itemView.findViewById(R.id.tvNombreArchivo);
+            btnConfirmar    = itemView.findViewById(R.id.btnConfirmar);
+            btnCambiar      = itemView.findViewById(R.id.btnCambiar);
         }
     }
 }

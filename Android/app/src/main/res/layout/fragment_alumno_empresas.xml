@@ -40,7 +40,6 @@
 
     </LinearLayout>
 
-    <!-- Vista de "ya perteneces a este proyecto" (oculta por defecto) -->
     <FrameLayout
         android:id="@+id/containerProyectoAsignado"
         android:layout_width="match_parent"
@@ -49,5 +48,4 @@
 
         <include layout="@layout/card_proyecto_asignado" />
     </FrameLayout>
-
 </FrameLayout>

@@ -80,19 +80,20 @@ public class ProyectoController {
                     System.err.println("Error obteniendo correo empresa: " + e.getMessage());
                 }
 
+                List<ProyectoDto> todosParaMostrar = proyectoService.getAll().stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList());
+
                 return ResponseEntity.ok(ProyectoAlumnoResponseDto.builder()
                         .enProyecto(true)
                         .proyectoAsignado(proyectoDto)
                         .correoEmpresa(correoEmpresa)
-                        .proyectos(new ArrayList<>())
+                        .proyectos(todosParaMostrar)
                         .build());
             }
 
-            List<Integer> idsEnProceso = solicitudRepository.findIdProyectosEnProcesoPorBoleta(boleta);
-
             List<Proyecto> todosProyectos = proyectoService.getAll();
             List<ProyectoDto> dtos = todosProyectos.stream()
-                    .filter(p -> !idsEnProceso.contains(p.getIdProyecto()))
                     .map(this::convertToDto)
                     .collect(Collectors.toList());
 

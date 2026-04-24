@@ -49,7 +49,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final String TAG = "AlumnoVistaCuenta";
 
-    // Correo de soporte (supervisor general)
+    // Correo de soporte
     private static final String CORREO_SOPORTE = "solinx.soporte@gmail.com";
 
     // Views
@@ -193,24 +193,44 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                 return;
             }
 
-            StringBuilder sb = new StringBuilder();
-            for (SolicitudDTO s : lista) {
-                sb.append("Empresa: ").append(s.getNombreEmpresa()).append("\n");
-                sb.append("Proyecto: ").append(s.getNombreProyecto()).append("\n");
+            android.text.SpannableStringBuilder sb = new android.text.SpannableStringBuilder();
 
-                String estado = s.getEstadoSolicitud();
+            for (SolicitudDTO s : lista) {
+                String empresa  = s.getNombreEmpresa()  != null ? s.getNombreEmpresa()  : "N/A";
+                String proyecto = s.getNombreProyecto() != null ? s.getNombreProyecto() : "N/A";
+                String estado   = s.getEstadoSolicitud();
+
+                sb.append("Empresa: ").append(empresa).append("\n");
+                sb.append("Proyecto: ").append(proyecto).append("\n");
+                sb.append("Estado: ");
+
+                String etiqueta;
+                int color;
                 if (estado == null) {
-                    sb.append("Estado: Desconocido");
+                    etiqueta = "Desconocido";
+                    color = android.graphics.Color.GRAY;
                 } else if (estado.equalsIgnoreCase("aceptada")) {
-                    sb.append("Estado: Admitido");
-                } else if (estado.equalsIgnoreCase("rechazada")) {
-                    sb.append("Estado: Rechazado");
+                    etiqueta = "Admitido ✅";
+                    color = android.graphics.Color.parseColor("#38a169");
+                } else if (estado.toLowerCase().startsWith("rechazada")) {
+                    etiqueta = "No seleccionado ❌";
+                    color = android.graphics.Color.parseColor("#e53e3e");
                 } else {
-                    sb.append("Estado: Pendiente");
+                    etiqueta = "En espera ⏳";
+                    color = android.graphics.Color.parseColor("#d69e2e");
                 }
+
+                int start = sb.length();
+                sb.append(etiqueta);
+                sb.setSpan(
+                        new android.text.style.ForegroundColorSpan(color),
+                        start, sb.length(),
+                        android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
                 sb.append("\n\n");
             }
-            tvPuntosStatus.setText(sb.toString().trim());
+
+            tvPuntosStatus.setText(sb);
         });
     }
 
@@ -255,6 +275,14 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         String i = inicio.length() > 5 ? inicio.substring(0, 5) : inicio;
         String f = fin.length()   > 5 ? fin.substring(0, 5)   : fin;
         return i + " – " + f;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarFotoPerfil();
+        cargarSolicitudes();
+        cargarHorario();
     }
 
     private void setupListeners() {

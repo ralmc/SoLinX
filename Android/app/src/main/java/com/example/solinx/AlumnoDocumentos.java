@@ -55,9 +55,27 @@ public class AlumnoDocumentos extends Fragment {
 
         pdfLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(), uri -> {
-                    if (uri != null && periodoSeleccionado != -1) {
-                        subirPDF(uri, periodoSeleccionado);
+                    if (uri == null || periodoSeleccionado == -1) return;
+                    // Validar tamaño
+                    long tamañoArchivo = 0;
+                    Cursor cursorSize = requireContext().getContentResolver()
+                            .query(uri, null, null, null, null);
+                    if (cursorSize != null && cursorSize.moveToFirst()) {
+                        int idx = cursorSize.getColumnIndex(OpenableColumns.SIZE);
+                        if (idx != -1) tamañoArchivo = cursorSize.getLong(idx);
+                        cursorSize.close();
                     }
+
+                    if (tamañoArchivo > 1_500_000L) {
+                        Toast.makeText(requireContext(),
+                                "El PDF no puede superar 1.5 MB (tamaño actual: " +
+                                        String.format("%.2f", tamañoArchivo / 1_000_000.0) + " MB)",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    String nombreArchivo = obtenerNombreArchivo(uri);
+                    periodoAdapter.mostrarPrevia(periodoSeleccionado, uri, nombreArchivo);
                 });
     }
 
@@ -86,12 +104,15 @@ public class AlumnoDocumentos extends Fragment {
 
         List<DocumentoDTO> periodosVacios = new ArrayList<>();
         for (int i = 0; i < 8; i++) periodosVacios.add(null);
+
         periodoAdapter = new PeriodoAdapter(periodosVacios, 1, periodo -> {
             periodoSeleccionado = periodo;
             pdfLauncher.launch("application/pdf");
         });
-        recyclerPeriodos.setAdapter(periodoAdapter);
 
+        periodoAdapter.setOnConfirmarClickListener((periodo, uri) -> subirPDF(uri, periodo));
+
+        recyclerPeriodos.setAdapter(periodoAdapter);
         cargarDocumentos();
     }
 
@@ -128,16 +149,11 @@ public class AlumnoDocumentos extends Fragment {
                 final int periodoDesbloqueado = primerPeriodoDisponible;
 
                 periodoAdapter = new PeriodoAdapter(periodos, periodoDesbloqueado, periodo -> {
-                    if (periodo < periodoDesbloqueado && periodos.get(periodo - 1) != null) {
-                        Toast.makeText(requireContext(),
-                                "El Periodo " + periodo + " ya fue subido",
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
                     periodoSeleccionado = periodo;
                     pdfLauncher.launch("application/pdf");
                 });
 
+                periodoAdapter.setOnConfirmarClickListener((periodo, uri) -> subirPDF(uri, periodo));
                 recyclerPeriodos.setAdapter(periodoAdapter);
             }
 
@@ -153,7 +169,9 @@ public class AlumnoDocumentos extends Fragment {
                     pdfLauncher.launch("application/pdf");
                 });
 
+                periodoAdapter.setOnConfirmarClickListener((periodo, uri) -> subirPDF(uri, periodo));
                 recyclerPeriodos.setAdapter(periodoAdapter);
+
                 Toast.makeText(requireContext(),
                         "Error al cargar documentos: " + t.getMessage(),
                         Toast.LENGTH_SHORT).show();
@@ -165,25 +183,6 @@ public class AlumnoDocumentos extends Fragment {
         if (boleta == null) return;
 
         try {
-            long tamañoMaximo = 1_500_000L;
-            long tamañoArchivo = 0;
-
-            Cursor cursorSize = requireContext().getContentResolver()
-                    .query(uri, null, null, null, null);
-            if (cursorSize != null && cursorSize.moveToFirst()) {
-                int idx = cursorSize.getColumnIndex(OpenableColumns.SIZE);
-                if (idx != -1) tamañoArchivo = cursorSize.getLong(idx);
-                cursorSize.close();
-            }
-
-            if (tamañoArchivo > tamañoMaximo) {
-                Toast.makeText(requireContext(),
-                        "El PDF no puede superar 1.5 MB (tamaño actual: " +
-                                String.format("%.2f", tamañoArchivo / 1_000_000.0) + " MB)",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-
             String nombreArchivo = obtenerNombreArchivo(uri);
 
             InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
@@ -202,13 +201,14 @@ public class AlumnoDocumentos extends Fragment {
                         public void onResponse(@NonNull Call<DocumentoDTO> call,
                                                @NonNull Response<DocumentoDTO> response) {
                             if (response.isSuccessful()) {
+                                periodoAdapter.limpiarPrevia(periodo);
                                 Toast.makeText(requireContext(),
-                                        "Periodo; " + periodo + " Subido correctamente",
+                                        "Período " + periodo + " subido correctamente ✓",
                                         Toast.LENGTH_SHORT).show();
                                 cargarDocumentos();
                             } else if (response.code() == 409) {
                                 Toast.makeText(requireContext(),
-                                        "Ya existe un documento para el Periodo " + periodo,
+                                        "Ya existe un documento para el Período " + periodo,
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(requireContext(),

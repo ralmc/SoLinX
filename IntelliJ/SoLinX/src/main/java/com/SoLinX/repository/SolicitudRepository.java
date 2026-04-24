@@ -61,6 +61,6 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Integer> {
             "JOIN FETCH s.proyecto p " +
             "JOIN FETCH p.empresa e " +
             "JOIN FETCH s.estudiante est " +
-            "WHERE est.boleta = :boleta AND s.estadoSolicitud = 'aprobada'")
+            "WHERE est.boleta = :boleta AND s.estadoSolicitud = 'aceptada'")
     List<Solicitud> findSolicitudAprobadaByBoleta(@Param("boleta") Integer boleta);
 }
