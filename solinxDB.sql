@@ -366,5 +366,4 @@ TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
  [ SUPERVISORES ]
  ---------------------------------------------------
  Correo: carlos@technova.com  | Password: sup123
-===========================================================
-*/
+=========================================================== */

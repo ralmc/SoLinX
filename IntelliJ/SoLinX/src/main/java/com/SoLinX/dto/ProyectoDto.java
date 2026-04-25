@@ -1,5 +1,6 @@
 package com.SoLinX.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +12,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProyectoDto {
-
     private Integer idProyecto;
     private String carreraEnfocada;
     private String nombreProyecto;
@@ -19,12 +19,17 @@ public class ProyectoDto {
     private String imagenProyecto;
     private String nombreEmpresa;
     private String objetivo;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Mexico_City")
     private Date fechaInicio;
+
     private Integer vacantes;
     private String ubicacion;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Mexico_City")
     private Date fechaTermino;
+
     private String telefonoEmpresa;
     private String fotoEmpresa;
     private Integer idEmpresa;
-
 }

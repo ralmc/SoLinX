@@ -5,11 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SoLinX — Empresa</title>
   <link rel="stylesheet" href="../../css/main.css">
+  <style>
+    .foto-proyecto-wrap { border:2px dashed var(--border); border-radius:var(--radius); padding:1rem; text-align:center; cursor:pointer; transition:.2s; margin-bottom:.5rem; }
+    .foto-proyecto-wrap:hover { border-color:var(--brand); }
+    .foto-proyecto-preview { width:100%; max-height:160px; object-fit:cover; border-radius:var(--radius-sm); display:none; margin-bottom:.5rem; }
+  </style>
 </head>
 <body>
 <div class="app-layout">
 
-  <!-- ── Sidebar ─────────────────────────────────────────── -->
   <aside class="app-sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon" style="background:transparent;padding:0;"><img src="../../img/logo_sf.png" alt="SoLinX" style="width:36px;height:36px;object-fit:contain;border-radius:6px;"></div>
@@ -38,7 +42,6 @@
     </div>
   </aside>
 
-  <!-- ── Main ────────────────────────────────────────────── -->
   <main class="app-main">
     <header class="app-topbar">
       <div class="topbar-title">Mis Proyectos</div>
@@ -63,7 +66,7 @@
 
 <!-- Modal: Crear / Editar Proyecto -->
 <div class="modal-overlay" id="modalProyecto">
-  <div class="modal" style="max-width:580px">
+  <div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto">
     <div class="modal-header">
       <h3 id="modal-titulo">Nuevo Proyecto</h3>
       <button class="btn-icon" onclick="cerrarModal()">
@@ -72,13 +75,28 @@
     </div>
     <div class="modal-body">
       <input type="hidden" id="p-id">
+      <input type="hidden" id="p-foto-b64">
+
+      <!-- Foto del proyecto -->
+      <div class="form-group">
+        <label class="form-label">Foto del proyecto <span class="text-muted text-xs">(opcional)</span></label>
+        <img id="foto-preview" class="foto-proyecto-preview" alt="Preview">
+        <div class="foto-proyecto-wrap" id="foto-wrap" onclick="seleccionarFoto()">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:.5rem;opacity:.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div class="text-sm text-muted">Haz clic para subir una imagen</div>
+          <div class="text-xs text-muted" style="margin-top:.25rem">JPG, PNG — máx. 2 MB</div>
+        </div>
+        <button class="btn btn-outline btn-sm" id="btn-quitar-foto" style="display:none;margin-top:.25rem" onclick="quitarFoto()">✕ Quitar foto</button>
+        <p class="text-xs text-muted" style="margin-top:.4rem">⚠️ La imagen se ajustará automáticamente a <strong>480×270 px</strong> (proporción 16:9). Se recomienda usar imágenes horizontales.</p>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Nombre del proyecto</label>
+          <label class="form-label">Nombre del proyecto *</label>
           <input class="form-input" type="text" id="p-nombre" placeholder="Nombre">
         </div>
         <div class="form-group">
-          <label class="form-label">Carrera enfocada</label>
+          <label class="form-label">Carrera enfocada *</label>
           <select class="form-select" id="p-carrera">
             <option value="">Selecciona...</option>
             <option>Ingeniería en Sistemas Computacionales</option>
@@ -93,27 +111,30 @@
           </select>
         </div>
       </div>
+
       <div class="form-group">
-        <label class="form-label">Objetivo / Descripción</label>
+        <label class="form-label">Objetivo / Descripción *</label>
         <textarea class="form-textarea" id="p-objetivo" placeholder="Describe el objetivo del proyecto..."></textarea>
       </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Vacantes</label>
+          <label class="form-label">Vacantes *</label>
           <input class="form-input" type="number" id="p-vacantes" placeholder="1" min="1">
         </div>
         <div class="form-group">
-          <label class="form-label">Ubicación</label>
+          <label class="form-label">Ubicación *</label>
           <input class="form-input" type="text" id="p-ubicacion" placeholder="Ciudad, Estado">
         </div>
       </div>
+
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Fecha inicio</label>
+          <label class="form-label">Fecha inicio *</label>
           <input class="form-input" type="date" id="p-inicio">
         </div>
         <div class="form-group">
-          <label class="form-label">Fecha término</label>
+          <label class="form-label">Fecha término *</label>
           <input class="form-input" type="date" id="p-termino">
         </div>
       </div>
@@ -124,6 +145,7 @@
     </div>
   </div>
 </div>
+
 
 <script type="module">
   import { Api }   from '../../js/api.js';
@@ -142,9 +164,69 @@
   document.getElementById('themeBtn').onclick    = () => toggleTheme();
   document.getElementById('btn-nuevo').onclick   = () => abrirModalCrear();
 
-  window.cerrarModal = () => document.getElementById('modalProyecto').classList.remove('active');
+  window.cerrarModal = () => {
+    document.getElementById('modalProyecto').classList.remove('active');
+    quitarFoto();
+  };
 
-  // ─── Cargar proyectos ─────────────────────────────────────
+  // ─── Foto del proyecto ────────────────────────────────
+  window.seleccionarFoto = function() {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    input.onchange = () => {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 10_000_000) { toast('La imagen no puede superar 10 MB', 'error'); return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        // Redimensionar automáticamente a 480x270 (16:9)
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width  = 480;
+          canvas.height = 270;
+          const ctx = canvas.getContext('2d');
+          // Centrar y recortar manteniendo proporción
+          const srcRatio = img.width / img.height;
+          const dstRatio = 480 / 270;
+          let sx, sy, sw, sh;
+          if (srcRatio > dstRatio) {
+            sh = img.height;
+            sw = img.height * dstRatio;
+            sx = (img.width - sw) / 2;
+            sy = 0;
+          } else {
+            sw = img.width;
+            sh = img.width / dstRatio;
+            sx = 0;
+            sy = (img.height - sh) / 2;
+          }
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 480, 270);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          const b64 = dataUrl.split(',')[1];
+          document.getElementById('p-foto-b64').value = b64;
+          const preview = document.getElementById('foto-preview');
+          preview.src = dataUrl;
+          preview.style.display = 'block';
+          document.getElementById('foto-wrap').style.display = 'none';
+          document.getElementById('btn-quitar-foto').style.display = '';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+    input.click();
+  };
+
+  window.quitarFoto = function() {
+    document.getElementById('p-foto-b64').value = '';
+    document.getElementById('foto-preview').style.display = 'none';
+    document.getElementById('foto-preview').src = '';
+    document.getElementById('foto-wrap').style.display = '';
+    document.getElementById('btn-quitar-foto').style.display = 'none';
+  };
+
+  // ─── Cargar proyectos ─────────────────────────────────
   async function cargarProyectos() {
     const container = document.getElementById('proyectosContainer');
     showLoader(container);
@@ -169,57 +251,77 @@
         </div>`;
       return;
     }
-
-    container.innerHTML = `<div class="proyectos-grid">${
-      lista.map((p, i) => `
-        <div class="proyecto-card">
-          <div class="proyecto-card-img" style="background:linear-gradient(135deg,#1497B922,#1497B9)">
-            <svg width="36" height="36" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24" opacity=".7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    container.innerHTML = `<div class="proyectos-grid">${lista.map((p, i) => `
+      <div class="proyecto-card">
+        <div class="proyecto-card-img" style="background:linear-gradient(135deg,#1497B922,#1497B9);overflow:hidden;">
+          ${p.imagenProyecto
+            ? `<img src="data:image/jpeg;base64,${p.imagenProyecto}" style="width:100%;height:100%;object-fit:cover;">`
+            : `<svg width="36" height="36" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24" opacity=".7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`}
+        </div>
+        <div class="proyecto-card-body">
+          <div class="flex justify-between items-center" style="margin-bottom:.25rem">
+            <span class="text-muted text-xs">#${i+1}</span>
+            <span class="badge badge-blue">${p.carreraEnfocada}</span>
           </div>
-          <div class="proyecto-card-body">
-            <div class="flex justify-between items-center" style="margin-bottom:.25rem">
-              <span class="text-muted text-xs">#${i+1}</span>
-              <span class="badge badge-blue">${p.carreraEnfocada}</span>
-            </div>
-            <div class="proyecto-card-title">${p.nombreProyecto}</div>
-            <div class="proyecto-card-meta" style="margin:.5rem 0">
-              <span class="badge badge-gray">${p.vacantes} vacante${p.vacantes !== 1?'s':''}</span>
-              <span class="badge badge-gray">${p.ubicacion}</span>
-            </div>
-            <p class="text-sm text-muted">${(p.objetivo??'').substring(0,90)}${p.objetivo?.length>90?'...':''}</p>
-            <div style="font-size:.75rem;color:var(--text-3);margin:.5rem 0">
-              ${fmtFecha(p.fechaInicio)} → ${fmtFecha(p.fechaTermino)}
-            </div>
-            <div class="proyecto-card-actions">
-              <button class="btn btn-outline btn-sm" onclick='editarProyecto(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Editar</button>
-              <button class="btn btn-danger btn-sm" onclick="eliminar(${p.idProyecto})">Eliminar</button>
-            </div>
+          <div class="proyecto-card-title">${p.nombreProyecto}</div>
+          <div class="proyecto-card-meta" style="margin:.5rem 0">
+            <span class="badge badge-gray">${p.vacantes} vacante${p.vacantes !== 1?'s':''}</span>
+            <span class="badge badge-gray">${p.ubicacion}</span>
           </div>
-        </div>`
-      ).join('')
-    }</div>`;
+          <p class="text-sm text-muted">${(p.objetivo??'').substring(0,90)}${(p.objetivo?.length??0)>90?'...':''}</p>
+          <div style="font-size:.75rem;color:var(--text-3);margin:.5rem 0">
+            Inicio: ${p.fechaInicio ?? "N/A"} | Fin: ${p.fechaTermino ?? "N/A"}
+          </div>
+          <div class="proyecto-card-actions">
+            <button class="btn btn-outline btn-sm" onclick='editarProyecto(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminar(${p.idProyecto})">Eliminar</button>
+          </div>
+        </div>
+      </div>`).join('')}</div>`;
   }
 
-  // ─── Modal Crear ──────────────────────────────────────────
+  // ─── Modal Crear ──────────────────────────────────────
   window.abrirModalCrear = function() {
     document.getElementById('modal-titulo').textContent = 'Nuevo Proyecto';
     document.getElementById('p-id').value = '';
-    ['nombre','carrera','objetivo','vacantes','ubicacion','inicio','termino'].forEach(f =>
+    ['nombre','objetivo','vacantes','ubicacion','inicio','termino'].forEach(f =>
       document.getElementById('p-'+f).value = '');
+    document.getElementById('p-carrera').value = '';
+    quitarFoto();
     document.getElementById('modalProyecto').classList.add('active');
     document.getElementById('btn-guardar').onclick = guardarProyecto;
   };
 
+  // Convierte "DD/MM/YYYY" → "YYYY-MM-DD" para el input date
+  function convertirFecha(fecha) {
+    if (!fecha) return '';
+    if (fecha.includes('-')) return fecha.substring(0, 10);
+    const [dia, mes, anio] = fecha.split('/');
+    return `${anio}-${mes}-${dia}`;
+  }
+
   window.editarProyecto = function(p) {
     document.getElementById('modal-titulo').textContent = 'Editar Proyecto';
-    document.getElementById('p-id').value       = p.idProyecto;
-    document.getElementById('p-nombre').value   = p.nombreProyecto ?? '';
-    document.getElementById('p-carrera').value  = p.carreraEnfocada ?? '';
-    document.getElementById('p-objetivo').value = p.objetivo ?? '';
-    document.getElementById('p-vacantes').value = p.vacantes ?? '';
-    document.getElementById('p-ubicacion').value= p.ubicacion ?? '';
-    document.getElementById('p-inicio').value   = (p.fechaInicio ?? '').substring(0,10);
-    document.getElementById('p-termino').value  = (p.fechaTermino ?? '').substring(0,10);
+    document.getElementById('p-id').value        = p.idProyecto;
+    document.getElementById('p-nombre').value    = p.nombreProyecto ?? '';
+    document.getElementById('p-carrera').value   = p.carreraEnfocada ?? '';
+    document.getElementById('p-objetivo').value  = p.objetivo ?? '';
+    document.getElementById('p-vacantes').value  = p.vacantes ?? '';
+    document.getElementById('p-ubicacion').value = p.ubicacion ?? '';
+    document.getElementById('p-inicio').value    = convertirFecha(p.fechaInicio);
+    document.getElementById('p-termino').value   = convertirFecha(p.fechaTermino);
+
+    // Foto existente
+    quitarFoto();
+    if (p.imagenProyecto) {
+      document.getElementById('p-foto-b64').value = p.imagenProyecto;
+      const preview = document.getElementById('foto-preview');
+      preview.src = `data:image/jpeg;base64,${p.imagenProyecto}`;
+      preview.style.display = 'block';
+      document.getElementById('foto-wrap').style.display = 'none';
+      document.getElementById('btn-quitar-foto').style.display = '';
+    }
+
     document.getElementById('modalProyecto').classList.add('active');
     document.getElementById('btn-guardar').onclick = () => actualizarProyecto(p.idProyecto);
   };
@@ -228,12 +330,11 @@
     const dto = construirDTO();
     if (!dto) return;
     dto.idEmpresa = idEmpresa;
-
     const btn = document.getElementById('btn-guardar');
     btn.disabled = true; btn.textContent = 'Guardando...';
     try {
       const res = await Api.crearProyecto(dto);
-      if (res.ok) { toast('Proyecto creado', 'success'); cerrarModal(); cargarProyectos(); }
+      if (res.ok) { toast('Proyecto creado ✓', 'success'); cerrarModal(); cargarProyectos(); }
       else toast('Error: ' + res.status, 'error');
     } catch (e) { toast(e.message, 'error'); }
     finally { btn.disabled = false; btn.textContent = 'Guardar'; }
@@ -243,32 +344,49 @@
     const dto = construirDTO();
     if (!dto) return;
     dto.idEmpresa = idEmpresa;
-
     const btn = document.getElementById('btn-guardar');
     btn.disabled = true; btn.textContent = 'Guardando...';
     try {
       const res = await Api.actualizarProyecto(id, dto);
-      if (res.ok) { toast('Proyecto actualizado', 'success'); cerrarModal(); cargarProyectos(); }
+      if (res.ok) { toast('Proyecto actualizado ✓', 'success'); cerrarModal(); cargarProyectos(); }
       else toast('Error: ' + res.status, 'error');
     } catch (e) { toast(e.message, 'error'); }
     finally { btn.disabled = false; btn.textContent = 'Guardar'; }
   }
 
   function construirDTO() {
-    const nombre   = document.getElementById('p-nombre').value.trim();
-    const carrera  = document.getElementById('p-carrera').value;
-    const objetivo = document.getElementById('p-objetivo').value.trim();
-    const vacantes = parseInt(document.getElementById('p-vacantes').value);
-    const ubicacion= document.getElementById('p-ubicacion').value.trim();
-    const inicio   = document.getElementById('p-inicio').value;
-    const termino  = document.getElementById('p-termino').value;
+    const nombre    = document.getElementById('p-nombre').value.trim();
+    const carrera   = document.getElementById('p-carrera').value;
+    const objetivo  = document.getElementById('p-objetivo').value.trim();
+    const vacantesV = document.getElementById('p-vacantes').value;
+    const vacantes  = parseInt(vacantesV);
+    const ubicacion = document.getElementById('p-ubicacion').value.trim();
+    const inicio    = document.getElementById('p-inicio').value;
+    const termino   = document.getElementById('p-termino').value;
+    const fotob64   = document.getElementById('p-foto-b64').value;
 
-    if (!nombre)   { toast('Ingresa el nombre del proyecto', 'error'); return null; }
-    if (!carrera)  { toast('Selecciona una carrera', 'error'); return null; }
-    if (!objetivo) { toast('Ingresa el objetivo', 'error'); return null; }
-    if (!vacantes) { toast('Ingresa las vacantes', 'error'); return null; }
+    // Validar campos obligatorios
+    if (!nombre)    { toast('Ingresa el nombre del proyecto', 'error', 6000); return null; }
+    if (!carrera)   { toast('Selecciona una carrera', 'error', 6000); return null; }
+    if (!objetivo)  { toast('Ingresa el objetivo del proyecto', 'error', 6000); return null; }
+    if (!vacantesV || vacantes < 1) { toast('Ingresa al menos 1 vacante', 'error', 6000); return null; }
+    if (!ubicacion) { toast('Ingresa la ubicación', 'error', 6000); return null; }
+    if (!inicio)    { toast('Selecciona la fecha de inicio', 'error', 6000); return null; }
+    if (!termino)   { toast('Selecciona la fecha de término', 'error', 6000); return null; }
 
-    return { nombreProyecto: nombre, carreraEnfocada: carrera, objetivo, vacantes, ubicacion, fechaInicio: inicio, fechaTermino: termino };
+    // Validar fecha término después de inicio
+    if (termino <= inicio) { toast('La fecha de término debe ser posterior a la de inicio', 'error', 6000); return null; }
+
+    return {
+      nombreProyecto: nombre,
+      carreraEnfocada: carrera,
+      objetivo,
+      vacantes,
+      ubicacion,
+      fechaInicio: inicio,
+      fechaTermino: termino,
+      imagenProyecto: fotob64 || null
+    };
   }
 
   window.eliminar = async function(id) {
