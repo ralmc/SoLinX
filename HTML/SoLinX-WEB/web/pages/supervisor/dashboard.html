@@ -9,7 +9,6 @@
 <body>
 <div class="app-layout">
 
-  <!-- ── Sidebar ─────────────────────────────────────────── -->
   <aside class="app-sidebar" id="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon" style="background:transparent;padding:0;"><img src="../../img/logo_sf.png" alt="SoLinX" style="width:36px;height:36px;object-fit:contain;border-radius:6px;"></div>
@@ -38,7 +37,6 @@
     </div>
   </aside>
 
-  <!-- ── Main ────────────────────────────────────────────── -->
   <main class="app-main">
     <header class="app-topbar">
       <div class="topbar-title" id="topbarTitle">Panel Supervisor</div>
@@ -70,18 +68,18 @@
                 <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
               </div>
               <h3>Aceptaciones de Empresa</h3>
-              <p class="text-muted text-sm mt-2">Revisa y aprueba las aceptaciones de empresas a alumnos</p>
+              <p class="text-muted text-sm mt-2">Revisa las aceptaciones finales de empresas a alumnos</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Panel: Solicitudes de alumnos -->
+      <!-- Panel: Solicitudes de alumnos (estado: enviada) -->
       <div id="panel-alumnos" style="display:none">
         <div class="flex justify-between items-center mb-4">
           <div>
             <h2>Solicitudes de Alumnos</h2>
-            <p class="text-muted text-sm mt-1">Revisa y aprueba o rechaza cada solicitud</p>
+            <p class="text-muted text-sm mt-1">Solicitudes enviadas por alumnos — aprueba para que pasen a la empresa</p>
           </div>
           <button class="btn btn-outline btn-sm" onclick="cargarSolicitudesAlumnos()">↻ Actualizar</button>
         </div>
@@ -92,12 +90,12 @@
         </div>
       </div>
 
-      <!-- Panel: Aceptaciones de empresa -->
+      <!-- Panel: Aceptaciones de empresa (estado: aceptada) -->
       <div id="panel-empresas" style="display:none">
         <div class="flex justify-between items-center mb-4">
           <div>
             <h2>Aceptaciones de Empresa</h2>
-            <p class="text-muted text-sm mt-1">Aprueba la aceptación final empresa → alumno</p>
+            <p class="text-muted text-sm mt-1">Alumnos aceptados por empresa — solo visualización</p>
           </div>
           <button class="btn btn-outline btn-sm" onclick="cargarAceptacionesEmpresa()">↻ Actualizar</button>
         </div>
@@ -131,23 +129,19 @@
 
   // ─── Panels ───────────────────────────────────────────────
   const panels = { home: 'panel-home', alumnos: 'panel-alumnos', empresas: 'panel-empresas' };
-  const titles = { home: 'Panel Supervisor', alumnos: 'Solicitudes de Alumnos', empresas: 'Aceptaciones de Empresa' };
+  const titles  = { home: 'Panel Supervisor', alumnos: 'Solicitudes de Alumnos', empresas: 'Aceptaciones de Empresa' };
 
   window.mostrarPanel = function(nombre) {
     Object.values(panels).forEach(id => document.getElementById(id).style.display = 'none');
     document.getElementById(panels[nombre]).style.display = '';
     document.getElementById('topbarTitle').textContent = titles[nombre];
-
     document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-    if (nombre !== 'home') {
-      document.getElementById('link-' + nombre).classList.add('active');
-    }
-
+    if (nombre !== 'home') document.getElementById('link-' + nombre).classList.add('active');
     if (nombre === 'alumnos')  cargarSolicitudesAlumnos();
     if (nombre === 'empresas') cargarAceptacionesEmpresa();
   };
 
-  // ─── Solicitudes de alumnos ───────────────────────────────
+  // ─── Solicitudes de alumnos (estado: enviada) ─────────────
   window.cargarSolicitudesAlumnos = async function() {
     const container = document.getElementById('tablaAlumnos');
     showLoader(container);
@@ -155,14 +149,16 @@
       const res = await Api.getSolicitudesEnviadas(idSupervisor);
       if (!res.ok) throw new Error('Error ' + res.status);
       const data = await res.json();
-      const lista = data.solicitudes ?? data ?? [];
+      const lista = (data.solicitudes ?? data ?? []).filter(s =>
+        s.estadoSolicitud?.toLowerCase() === 'enviada'
+      );
       renderTablaSolicitudes(lista, container, 'alumno');
     } catch (e) {
       container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
     }
   };
 
-  // ─── Aceptaciones de empresa ──────────────────────────────
+  // ─── Aceptaciones de empresa (estado: aceptada) ───────────
   window.cargarAceptacionesEmpresa = async function() {
     const container = document.getElementById('tablaEmpresas');
     showLoader(container);
@@ -170,21 +166,21 @@
       const res = await Api.getSolicitudesAceptadas(idEmpresa);
       if (!res.ok) throw new Error('Error ' + res.status);
       const data = await res.json();
-      const lista = data.solicitudes ?? data ?? [];
-      renderTablaSolicitudes(lista, container, 'empresa');
+      const lista = (data.solicitudes ?? data ?? []).filter(s =>
+        s.estadoSolicitud?.toLowerCase() === 'aceptada'
+      );
+      renderTablaAceptaciones(lista, container);
     } catch (e) {
       container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
     }
   };
 
+  // ─── Render tabla solicitudes de alumnos ──────────────────
   function renderTablaSolicitudes(lista, container, tipo) {
     if (!lista.length) {
-      container.innerHTML = `<div class="empty-state"><h3>Sin solicitudes pendientes</h3></div>`;
+      container.innerHTML = `<div class="empty-state"><h3>Sin solicitudes pendientes</h3><p>No hay solicitudes de alumnos por revisar</p></div>`;
       return;
     }
-
-    const accionPrincipal = tipo === 'alumno' ? 'aceptar'  : 'aprobar';
-    const estadoPrincipal = tipo === 'alumno' ? 'aceptada' : 'aprobada';
 
     container.innerHTML = `
       <table class="table">
@@ -205,11 +201,11 @@
               <td>
                 <div class="flex gap-2">
                   <button class="btn btn-success btn-sm"
-                    onclick="procesarSolicitud(${s.idSolicitud},'${estadoPrincipal}','${s.nombreEstudiante ?? ''}','${tipo}')">
-                    ${accionPrincipal.charAt(0).toUpperCase() + accionPrincipal.slice(1)}
+                    onclick="procesarSolicitud(${s.idSolicitud},'aprobada_supervisor','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}')">
+                    Aprobar → Empresa
                   </button>
                   <button class="btn btn-danger btn-sm"
-                    onclick="procesarSolicitud(${s.idSolicitud},'rechazada','${s.nombreEstudiante ?? ''}','${tipo}')">
+                    onclick="procesarSolicitud(${s.idSolicitud},'rechazada_supervisor','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}')">
                     Rechazar
                   </button>
                 </div>
@@ -220,15 +216,46 @@
       </table>`;
   }
 
-  window.procesarSolicitud = async function(idSolicitud, nuevoEstado, nombreAlumno, tipo) {
-    const ok = await confirmDialog('Confirmar', `¿${nuevoEstado.charAt(0).toUpperCase()+nuevoEstado.slice(1)} la solicitud de ${nombreAlumno}?`);
+  // ─── Render tabla aceptaciones empresa (solo lectura) ──────
+  function renderTablaAceptaciones(lista, container) {
+    if (!lista.length) {
+      container.innerHTML = `<div class="empty-state"><h3>Sin aceptaciones aún</h3><p>Aquí aparecerán los alumnos aceptados por empresas</p></div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Alumno</th>
+            <th>Proyecto</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>${
+          lista.map(s => `
+            <tr>
+              <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong></td>
+              <td>${s.nombreProyecto ?? 'N/A'}</td>
+              <td>${badgeEstado(s.estadoSolicitud)}</td>
+            </tr>`)
+          .join('')
+        }</tbody>
+      </table>`;
+  }
+
+  // ─── Procesar solicitud supervisor ────────────────────────
+  window.procesarSolicitud = async function(idSolicitud, nuevoEstado, nombreAlumno) {
+    const accion = nuevoEstado === 'aprobada_supervisor' ? 'aprobar y enviar a empresa' : 'rechazar';
+    const ok = await confirmDialog('Confirmar', `¿Deseas ${accion} la solicitud de ${nombreAlumno}?`);
     if (!ok) return;
     try {
       const res = await Api.actualizarSolicitudSupervisor(idSolicitud, nuevoEstado);
       if (res.ok) {
-        toast('Solicitud actualizada', 'success');
-        if (tipo === 'alumno') cargarSolicitudesAlumnos();
-        else cargarAceptacionesEmpresa();
+        toast(nuevoEstado === 'aprobada_supervisor'
+          ? 'Solicitud aprobada — ahora la verá la empresa ✓'
+          : 'Solicitud rechazada', 'success');
+        cargarSolicitudesAlumnos();
       } else {
         toast('Error: ' + res.status, 'error');
       }

@@ -23,6 +23,11 @@
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Solicitudes
       </a>
+      <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
+      <a class="sidebar-link" href="cuenta.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mi Perfil
+      </a>
     </nav>
     <div class="sidebar-bottom">
       <div class="sidebar-user">
@@ -49,7 +54,7 @@
     <div class="app-content">
       <div class="card">
         <div class="card-header">
-          <h3>Solicitudes recibidas</h3>
+          <h3>Solicitudes aprobadas por supervisor</h3>
           <button class="btn btn-outline btn-sm" onclick="cargarSolicitudes()">↻ Actualizar</button>
         </div>
         <div class="card-body table-wrap">
@@ -65,7 +70,7 @@
 <script type="module">
   import { Api }   from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
-  import { toast, initTheme, toggleTheme, showLoader, badgeEstado, fmtFecha, confirmDialog } from '../../js/utils.js';
+  import { toast, initTheme, toggleTheme, showLoader, badgeEstado, confirmDialog } from '../../js/utils.js';
 
   requireAuth('empresa');
   initTheme();
@@ -82,18 +87,56 @@
     try {
       const res = await Api.getSolicitudesPorEmpresa(idEmpresa);
       if (!res.ok) throw new Error('Error ' + res.status);
-      const lista = await res.json();
-      renderTabla(lista, container);
+      const todas = await res.json();
+
+      // Empresa solo ve las que el supervisor ya aprobó
+      const lista = todas.filter(s =>
+        s.estadoSolicitud?.toLowerCase() === 'aprobada_supervisor'
+      );
+
+      renderTabla(lista, todas, container);
     } catch (e) {
       container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
     }
   };
 
-  function renderTabla(lista, container) {
-    if (!lista.length) {
-      container.innerHTML = `<div class="empty-state"><h3>Sin solicitudes aún</h3><p>Cuando los alumnos se postulen aparecerán aquí</p></div>`;
+  function renderTabla(lista, todas, container) {
+    // Mostrar también las ya procesadas (aceptada, rechazada_empresa) como historial
+    const historial = todas.filter(s => {
+      const estado = s.estadoSolicitud?.toLowerCase();
+      return estado === 'aceptada' || estado === 'rechazada_empresa';
+    });
+
+    if (!lista.length && !historial.length) {
+      container.innerHTML = `<div class="empty-state"><h3>Sin solicitudes por revisar</h3><p>Cuando el supervisor apruebe solicitudes aparecerán aquí</p></div>`;
       return;
     }
+
+    const renderFila = (s, conBotones) => `
+      <tr>
+        <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong><br><span class="text-xs text-muted">${s.correoEstudiante ?? ''}</span></td>
+        <td>${s.nombreProyecto ?? 'N/A'}</td>
+        <td>${badgeEstado(s.estadoSolicitud)}</td>
+        <td>
+          <div class="flex gap-2">
+            ${conBotones ? `
+              <button class="btn btn-success btn-sm"
+                onclick="cambiarEstado(${s.idSolicitud},'aceptada','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}',${s.boletaAlumno})">
+                Aceptar
+              </button>
+              <button class="btn btn-danger btn-sm"
+                onclick="cambiarEstado(${s.idSolicitud},'rechazada_empresa','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}',${s.boletaAlumno})">
+                Rechazar
+              </button>` : ''}
+            ${s.correoEstudiante ? `
+              <button class="btn btn-outline btn-sm"
+                onclick="contactarAlumno('${s.correoEstudiante}','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}','${(s.nombreProyecto ?? '').replace(/'/g,"\\'")}')">
+                ✉️ Contactar
+              </button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+
     container.innerHTML = `
       <table class="table">
         <thead>
@@ -104,34 +147,40 @@
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody>${
-          lista.map(s => `
-            <tr>
-              <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong><br><span class="text-xs text-muted">${s.correoEstudiante ?? ''}</span></td>
-              <td>${s.nombreProyecto ?? 'N/A'}</td>
-              <td>${badgeEstado(s.estadoSolicitud)}</td>
-              <td>
-                ${s.estadoSolicitud?.toLowerCase() === 'pendiente' ? `
-                  <div class="flex gap-2">
-                    <button class="btn btn-success btn-sm" onclick="cambiarEstado(${s.idSolicitud},'aceptada','${s.nombreEstudiante}')">Aceptar</button>
-                    <button class="btn btn-danger btn-sm"  onclick="cambiarEstado(${s.idSolicitud},'rechazada','${s.nombreEstudiante}')">Rechazar</button>
-                  </div>` : '<span class="text-muted text-sm">—</span>'}
-              </td>
-            </tr>`)
-          .join('')
-        }</tbody>
+        <tbody>
+          ${lista.map(s => renderFila(s, true)).join('')}
+          ${historial.map(s => renderFila(s, false)).join('')}
+        </tbody>
       </table>`;
   }
 
   window.cambiarEstado = async function(idSolicitud, nuevoEstado, nombre) {
-    const verbo = nuevoEstado === 'aceptada' ? 'aceptar' : 'rechazar';
-    const ok = await confirmDialog('Confirmar', `¿${verbo.charAt(0).toUpperCase()+verbo.slice(1)} la solicitud de ${nombre}?`);
+    const accion = nuevoEstado === 'aceptada' ? 'aceptar' : 'rechazar';
+    const ok = await confirmDialog('Confirmar', `¿Deseas ${accion} la solicitud de ${nombre}?`);
     if (!ok) return;
     try {
       const res = await Api.actualizarEstadoSolicitud(idSolicitud, nuevoEstado);
-      if (res.ok) { toast('Estado actualizado', 'success'); cargarSolicitudes(); }
-      else toast('Error: ' + res.status, 'error');
+      if (res.ok) {
+        toast(nuevoEstado === 'aceptada'
+          ? '¡Alumno aceptado en el proyecto! ✓'
+          : 'Solicitud rechazada', 'success');
+        window.contactarAlumno = function(correo, nombre, proyecto) {
+    const subject = encodeURIComponent(`SoLinX - Proyecto: ${proyecto}`);
+    const body = encodeURIComponent(`Hola ${nombre},\n\nTe contactamos desde SoLinX en relación al proyecto "${proyecto}".\n\nSaludos,\n${Session.nombre}`);
+    window.open(`mailto:${correo}?subject=${subject}&body=${body}`, '_blank');
+  };
+
+  cargarSolicitudes();
+      } else {
+        toast('Error: ' + res.status, 'error');
+      }
     } catch (e) { toast(e.message, 'error'); }
+  };
+
+  window.contactarAlumno = function(correo, nombre, proyecto) {
+    const subject = encodeURIComponent(`SoLinX - Proyecto: ${proyecto}`);
+    const body = encodeURIComponent(`Hola ${nombre},\n\nTe contactamos desde SoLinX en relación al proyecto "${proyecto}".\n\nSaludos,\n${Session.nombre}`);
+    window.open(`mailto:${correo}?subject=${subject}&body=${body}`, '_blank');
   };
 
   cargarSolicitudes();

@@ -192,20 +192,20 @@ INSERT INTO Supervisor (area, idEmpresa) VALUES
 -- ─── 4. USUARIOS ───────────────────────────────────────
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol, verificado) VALUES
 -- Estudiantes
-('Mauro López',       'mauro@correo.com',    '5512345678', 'pass123',    'estudiante', TRUE),  -- id 1 → ACEPTADO
-('Sofía Ramírez',     'sofia@correo.com',    '5544332211', 'pass123',    'estudiante', TRUE),  -- id 4 → PENDIENTE
-('Luis Herrera',      'luis@correo.com',     '5533334444', 'pass123',    'estudiante', TRUE),  -- id 7 → RECHAZADO
-('Ana Martínez',      'ana@correo.com',      '5555556666', 'pass123',    'estudiante', TRUE),  -- id 8 → sin solicitud
-('Pedro Jiménez',     'pedro@correo.com',    '5577778888', 'pass123',    'estudiante', TRUE),  -- id 9 → sin solicitud
-('Carlos Mendoza',    'carlos@correo.com',   '5511223344', 'pass123',    'estudiante', TRUE),  -- id 10 → sin solicitud
-('Diana Torres',      'diana@correo.com',    '5599887766', 'pass123',    'estudiante', TRUE),  -- id 11 → sin solicitud
+('Mauro López',       'mauro@correo.com',    '5512345678', 'pass123',    'estudiante', TRUE),
+('Sofía Ramírez',     'sofia@correo.com',    '5544332211', 'pass123',    'estudiante', TRUE),
+('Luis Herrera',      'luis@correo.com',     '5533334444', 'pass123',    'estudiante', TRUE),
+('Ana Martínez',      'ana@correo.com',      '5555556666', 'pass123',    'estudiante', TRUE),
+('Pedro Jiménez',     'pedro@correo.com',    '5577778888', 'pass123',    'estudiante', TRUE),
+('Carlos Mendoza',    'carlos@correo.com',   '5511223344', 'pass123',    'estudiante', TRUE),
+('Diana Torres',      'diana@correo.com',    '5599887766', 'pass123',    'estudiante', TRUE),
 -- Empresas
-('Laura Tech',        'laura@technova.com',  '5588991122', 'empresa123', 'empresa',    TRUE),  -- id 2
-('Empresa Aero',      'aero@aero.com',       '5598761234', 'empresa123', 'empresa',    TRUE),  -- id 5
-('Empresa Soft',      'soft@soft.com',       '5534129876', 'empresa123', 'empresa',    TRUE),  -- id 6
-('Empresa Electro',   'electro@electro.com', '5567893412', 'empresa123', 'empresa',    TRUE),  -- id 12
+('Laura Tech',        'laura@technova.com',  '5588991122', 'empresa123', 'empresa',    TRUE),
+('Empresa Aero',      'aero@aero.com',       '5598761234', 'empresa123', 'empresa',    TRUE),
+('Empresa Soft',      'soft@soft.com',       '5534129876', 'empresa123', 'empresa',    TRUE),
+('Empresa Electro',   'electro@electro.com', '5567893412', 'empresa123', 'empresa',    TRUE),
 -- Supervisor
-('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123',     'supervisor', TRUE);  -- id 3
+('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123',     'supervisor', TRUE); 
 
 -- ─── 5. VINCULACIÓN USUARIOS ↔ ROLES ───────────────────
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
