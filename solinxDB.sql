@@ -160,6 +160,7 @@ CREATE TABLE Documento (
     archivo LONGBLOB NOT NULL,
     nombreArchivo VARCHAR(255) NOT NULL,
     fechaSubida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estadoDocumento ENUM('pendiente', 'aprobado', 'rechazado') NOT NULL DEFAULT 'pendiente',
     boleta INT NOT NULL,
     FOREIGN KEY (boleta) REFERENCES Estudiante(boleta) ON UPDATE CASCADE ON DELETE CASCADE,
     UNIQUE KEY unique_periodo_boleta (boleta, periodo)

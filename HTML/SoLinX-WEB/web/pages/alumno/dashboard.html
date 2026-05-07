@@ -140,7 +140,6 @@
   document.getElementById('btn-logout').onclick = () => logout();
   document.getElementById('themeBtn').onclick   = () => toggleTheme();
 
-  // Mobile sidebar
   if (window.innerWidth <= 768) document.getElementById('sidebarToggle').style.display = 'flex';
   document.getElementById('sidebarToggle').onclick = () => document.getElementById('sidebar').classList.toggle('open');
 
@@ -235,30 +234,24 @@
       const solCard = misSolicitudes.find(s => s.idProyecto === p.idProyecto);
       const estadoCard = solCard?.estadoSolicitud?.toLowerCase();
       if (estadoCard === 'aceptada') {
-        btnLabel = '✅ Aceptado';
-        btnClass = 'btn btn-sm w-full' ;
+        btnLabel = '✅ Aceptado'; btnClass = 'btn btn-sm w-full';
       } else if (estadoCard === 'rechazada' || estadoCard === 'rechazada_empresa' || estadoCard === 'rechazada_supervisor') {
-        btnLabel = '❌ No seleccionado';
-        btnClass = 'btn btn-sm w-full';
+        btnLabel = '❌ No seleccionado'; btnClass = 'btn btn-sm w-full';
       } else if (alumnoAceptado) {
-        btnLabel = 'Ya fuiste aceptado ✅';
-        btnClass = 'btn btn-outline btn-sm w-full';
+        btnLabel = 'Ya fuiste aceptado ✅'; btnClass = 'btn btn-outline btn-sm w-full';
       } else if (postulado) {
-        btnLabel = '⏳ En proceso';
-        btnClass = 'btn btn-outline btn-sm w-full';
+        btnLabel = '⏳ En proceso'; btnClass = 'btn btn-outline btn-sm w-full';
       } else {
-        btnLabel = 'Ver detalles';
-        btnClass = 'btn btn-primary btn-sm w-full';
+        btnLabel = 'Ver detalles'; btnClass = 'btn btn-primary btn-sm w-full';
       }
       const btnStyle = estadoCard === 'aceptada'
         ? 'background:#38a169;color:#fff;border:none;'
         : estadoCard === 'rechazada' || estadoCard === 'rechazada_empresa' || estadoCard === 'rechazada_supervisor'
-        ? 'background:#e53e3e;color:#fff;border:none;'
-        : '';
+        ? 'background:#e53e3e;color:#fff;border:none;' : '';
       return `
       <div class="proyecto-card" onclick="abrirProyecto(${i})">
         <div class="proyecto-card-img" style="background:linear-gradient(135deg,${alumnoAceptado || postulado ? '#9ca3af22' : colores[i%5]+'22'},${alumnoAceptado || postulado ? '#6b7280' : colores[i%5]});filter:${alumnoAceptado || postulado ? 'grayscale(1)' : 'none'};transition:filter .3s;overflow:hidden;">
-            ${p.imagenProyecto
+          ${p.imagenProyecto
             ? `<img src="data:image/jpeg;base64,${p.imagenProyecto}" style="width:100%;height:100%;object-fit:cover;">`
             : `<svg width="40" height="40" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24" opacity=".7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`}
         </div>
@@ -288,7 +281,6 @@
   window.abrirProyecto = async function(idx) {
     const p = window._proyectos[idx];
     const postulado = yaPostulado(p.idProyecto);
-
     document.getElementById('modal-proyecto-titulo').textContent = p.nombreProyecto;
     document.getElementById('modal-proyecto-body').innerHTML = `
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
@@ -304,25 +296,15 @@
         <div><strong>Fin:</strong> ${p.fechaTermino ?? 'N/A'}</div>
         <div><strong>Teléfono:</strong> ${p.telefonoEmpresa ?? 'N/A'}</div>
       </div>`;
-
-    // Botón postular: 
     const btnPostular = document.getElementById('btnPostular');
     btnPostular.dataset.idx = idx;
     if (alumnoAceptado) {
-      btnPostular.disabled = true;
-      btnPostular.textContent = 'Ya fuiste aceptado ✅';
-      btnPostular.className = 'btn btn-outline';
+      btnPostular.disabled = true; btnPostular.textContent = 'Ya fuiste aceptado ✅'; btnPostular.className = 'btn btn-outline';
     } else if (postulado) {
-      btnPostular.disabled = true;
-      btnPostular.textContent = 'En proceso ⏳';
-      btnPostular.className = 'btn btn-outline';
+      btnPostular.disabled = true; btnPostular.textContent = 'En proceso ⏳'; btnPostular.className = 'btn btn-outline';
     } else {
-      btnPostular.disabled = false;
-      btnPostular.textContent = 'Postularme';
-      btnPostular.className = 'btn btn-primary';
+      btnPostular.disabled = false; btnPostular.textContent = 'Postularme'; btnPostular.className = 'btn btn-primary';
     }
-
-    // Correo empresa
     correoEmpresaActual = null;
     const btnCorreo = document.getElementById('btnCorreoEmpresa');
     btnCorreo.style.display = 'none';
@@ -336,36 +318,30 @@
         }
       } catch {}
     }
-
     document.getElementById('modalProyecto').classList.add('active');
   };
 
   window.cerrarModal = () => {
     document.getElementById('modalProyecto').classList.remove('active');
     const btn = document.getElementById('btnPostular');
-    btn.disabled = false;
-    btn.textContent = 'Postularme';
-    btn.className = 'btn btn-primary';
+    btn.disabled = false; btn.textContent = 'Postularme'; btn.className = 'btn btn-primary';
   };
 
   document.getElementById('btnCorreoEmpresa').onclick = () => {
     const p = window._proyectos[document.getElementById('btnPostular').dataset.idx];
-    const subject = encodeURIComponent(`SoLinX - Consulta sobre proyecto: ${p.nombreProyecto}`);
-    window.open(`mailto:${correoEmpresaActual || ''}?subject=${subject}`, '_blank');
+    window.open(`mailto:${correoEmpresaActual || ''}?subject=${encodeURIComponent(`SoLinX - Consulta sobre proyecto: ${p.nombreProyecto}`)}`, '_blank');
   };
 
   document.getElementById('btnPostular').onclick = async () => {
     const idx = parseInt(document.getElementById('btnPostular').dataset.idx);
     const p = window._proyectos[idx];
-    if (alumnoAceptado || yaPostulado(p.idProyecto)) return; // doble check seguridad
+    if (alumnoAceptado || yaPostulado(p.idProyecto)) return;
     const btn = document.getElementById('btnPostular');
     btn.disabled = true; btn.textContent = 'Enviando...';
     try {
-      const dto = { boletaAlumno: boleta, idProyecto: p.idProyecto, estadoSolicitud: 'enviada' };
-      const res = await Api.enviarSolicitud(dto);
+      const res = await Api.enviarSolicitud({ boletaAlumno: boleta, idProyecto: p.idProyecto, estadoSolicitud: 'enviada' });
       if (res.ok) {
         toast('¡Solicitud enviada con éxito!', 'success');
-        // Actualizar lista local y re-renderizar
         misSolicitudes.push({ idProyecto: p.idProyecto, estadoSolicitud: 'enviada' });
         cerrarModal();
         renderProyectos(window._proyectos, document.getElementById('proyectosContainer'));
@@ -388,33 +364,84 @@
       const docs = res.ok ? await res.json() : [];
       const periodos = Array(8).fill(null);
       docs.forEach(d => { if (d.periodo >= 1 && d.periodo <= 8) periodos[d.periodo - 1] = d; });
-      let primerDisponible = 1;
-      for (let i = 0; i < 8; i++) { if (periodos[i] !== null) primerDisponible = i + 2; else break; }
-      renderPeriodos(periodos, primerDisponible, container);
+      renderPeriodos(periodos, container);
     } catch (e) {
       container.innerHTML = `<p class="text-muted">Error: ${e.message}</p>`;
     }
   }
 
-  function renderPeriodos(periodos, primerDisponible, container) {
+  function renderPeriodos(periodos, container) {
     container.innerHTML = periodos.map((doc, i) => {
       const num = i + 1;
-      const locked = num > primerDisponible;
-      const subido = doc !== null;
-      return `<div class="periodo-item ${locked?'locked':''} ${subido?'uploaded':''}"
-        ${!locked && !subido ? `onclick="subirDoc(${num})" style="cursor:pointer"` : ''}>
-        <div class="periodo-num">${subido ? '✓' : num}</div>
+
+      // Sin documento subido — solo puede subir si el anterior está aprobado (o es el periodo 1)
+      if (!doc) {
+        const anteriorAprobado = num === 1 ||
+          (periodos[i - 1] !== null && periodos[i - 1].estadoDocumento === 'aprobado');
+
+        if (!anteriorAprobado) {
+          // Bloqueado
+          return `
+          <div class="periodo-item locked">
+            <div class="periodo-num">${num}</div>
+            <div class="periodo-info">
+              <div class="periodo-nombre">Período ${num}</div>
+              <div class="periodo-estado">Bloqueado — el período anterior debe ser aprobado primero</div>
+            </div>
+            <svg width="16" height="16" fill="none" stroke="var(--text-3)" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>`;
+        }
+
+        // Disponible para subir
+        return `
+        <div class="periodo-item" onclick="subirDoc(${num})" style="cursor:pointer">
+          <div class="periodo-num">${num}</div>
+          <div class="periodo-info">
+            <div class="periodo-nombre">Período ${num}</div>
+            <div class="periodo-estado">Haz clic para subir PDF (máx. 1.5 MB)</div>
+          </div>
+          <span class="badge badge-yellow">Pendiente</span>
+        </div>`;
+      }
+
+      // Documento subido — mostrar según estado
+      const estado = doc.estadoDocumento ?? 'pendiente';
+
+      if (estado === 'aprobado') {
+        return `
+        <div class="periodo-item uploaded">
+          <div class="periodo-num">✓</div>
+          <div class="periodo-info">
+            <div class="periodo-nombre">Período ${num}</div>
+            <div class="periodo-estado">${doc.nombreArchivo ?? 'documento.pdf'} · ${doc.fechaSubida ?? ''}</div>
+          </div>
+          <span class="badge badge-green">✓ Aprobado</span>
+        </div>`;
+      }
+
+      if (estado === 'rechazado') {
+        return `
+        <div class="periodo-item" onclick="subirDoc(${num})" style="cursor:pointer;border-color:var(--danger)">
+          <div class="periodo-num" style="color:var(--danger)">✗</div>
+          <div class="periodo-info">
+            <div class="periodo-nombre">Período ${num}</div>
+            <div class="periodo-estado" style="color:var(--danger)">Rechazado — haz clic para subir nuevamente</div>
+          </div>
+          <span class="badge badge-red">↑ Resubir</span>
+        </div>`;
+      }
+
+      // Estado pendiente (en espera de revisión)
+      return `
+      <div class="periodo-item uploaded">
+        <div class="periodo-num">⏳</div>
         <div class="periodo-info">
           <div class="periodo-nombre">Período ${num}</div>
-          <div class="periodo-estado">${
-            subido  ? `Subido: ${doc.nombreArchivo ?? 'documento.pdf'}` :
-            locked  ? 'Bloqueado — sube el período anterior primero' :
-                      'Haz clic para subir PDF (máx. 1.5 MB)'}</div>
+          <div class="periodo-estado">${doc.nombreArchivo ?? 'documento.pdf'} · En revisión</div>
         </div>
-        ${subido ? '<span class="badge badge-green">✓ Subido</span>' :
-          locked  ? '<svg width="16" height="16" fill="none" stroke="var(--text-3)" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' :
-                    '<span class="badge badge-yellow">Pendiente</span>'}
+        <span class="badge badge-yellow">⏳ En revisión</span>
       </div>`;
+
     }).join('');
   }
 
@@ -428,9 +455,14 @@
       toast('Subiendo documento...', 'info');
       try {
         const res = await Api.subirDocumento(boleta, periodo, file);
-        if (res.ok) { toast(`Período ${periodo} subido correctamente`, 'success'); cargarDocumentos(); }
-        else if (res.status === 409) toast(`Ya existe documento para el Período ${periodo}`, 'error');
-        else toast('Error al subir: ' + res.status, 'error');
+        if (res.ok) {
+          toast(`Período ${periodo} subido correctamente ✓`, 'success');
+          cargarDocumentos();
+        } else if (res.status === 409) {
+          toast(`Error al subir el Período ${periodo}`, 'error');
+        } else {
+          toast('Error al subir: ' + res.status, 'error');
+        }
       } catch (e) { toast('Error de red: ' + e.message, 'error'); }
     };
     input.click();
@@ -486,6 +518,14 @@
   cargarProyectos();
   cargarBadgeNotif();
   cargarFotoSidebar();
+
+  const tabPendiente = sessionStorage.getItem('sl_tab');
+  if (tabPendiente) {
+    sessionStorage.removeItem('sl_tab');
+    const tabMap = { docs: 'tabDocs', notif: 'tabNotif' };
+    const btnId = tabMap[tabPendiente];
+    if (btnId) document.getElementById(btnId)?.click();
+  }
 </script>
 </body>
 </html>

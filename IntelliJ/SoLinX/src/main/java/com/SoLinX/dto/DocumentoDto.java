@@ -11,4 +11,5 @@ public class DocumentoDto {
     private String nombreArchivo;
     private String fechaSubida;
     private Integer boleta;
+    private String estadoDocumento;
 }

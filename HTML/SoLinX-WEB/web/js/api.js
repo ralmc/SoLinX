@@ -3,7 +3,7 @@
  * Cambia BASE_URL por la IP de tu computadora
  */
  
-const BASE_URL = 'http://192.168.1.91:8080/SoLinX/api';
+const BASE_URL = 'http://192.168.1.97:8080/SoLinX/api';
  
 async function request(method, endpoint, body = null, isMultipart = false) {
   const headers = {};
@@ -65,6 +65,8 @@ export const Api = {
       form.append('nuevoEstado', nuevoEstado);
       return postForm('supervisor/actualizar-solicitud', form);
     },
+    actualizarEstadoDocumento: (boleta, periodo, estado) =>
+    put(`documento/${boleta}/${periodo}/estado?estado=${encodeURIComponent(estado)}`),
 
     // ─── Horario ─────────────────────────────────────────────
     getHorario:    (boleta) => get(`horario/${boleta}`),

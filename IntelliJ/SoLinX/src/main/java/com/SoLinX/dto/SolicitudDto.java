@@ -21,6 +21,7 @@ public class SolicitudDto {
     private String nombreEstudiante;
     private String correoEstudiante;
     private String carrera;
+    private String carreraEnfocada;
     private String carreraAlumno;
     private String escuela;
 

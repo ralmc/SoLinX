@@ -6,47 +6,222 @@
   <title>SoLinX — Mi Perfil</title>
   <link rel="stylesheet" href="../../css/main.css">
   <style>
-    .perfil-header { display:flex; align-items:center; gap:1.5rem; padding:1.5rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1.5rem; }
-    .perfil-foto-wrap { position:relative; cursor:pointer; }
-    .perfil-foto-wrap:hover .foto-overlay { opacity:1; }
-    .foto-overlay { position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:.2s; color:#fff; font-size:.7rem; text-align:center; }
-    .horario-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:.75rem; }
-    .horario-dia { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:.75rem; text-align:center; }
-    .horario-dia-nombre { font-size:.7rem; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--text-3); margin-bottom:.25rem; }
-    .horario-dia-hora { font-size:.85rem; color:var(--text-2); font-weight:500; }
-    .tema-btns { display:flex; gap:.75rem; }
-    .tema-btn { flex:1; padding:.75rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; text-align:center; transition:all .2s; font-size:.85rem; font-weight:600; background:var(--surface); color:var(--text-2); }
-    .tema-btn:hover { border-color:var(--brand); color:var(--brand); }
-    .tema-btn.active { border-color:var(--brand); background:var(--brand-light); color:var(--brand); }
-    .solicitud-item { padding:.85rem 1rem; background:var(--surface-2); border-radius:var(--radius-sm); margin-bottom:.5rem; font-size:.875rem; }
+    /* ─── Fix layout: sidebar fijo, main ocupa el resto ─────── */
+
+    /* main.css pone el sidebar en position:fixed — lo mantenemos */
+    .app-sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    /* main.css usa margin-left en .app-main — lo conservamos
+       pero añadimos width explícito para que llene hasta el borde */
+    .app-main {
+      margin-left: var(--sidebar-w);
+      width: calc(100% - var(--sidebar-w));
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* El max-width:1100px del main.css es el culpable del hueco */
+    .app-content {
+      max-width: 100% !important;
+      width: 100%;
+      padding: 1.25rem 1.5rem;
+      box-sizing: border-box;
+    }
+
+    /* ─── Perfil header ─────────────────────────────────────── */
+    .perfil-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .perfil-foto-wrap { position: relative; cursor: pointer; }
+    .perfil-foto-wrap:hover .foto-overlay { opacity: 1; }
+    .foto-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(0,0,0,.4); display: flex; align-items: center;
+      justify-content: center; opacity: 0; transition: .2s;
+      color: #fff; font-size: .7rem; text-align: center;
+    }
+
+    /* ─── Grid de tarjetas — 2 cols en desktop, 1 en móvil ──── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .cards-grid .card {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* ─── Horario ───────────────────────────────────────────── */
+    .horario-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: .75rem;
+    }
+    .horario-dia {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: .75rem; text-align: center;
+    }
+    .horario-dia-nombre { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); margin-bottom: .25rem; }
+    .horario-dia-hora   { font-size: .85rem; color: var(--text-2); font-weight: 500; }
+
+    /* ─── Tema ──────────────────────────────────────────────── */
+    .tema-btns { display: flex; gap: .75rem; }
+    .tema-btn {
+      flex: 1; padding: .75rem;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      cursor: pointer; text-align: center; transition: all .2s;
+      font-size: .85rem; font-weight: 600;
+      background: var(--surface); color: var(--text-2);
+    }
+    .tema-btn:hover  { border-color: var(--brand); color: var(--brand); }
+    .tema-btn.active { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
+
+    /* ─── Solicitudes ───────────────────────────────────────── */
+    .solicitud-item {
+      padding: .85rem 1rem; background: var(--surface-2);
+      border-radius: var(--radius-sm); margin-bottom: .5rem; font-size: .875rem;
+    }
+
+    /* ─── Campos editables ──────────────────────────────────── */
+    .campo-editable {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .6rem 0; border-bottom: 1px solid var(--border);
+    }
+    .campo-editable:last-child { border-bottom: none; }
+    .campo-label {
+      font-size: .8rem; font-weight: 600; color: var(--text-3);
+      width: 90px; flex-shrink: 0; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .campo-valor { flex: 1; font-size: .9rem; color: var(--text-1); min-width: 0; word-break: break-word; }
+    .campo-btn   { padding: .25rem .6rem; font-size: .75rem; flex-shrink: 0; }
+
+    /* ─── Alerta pendiente ──────────────────────────────────── */
+    .alerta-pendiente {
+      display: flex; align-items: flex-start; gap: .75rem;
+      padding: 1rem; background: var(--brand-light);
+      border: 1.5px solid var(--brand); border-radius: var(--radius);
+      margin-bottom: 1.25rem; font-size: .875rem; color: var(--brand);
+    }
+    .alerta-pendiente svg { flex-shrink: 0; margin-top: 2px; }
+
+    /* ─── Hamburger (solo móvil) ────────────────────────────── */
+    .hamburger {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      padding: .4rem; color: var(--text-1);
+    }
+
+    /* ─── Overlay del sidebar en móvil ─────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
+      z-index: 99;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — tablet: ≤ 900 px
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .app-sidebar {
+        position: fixed;
+        left: -240px;
+        top: 0; bottom: 0;
+        z-index: 100;
+        transition: left .25s ease;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        width: 220px;
+        height: 100vh;
+      }
+      .app-sidebar.open { left: 0; }
+
+      .hamburger { display: flex; align-items: center; justify-content: center; }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — móvil: ≤ 600 px
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .app-content { padding: 1rem .75rem; }
+
+      .perfil-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+      }
+
+      .horario-grid {
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+        gap: .5rem;
+      }
+
+      .campo-editable { flex-wrap: wrap; }
+      .campo-label    { width: 100%; }
+
+      .tema-btns { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
+
+<!-- Overlay para cerrar sidebar en móvil -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="app-layout">
   <aside class="app-sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon" style="background:transparent;padding:0;"><img src="../../img/logo_sf.png" alt="SoLinX" style="width:36px;height:36px;object-fit:contain;border-radius:6px;"></div>
+      <div class="sidebar-logo-icon" style="background:transparent;padding:0;">
+        <img src="../../img/logo_sf.png" alt="SoLinX" style="width:36px;height:36px;object-fit:contain;border-radius:6px;">
+      </div>
       <span class="sidebar-logo-text">SoLinX</span>
     </div>
     <nav class="sidebar-nav">
-        <div class="sidebar-section-label">Alumno</div>
-        <a class="sidebar-link" href="dashboard.html">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-            Proyectos
-        </a>
-        <a class="sidebar-link" href="dashboard.html">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            Documentos
-        </a>
-        <a class="sidebar-link" href="dashboard.html">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            Notificaciones
-        </a>
-        <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
-        <a class="sidebar-link active" href="cuenta.html">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            Mi Perfil
-        </a>
+      <div class="sidebar-section-label">Alumno</div>
+      <a class="sidebar-link" href="dashboard.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Proyectos
+      </a>
+      <a class="sidebar-link" href="dashboard.html" onclick="sessionStorage.setItem('sl_tab','docs')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentos
+      </a>
+      <a class="sidebar-link" href="dashboard.html" onclick="sessionStorage.setItem('sl_tab','notif')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Notificaciones
+      </a>
+      <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
+      <a class="sidebar-link active" href="cuenta.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mi Perfil
+      </a>
     </nav>
     <div class="sidebar-bottom">
       <button class="btn btn-outline w-full" id="btn-logout" style="font-size:.8rem">Cerrar sesión</button>
@@ -55,22 +230,53 @@
 
   <main class="app-main">
     <header class="app-topbar">
-      <div class="topbar-title">Mi Perfil</div>
+      <div class="topbar-title" style="display:flex;align-items:center;gap:.75rem">
+        <!-- Hamburger visible solo en tablet/móvil -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="3" y1="6"  x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        Mi Perfil
+      </div>
       <div class="topbar-actions">
         <button class="btn-icon" id="themeBtn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1"  x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22"  y1="4.22"  x2="5.64"  y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1"  y1="12" x2="3"  y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36"/>
+            <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"/>
+          </svg>
         </button>
       </div>
     </header>
 
     <div class="app-content">
+
+      <!-- Alerta cambios pendientes -->
+      <div id="alertaPendiente" style="display:none" class="alerta-pendiente">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <strong>Cambios en revisión</strong>
+          <div id="alertaPendienteDetalle" class="text-sm" style="margin-top:.2rem;opacity:.85"></div>
+        </div>
+      </div>
+
       <!-- Header de perfil -->
       <div class="perfil-header">
         <div class="perfil-foto-wrap" id="fotowrap">
-          <div class="avatar avatar-xl" id="avatarEl" style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem">?</div>
+          <div class="avatar avatar-xl" id="avatarEl"
+               style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem">?</div>
           <div class="foto-overlay">📷<br>Cambiar</div>
         </div>
-        <div>
+        <div style="min-width:0;flex:1">
           <h2 id="ph-nombre">Cargando...</h2>
           <p class="text-muted" id="ph-correo">—</p>
           <div style="display:flex;gap:.5rem;margin-top:.5rem;flex-wrap:wrap">
@@ -81,18 +287,46 @@
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+      <!-- Grid de tarjetas -->
+      <div class="cards-grid">
+
+        <!-- Editar datos -->
+        <div class="card">
+          <div class="card-header"><h3>Mis Datos</h3></div>
+          <div class="card-body">
+            <div class="campo-editable">
+              <span class="campo-label">Nombre</span>
+              <span class="campo-valor" id="val-nombre">—</span>
+              <button class="btn btn-outline btn-sm campo-btn" onclick="abrirEdicion('nombre')">Editar</button>
+            </div>
+            <div class="campo-editable">
+              <span class="campo-label">Carrera</span>
+              <span class="campo-valor" id="val-carrera">—</span>
+              <button class="btn btn-outline btn-sm campo-btn" onclick="abrirEdicion('carrera')">Editar</button>
+            </div>
+            <div class="campo-editable">
+              <span class="campo-label">Escuela</span>
+              <span class="campo-valor" id="val-escuela">—</span>
+              <button class="btn btn-outline btn-sm campo-btn" onclick="abrirEdicion('escuela')">Editar</button>
+            </div>
+          </div>
+        </div>
+
         <!-- Mis solicitudes -->
         <div class="card">
           <div class="card-header"><h3>Mis Solicitudes</h3></div>
-          <div class="card-body" id="solicitudesContainer"><div class="loader-wrap"><div class="spinner"></div></div></div>
+          <div class="card-body" id="solicitudesContainer">
+            <div class="loader-wrap"><div class="spinner"></div></div>
+          </div>
         </div>
 
         <!-- Horario -->
         <div class="card">
           <div class="card-header"><h3>Mi Horario</h3></div>
           <div class="card-body">
-            <div class="horario-grid" id="horarioContainer"><div class="loader-wrap"><div class="spinner"></div></div></div>
+            <div class="horario-grid" id="horarioContainer">
+              <div class="loader-wrap"><div class="spinner"></div></div>
+            </div>
           </div>
         </div>
 
@@ -102,31 +336,60 @@
           <div class="card-body">
             <p class="text-sm text-muted mb-4">Selecciona el modo de visualización</p>
             <div class="tema-btns">
-              <div class="tema-btn" id="btnTemaClaro" onclick="setTema('light')">☀️ Claro</div>
+              <div class="tema-btn" id="btnTemaClaro"  onclick="setTema('light')">☀️ Claro</div>
               <div class="tema-btn" id="btnTemaOscuro" onclick="setTema('dark')">🌙 Oscuro</div>
             </div>
           </div>
         </div>
 
-        <!-- Contactar soporte -->
+        <!-- Soporte -->
         <div class="card">
           <div class="card-header"><h3>Soporte</h3></div>
           <div class="card-body">
             <p class="text-sm text-muted mb-4">¿Tienes algún problema o duda? Contáctanos.</p>
             <button class="btn btn-outline w-full" id="btnSoporte">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
               Contactar Supervisor
             </button>
           </div>
         </div>
+
       </div>
     </div>
   </main>
 </div>
 
+<!-- Modal: Editar campo -->
+<div class="modal-overlay" id="modalEdicion">
+  <div class="modal" style="max-width:440px;width:90%">
+    <div class="modal-header">
+      <h3 id="modal-edicion-titulo">Editar</h3>
+      <button class="btn-icon" onclick="cerrarEdicion()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="text-sm text-muted mb-4">El cambio será enviado al supervisor para su validación. Tu dato actual se mantendrá hasta que sea aprobado.</p>
+      <div class="form-group">
+        <label class="form-label" id="modal-edicion-label">Nuevo valor</label>
+        <input class="form-input" type="text" id="modal-edicion-input" placeholder="">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarEdicion()">Cancelar</button>
+      <button class="btn btn-primary" id="modal-edicion-btn">Solicitar cambio</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal soporte -->
 <div class="modal-overlay" id="modalSoporte">
-  <div class="modal">
+  <div class="modal" style="width:90%">
     <div class="modal-header"><h3>Contactar Soporte</h3></div>
     <div class="modal-body">
       <div class="form-group">
@@ -144,30 +407,50 @@
 <script type="module">
   import { Api } from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
-  import { toast, initTheme, toggleTheme } from '../../js/utils.js';
+  import { toast, initTheme, toggleTheme, confirmDialog } from '../../js/utils.js';
 
   requireAuth('estudiante');
   initTheme();
 
   const boleta    = Session.boleta;
   const idUsuario = Session.idUsuario;
-  const nombre    = Session.nombre;
-  const correo    = Session.correo;
-  const carrera   = Session.carrera;
-  const escuela   = Session.escuela;
+  let nombre  = Session.nombre;
+  let correo  = Session.correo;
+  let carrera = Session.carrera;
+  let escuela = Session.escuela;
 
   document.getElementById('btn-logout').onclick = () => logout();
   document.getElementById('themeBtn').onclick   = () => { toggleTheme(); actualizarBtnsTheme(); };
 
-  // ─── Info básica ──────────────────────────────────────
-  document.getElementById('ph-nombre').textContent  = nombre;
-  document.getElementById('ph-correo').textContent  = correo;
-  document.getElementById('ph-carrera').textContent = carrera || 'N/A';
-  document.getElementById('ph-escuela').textContent = escuela || 'N/A';
-  document.getElementById('ph-boleta').textContent  = boleta || 'N/A';
+  // ─── Hamburger / sidebar en móvil ─────────────────────
+  const hamburgerBtn   = document.getElementById('hamburgerBtn');
+  const sidebar        = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-  const initials = nombre?.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase() ?? '?';
-  document.getElementById('avatarEl').textContent = initials;
+  hamburgerBtn.onclick = () => {
+    sidebar.classList.toggle('open');
+    sidebarOverlay.classList.toggle('active');
+  };
+  sidebarOverlay.onclick = () => {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+  };
+
+  const initials = () => nombre?.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase() ?? '?';
+
+  // ─── Info básica ──────────────────────────────────────
+  function renderInfoBasica() {
+    document.getElementById('ph-nombre').textContent  = nombre;
+    document.getElementById('ph-correo').textContent  = correo;
+    document.getElementById('ph-carrera').textContent = carrera || 'N/A';
+    document.getElementById('ph-escuela').textContent = escuela || 'N/A';
+    document.getElementById('ph-boleta').textContent  = boleta  || 'N/A';
+    document.getElementById('val-nombre').textContent  = nombre;
+    document.getElementById('val-carrera').textContent = carrera || 'N/A';
+    document.getElementById('val-escuela').textContent = escuela || 'N/A';
+    document.getElementById('avatarEl').textContent = initials();
+  }
+  renderInfoBasica();
 
   // ─── Foto ─────────────────────────────────────────────
   async function cargarFoto() {
@@ -176,15 +459,14 @@
       const res = await Api.getPerfil(idUsuario);
       if (!res.ok) return;
       const data = await res.json();
+      const av = document.getElementById('avatarEl');
       if (data.foto) {
         const img = document.createElement('img');
         img.src = `data:image/jpeg;base64,${data.foto}`;
         img.style.cssText = 'width:110px;height:110px;border-radius:50%;object-fit:cover';
-        const av = document.getElementById('avatarEl');
-        av.innerHTML = '';
-        av.appendChild(img);
+        av.innerHTML = ''; av.appendChild(img);
       } else {
-        document.getElementById('avatarEl').textContent = initials;
+        av.textContent = initials();
       }
     } catch {}
   }
@@ -193,8 +475,7 @@
     const input = document.createElement('input');
     input.type = 'file'; input.accept = 'image/*';
     input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
+      const file = input.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = async e => {
         const b64 = e.target.result.split(',')[1];
@@ -202,11 +483,117 @@
           const res = await Api.actualizarFoto(idUsuario, b64);
           if (res.ok) { toast('Foto actualizada ✓', 'success'); cargarFoto(); }
           else toast('Error al guardar foto', 'error');
-        } catch (ex) { toast('Error de red', 'error'); }
+        } catch { toast('Error de red', 'error'); }
       };
       reader.readAsDataURL(file);
     };
     input.click();
+  };
+
+  // ─── Cambios pendientes ───────────────────────────────
+  const KEY_PENDIENTES = `solinx_cambios_pendientes_${idUsuario}`;
+
+  function getPendientes() {
+    try { return JSON.parse(localStorage.getItem(KEY_PENDIENTES)) ?? []; }
+    catch { return []; }
+  }
+  function setPendientes(lista) {
+    localStorage.setItem(KEY_PENDIENTES, JSON.stringify(lista));
+  }
+  function mostrarAlertaPendientes() {
+    const pendientes = getPendientes();
+    const alerta  = document.getElementById('alertaPendiente');
+    const detalle = document.getElementById('alertaPendienteDetalle');
+    if (!pendientes.length) { alerta.style.display = 'none'; return; }
+    alerta.style.display = 'flex';
+    const nombres = { nombre:'Nombre', correo:'Correo', carrera:'Carrera', escuela:'Escuela' };
+    detalle.textContent = `Cambios en espera de aprobación: ${pendientes.map(p => nombres[p.campo]).join(', ')}`;
+  }
+  mostrarAlertaPendientes();
+
+  // ─── Modal edición ────────────────────────────────────
+  const titulos  = { nombre:'Cambiar Nombre', correo:'Cambiar Correo', carrera:'Cambiar Carrera', escuela:'Cambiar Escuela' };
+  const labels   = { nombre:'Nuevo nombre',   correo:'Nuevo correo',   carrera:'Nueva carrera',   escuela:'Nueva escuela' };
+  const actuales = { nombre:()=>nombre, correo:()=>correo, carrera:()=>carrera, escuela:()=>escuela };
+  let campoActual = null;
+
+  window.abrirEdicion = function(campo) {
+    const pendientes = getPendientes();
+    if (pendientes.some(p => p.campo === campo)) {
+      toast('Ya tienes un cambio pendiente para este campo', 'error'); return;
+    }
+    campoActual = campo;
+    document.getElementById('modal-edicion-titulo').textContent = titulos[campo];
+    document.getElementById('modal-edicion-label').textContent  = labels[campo];
+
+    const inputEl = document.getElementById('modal-edicion-input');
+
+    if (campo === 'carrera') {
+      inputEl.outerHTML = `<select class="form-select" id="modal-edicion-input">
+        <option value="">Selecciona...</option>
+        <option>Ingeniería en Sistemas Computacionales</option>
+        <option>Ingeniería en Software</option>
+        <option>Ingeniería Industrial</option>
+        <option>Ingeniería Mecatrónica</option>
+        <option>Ingeniería Informática</option>
+        <option>Ingeniería en Inteligencia Artificial</option>
+        <option>Ingeniería Aeronáutica</option>
+        <option>Ingeniería Biónica</option>
+        <option>Programación</option>
+      </select>`;
+      document.getElementById('modal-edicion-input').value = actuales[campo]();
+    } else if (campo === 'escuela') {
+      inputEl.outerHTML = `<select class="form-select" id="modal-edicion-input">
+        <option value="">Selecciona...</option>
+        <option>ESCOM</option><option>UPIICSA</option><option>UPIITA</option>
+        <option>UPIBI</option><option>ESIA Ticomán</option><option>ESIA Zacatenco</option>
+        <option>ESIME Culhuacán</option><option>ESIME Zacatenco</option>
+        <option>ESIQIE</option><option>ENCB</option>
+      </select>`;
+      document.getElementById('modal-edicion-input').value = actuales[campo]();
+    } else {
+      const el = document.getElementById('modal-edicion-input');
+      if (el.tagName === 'SELECT') {
+        el.outerHTML = `<input class="form-input" type="text" id="modal-edicion-input">`;
+      }
+      document.getElementById('modal-edicion-input').value       = actuales[campo]();
+      document.getElementById('modal-edicion-input').placeholder = actuales[campo]();
+    }
+    document.getElementById('modalEdicion').classList.add('active');
+  };
+
+  window.cerrarEdicion = function() {
+    document.getElementById('modalEdicion').classList.remove('active');
+    campoActual = null;
+  };
+
+  document.getElementById('modal-edicion-btn').onclick = async () => {
+    if (!campoActual) return;
+    const nuevoValor = document.getElementById('modal-edicion-input').value.trim();
+    if (!nuevoValor)                          { toast('Ingresa un valor', 'error'); return; }
+    if (nuevoValor === actuales[campoActual]()) { toast('El valor es igual al actual', 'error'); return; }
+
+    const ok = await confirmDialog(
+      `¿Solicitar cambio de ${titulos[campoActual].toLowerCase()}?`,
+      `Valor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nEl supervisor deberá aprobar este cambio antes de que se aplique.`
+    );
+    if (!ok) return;
+
+    const pendientes = getPendientes();
+    pendientes.push({ campo: campoActual, valorAnterior: actuales[campoActual](), valorNuevo: nuevoValor, fecha: new Date().toISOString() });
+    setPendientes(pendientes);
+
+    try {
+      const nombresCampo = { nombre:'Nombre', correo:'Correo', carrera:'Carrera', escuela:'Escuela' };
+      await Api.crearNotificacion(12,
+        `Solicitud de cambio de perfil — ${nombresCampo[campoActual]}`,
+        `El alumno ${nombre} (boleta: ${boleta}) solicita cambiar su ${nombresCampo[campoActual].toLowerCase()}.\n\nValor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nRevisa el panel de supervisor para aprobar o rechazar.`
+      );
+    } catch {}
+
+    toast('Solicitud enviada al supervisor ✓', 'success');
+    cerrarEdicion();
+    mostrarAlertaPendientes();
   };
 
   // ─── Solicitudes ──────────────────────────────────────
@@ -217,10 +604,9 @@
       if (!res.ok) throw new Error('Error ' + res.status);
       const lista = await res.json();
       if (!lista.length) { container.innerHTML = '<p class="text-muted text-sm">No tienes solicitudes enviadas.</p>'; return; }
-
       const estadoLabel = e => {
         if (!e) return 'Desconocido';
-        const m = {aceptada:'✅ Admitido', rechazada:'❌ Rechazado', enviada:'⏳ Pendiente', pendiente:'⏳ Pendiente'};
+        const m = { aceptada:'✅ Admitido', rechazada:'❌ Rechazado', enviada:'⏳ Pendiente', pendiente:'⏳ Pendiente' };
         return m[e.toLowerCase()] ?? e;
       };
       container.innerHTML = lista.map(s => `
@@ -261,15 +647,13 @@
   function actualizarBtnsTheme() {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.getElementById('btnTemaClaro').classList.toggle('active', !dark);
-    document.getElementById('btnTemaOscuro').classList.toggle('active', dark);
+    document.getElementById('btnTemaOscuro').classList.toggle('active',  dark);
   }
-
   window.setTema = function(modo) {
     document.documentElement.setAttribute('data-theme', modo);
     localStorage.setItem('sl_theme', modo);
     actualizarBtnsTheme();
   };
-
   actualizarBtnsTheme();
 
   // ─── Soporte ──────────────────────────────────────────
@@ -279,9 +663,7 @@
     const msg = document.getElementById('msgSoporte').value.trim();
     if (!msg) { toast('Escribe un mensaje', 'error'); return; }
     const cuerpo = `Alumno: ${nombre}\nBoleta: ${boleta}\nCarrera: ${carrera}\n\nMensaje:\n${msg}`;
-    const subject = encodeURIComponent(`SoLinX - Soporte Alumno: ${nombre}`);
-    const body = encodeURIComponent(cuerpo);
-    window.open(`mailto:${CORREO_SOPORTE}?subject=${subject}&body=${body}`, '_blank');
+    window.open(`mailto:${CORREO_SOPORTE}?subject=${encodeURIComponent(`SoLinX - Soporte Alumno: ${nombre}`)}&body=${encodeURIComponent(cuerpo)}`, '_blank');
     document.getElementById('modalSoporte').classList.remove('active');
   };
 

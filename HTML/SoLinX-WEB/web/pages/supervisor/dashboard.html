@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SoLinX — Supervisor</title>
   <link rel="stylesheet" href="../../css/main.css">
+  <style>
+    .detalle-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+    .detalle-item { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem; }
+    .detalle-label { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-3); margin-bottom:.35rem; }
+    .detalle-valor { font-size:.95rem; color:var(--text-1); font-weight:500; }
+    .pdf-frame { width:100%; height:500px; border:1px solid var(--border); border-radius:var(--radius-sm); }
+  </style>
 </head>
 <body>
 <div class="app-layout">
@@ -22,7 +29,20 @@
       </a>
       <a class="sidebar-link" href="#" id="link-empresas" onclick="mostrarPanel('empresas')">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-        Aceptaciones de Empresa
+        Solicitudes de Empresas
+      </a>
+      <a class="sidebar-link" href="#" id="link-docs" onclick="mostrarPanel('docs')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentos
+      </a>
+      <a class="sidebar-link" href="#" id="link-cambios" onclick="mostrarPanel('cambios')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Aprobar Cambios
+      </a>
+      <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
+      <a class="sidebar-link" href="cuenta.html">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mi Perfil
       </a>
     </nav>
     <div class="sidebar-bottom">
@@ -48,71 +68,133 @@
     </header>
 
     <div class="app-content">
+
       <!-- Panel bienvenida -->
       <div id="panel-home">
         <h2 id="welcome-msg">Bienvenido</h2>
         <p class="text-muted mt-2 mb-4">Selecciona una opción del menú para empezar</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem">
           <div class="card" style="cursor:pointer" onclick="mostrarPanel('alumnos')">
-            <div class="card-body" style="text-align:center;padding:2.5rem">
-              <div style="width:60px;height:60px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <div class="card-body" style="text-align:center;padding:2rem">
+              <div style="width:56px;height:56px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+                <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
               </div>
               <h3>Solicitudes de Alumnos</h3>
-              <p class="text-muted text-sm mt-2">Aprueba o rechaza solicitudes enviadas por alumnos</p>
+              <p class="text-muted text-sm mt-2">Aprueba o rechaza solicitudes con detalle de carrera</p>
             </div>
           </div>
           <div class="card" style="cursor:pointer" onclick="mostrarPanel('empresas')">
-            <div class="card-body" style="text-align:center;padding:2.5rem">
-              <div style="width:60px;height:60px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            <div class="card-body" style="text-align:center;padding:2rem">
+              <div style="width:56px;height:56px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+                <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
               </div>
-              <h3>Aceptaciones de Empresa</h3>
-              <p class="text-muted text-sm mt-2">Revisa las aceptaciones finales de empresas a alumnos</p>
+              <h3>Solicitudes de Empresas</h3>
+              <p class="text-muted text-sm mt-2">Revisa las aceptaciones finales de empresas</p>
+            </div>
+          </div>
+          <div class="card" style="cursor:pointer" onclick="mostrarPanel('docs')">
+            <div class="card-body" style="text-align:center;padding:2rem">
+              <div style="width:56px;height:56px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+                <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <h3>Documentos</h3>
+              <p class="text-muted text-sm mt-2">Revisa y aprueba los reportes de cada periodo</p>
+            </div>
+          </div>
+          <div class="card" style="cursor:pointer" onclick="mostrarPanel('cambios')">
+            <div class="card-body" style="text-align:center;padding:2rem">
+              <div style="width:56px;height:56px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+                <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </div>
+              <h3>Aprobar Cambios</h3>
+              <p class="text-muted text-sm mt-2">Cambios de datos de alumnos y empresas</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Panel: Solicitudes de alumnos (estado: enviada) -->
+      <!-- Panel: Solicitudes de alumnos -->
       <div id="panel-alumnos" style="display:none">
         <div class="flex justify-between items-center mb-4">
-          <div>
-            <h2>Solicitudes de Alumnos</h2>
-            <p class="text-muted text-sm mt-1">Solicitudes enviadas por alumnos — aprueba para que pasen a la empresa</p>
-          </div>
+          <div><h2>Solicitudes de Alumnos</h2><p class="text-muted text-sm mt-1">Revisa el detalle de carrera antes de aprobar</p></div>
           <button class="btn btn-outline btn-sm" onclick="cargarSolicitudesAlumnos()">↻ Actualizar</button>
         </div>
-        <div class="card">
-          <div class="card-body table-wrap" id="tablaAlumnos">
-            <div class="loader-wrap"><div class="spinner"></div></div>
-          </div>
-        </div>
+        <div class="card"><div class="card-body table-wrap" id="tablaAlumnos"><div class="loader-wrap"><div class="spinner"></div></div></div></div>
       </div>
 
-      <!-- Panel: Aceptaciones de empresa (estado: aceptada) -->
+      <!-- Panel: Solicitudes de empresa -->
       <div id="panel-empresas" style="display:none">
         <div class="flex justify-between items-center mb-4">
-          <div>
-            <h2>Aceptaciones de Empresa</h2>
-            <p class="text-muted text-sm mt-1">Alumnos aceptados por empresa — solo visualización</p>
-          </div>
+          <div><h2>Solicitudes de Empresas</h2><p class="text-muted text-sm mt-1">Alumnos aceptados por empresa — solo visualización</p></div>
           <button class="btn btn-outline btn-sm" onclick="cargarAceptacionesEmpresa()">↻ Actualizar</button>
         </div>
-        <div class="card">
-          <div class="card-body table-wrap" id="tablaEmpresas">
-            <div class="loader-wrap"><div class="spinner"></div></div>
-          </div>
-        </div>
+        <div class="card"><div class="card-body table-wrap" id="tablaEmpresas"><div class="loader-wrap"><div class="spinner"></div></div></div></div>
       </div>
+
+      <!-- Panel: Documentos -->
+      <div id="panel-docs" style="display:none">
+        <div class="flex justify-between items-center mb-4">
+          <div><h2>Documentos de Alumnos</h2><p class="text-muted text-sm mt-1">Revisa y aprueba los reportes por periodo</p></div>
+          <button class="btn btn-outline btn-sm" onclick="cargarDocumentos()">↻ Actualizar</button>
+        </div>
+        <div class="card"><div class="card-body table-wrap" id="tablaDocumentos"><div class="loader-wrap"><div class="spinner"></div></div></div></div>
+      </div>
+
+      <!-- Panel: Aprobar Cambios -->
+      <div id="panel-cambios" style="display:none">
+        <div class="flex justify-between items-center mb-4">
+          <div><h2>Aprobar Cambios de Perfil</h2><p class="text-muted text-sm mt-1">Solicitudes de cambio de datos de alumnos y empresas</p></div>
+          <button class="btn btn-outline btn-sm" onclick="cargarCambiosPerfil()">↻ Actualizar</button>
+        </div>
+        <div class="card"><div class="card-body table-wrap" id="tablaCambios"><div class="loader-wrap"><div class="spinner"></div></div></div></div>
+      </div>
+
     </div>
   </main>
 </div>
 
+<!-- Modal: Detalle solicitud alumno -->
+<div class="modal-overlay" id="modalSolicitud">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h3 id="modal-sol-titulo">Detalle de Solicitud</h3>
+      <button class="btn-icon" onclick="cerrarModalSolicitud()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-sol-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarModalSolicitud()">Cancelar</button>
+      <button class="btn btn-danger"  id="modal-sol-rechazar">Rechazar</button>
+      <button class="btn btn-success" id="modal-sol-aprobar">Aprobar → Empresa</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Visor PDF -->
+<div class="modal-overlay" id="modalPdf">
+  <div class="modal" style="max-width:780px;width:95vw">
+    <div class="modal-header">
+      <h3 id="modal-pdf-titulo">Documento</h3>
+      <button class="btn-icon" onclick="cerrarModalPdf()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body"><iframe id="pdfFrame" class="pdf-frame" src=""></iframe></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarModalPdf()">Cerrar</button>
+      <button class="btn btn-danger"  id="modal-pdf-rechazar">Rechazar periodo</button>
+      <button class="btn btn-success" id="modal-pdf-aprobar">Aprobar periodo ✓</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
-  import { Api }   from '../../js/api.js';
+  import { Api } from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
   import { toast, initTheme, toggleTheme, showLoader, badgeEstado, confirmDialog } from '../../js/utils.js';
+
+  const BASE_URL = 'http://192.168.1.97:8080/SoLinX/api';
 
   requireAuth('supervisor');
   initTheme();
@@ -128,20 +210,22 @@
   document.getElementById('themeBtn').onclick   = () => toggleTheme();
 
   // ─── Panels ───────────────────────────────────────────────
-  const panels = { home: 'panel-home', alumnos: 'panel-alumnos', empresas: 'panel-empresas' };
-  const titles  = { home: 'Panel Supervisor', alumnos: 'Solicitudes de Alumnos', empresas: 'Aceptaciones de Empresa' };
+  const panels = { home:'panel-home', alumnos:'panel-alumnos', empresas:'panel-empresas', docs:'panel-docs', cambios:'panel-cambios' };
+  const titles  = { home:'Panel Supervisor', alumnos:'Solicitudes de Alumnos', empresas:'Solicitudes de Empresas', docs:'Documentos de Alumnos', cambios:'Aprobar Cambios' };
 
-  window.mostrarPanel = function(nombre) {
+  window.mostrarPanel = function(panel) {
     Object.values(panels).forEach(id => document.getElementById(id).style.display = 'none');
-    document.getElementById(panels[nombre]).style.display = '';
-    document.getElementById('topbarTitle').textContent = titles[nombre];
+    document.getElementById(panels[panel]).style.display = '';
+    document.getElementById('topbarTitle').textContent = titles[panel];
     document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-    if (nombre !== 'home') document.getElementById('link-' + nombre).classList.add('active');
-    if (nombre === 'alumnos')  cargarSolicitudesAlumnos();
-    if (nombre === 'empresas') cargarAceptacionesEmpresa();
+    if (panel !== 'home') document.getElementById('link-' + panel)?.classList.add('active');
+    if (panel === 'alumnos')  cargarSolicitudesAlumnos();
+    if (panel === 'empresas') cargarAceptacionesEmpresa();
+    if (panel === 'docs')     cargarDocumentos();
+    if (panel === 'cambios')  cargarCambiosPerfil();
   };
 
-  // ─── Solicitudes de alumnos (estado: enviada) ─────────────
+  // ─── SOLICITUDES DE ALUMNOS ───────────────────────────────
   window.cargarSolicitudesAlumnos = async function() {
     const container = document.getElementById('tablaAlumnos');
     showLoader(container);
@@ -149,102 +233,80 @@
       const res = await Api.getSolicitudesEnviadas(idSupervisor);
       if (!res.ok) throw new Error('Error ' + res.status);
       const data = await res.json();
-      const lista = (data.solicitudes ?? data ?? []).filter(s =>
-        s.estadoSolicitud?.toLowerCase() === 'enviada'
-      );
-      renderTablaSolicitudes(lista, container, 'alumno');
+      const lista = (data.solicitudes ?? data ?? []).filter(s => s.estadoSolicitud?.toLowerCase() === 'enviada');
+      renderTablaSolicitudes(lista, container);
     } catch (e) {
       container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
     }
   };
 
-  // ─── Aceptaciones de empresa (estado: aceptada) ───────────
-  window.cargarAceptacionesEmpresa = async function() {
-    const container = document.getElementById('tablaEmpresas');
-    showLoader(container);
-    try {
-      const res = await Api.getSolicitudesAceptadas(idEmpresa);
-      if (!res.ok) throw new Error('Error ' + res.status);
-      const data = await res.json();
-      const lista = (data.solicitudes ?? data ?? []).filter(s =>
-        s.estadoSolicitud?.toLowerCase() === 'aceptada'
-      );
-      renderTablaAceptaciones(lista, container);
-    } catch (e) {
-      container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
-    }
-  };
-
-  // ─── Render tabla solicitudes de alumnos ──────────────────
-  function renderTablaSolicitudes(lista, container, tipo) {
+  function renderTablaSolicitudes(lista, container) {
     if (!lista.length) {
       container.innerHTML = `<div class="empty-state"><h3>Sin solicitudes pendientes</h3><p>No hay solicitudes de alumnos por revisar</p></div>`;
       return;
     }
-
     container.innerHTML = `
       <table class="table">
-        <thead>
+        <thead><tr><th>Alumno</th><th>Proyecto</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>${lista.map(s => `
           <tr>
-            <th>Alumno</th>
-            <th>Proyecto</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>${
-          lista.map(s => `
-            <tr>
-              <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong></td>
-              <td>${s.nombreProyecto ?? 'N/A'}</td>
-              <td>${badgeEstado(s.estadoSolicitud)}</td>
-              <td>
-                <div class="flex gap-2">
-                  <button class="btn btn-success btn-sm"
-                    onclick="procesarSolicitud(${s.idSolicitud},'aprobada_supervisor','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}')">
-                    Aprobar → Empresa
-                  </button>
-                  <button class="btn btn-danger btn-sm"
-                    onclick="procesarSolicitud(${s.idSolicitud},'rechazada_supervisor','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}')">
-                    Rechazar
-                  </button>
-                </div>
-              </td>
-            </tr>`)
-          .join('')
-        }</tbody>
+            <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong></td>
+            <td>${s.nombreProyecto ?? 'N/A'}</td>
+            <td>${badgeEstado(s.estadoSolicitud)}</td>
+            <td>
+              <button class="btn btn-outline btn-sm"
+                onclick='verDetalleSolicitud(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+                🔍 Ver más
+              </button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
       </table>`;
   }
 
-  // ─── Render tabla aceptaciones empresa (solo lectura) ──────
-  function renderTablaAceptaciones(lista, container) {
-    if (!lista.length) {
-      container.innerHTML = `<div class="empty-state"><h3>Sin aceptaciones aún</h3><p>Aquí aparecerán los alumnos aceptados por empresas</p></div>`;
-      return;
-    }
+  // ─── MODAL DETALLE SOLICITUD ──────────────────────────────
+  window.verDetalleSolicitud = function(s) {
+    document.getElementById('modal-sol-titulo').textContent = `Solicitud — ${s.nombreEstudiante ?? 'Alumno'}`;
+    const carreraAlumno   = s.carreraAlumno ?? s.carrera ?? 'N/A';
+    const carreraProyecto = s.carreraEnfocada ?? 'N/A';
 
-    container.innerHTML = `
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Alumno</th>
-            <th>Proyecto</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>${
-          lista.map(s => `
-            <tr>
-              <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong></td>
-              <td>${s.nombreProyecto ?? 'N/A'}</td>
-              <td>${badgeEstado(s.estadoSolicitud)}</td>
-            </tr>`)
-          .join('')
-        }</tbody>
-      </table>`;
-  }
+    document.getElementById('modal-sol-body').innerHTML = `
+      <div class="detalle-grid">
+        <div class="detalle-item">
+          <div class="detalle-label">Alumno</div>
+          <div class="detalle-valor">${s.nombreEstudiante ?? 'N/A'}</div>
+        </div>
+        <div class="detalle-item">
+          <div class="detalle-label">Correo</div>
+          <div class="detalle-valor">${s.correoEstudiante ?? 'N/A'}</div>
+        </div>
+        <div class="detalle-item">
+          <div class="detalle-label">Carrera del Alumno</div>
+          <div class="detalle-valor">${carreraAlumno}</div>
+        </div>
+        <div class="detalle-item">
+          <div class="detalle-label">Carrera enfocada del Proyecto</div>
+          <div class="detalle-valor">${carreraProyecto}</div>
+        </div>
+        <div class="detalle-item">
+          <div class="detalle-label">Proyecto</div>
+          <div class="detalle-valor">${s.nombreProyecto ?? 'N/A'}</div>
+        </div>
+        <div class="detalle-item">
+          <div class="detalle-label">Empresa</div>
+          <div class="detalle-valor">${s.nombreEmpresa ?? 'N/A'}</div>
+        </div>
+      </div>`;
 
-  // ─── Procesar solicitud supervisor ────────────────────────
+    document.getElementById('modal-sol-aprobar').onclick  = () => procesarSolicitud(s.idSolicitud, 'aprobada_supervisor', s.nombreEstudiante);
+    document.getElementById('modal-sol-rechazar').onclick = () => procesarSolicitud(s.idSolicitud, 'rechazada_supervisor', s.nombreEstudiante);
+    document.getElementById('modalSolicitud').classList.add('active');
+  };
+
+  window.cerrarModalSolicitud = () => {
+    document.getElementById('modalSolicitud').classList.remove('active');
+  };
+
   window.procesarSolicitud = async function(idSolicitud, nuevoEstado, nombreAlumno) {
     const accion = nuevoEstado === 'aprobada_supervisor' ? 'aprobar y enviar a empresa' : 'rechazar';
     const ok = await confirmDialog('Confirmar', `¿Deseas ${accion} la solicitud de ${nombreAlumno}?`);
@@ -252,17 +314,225 @@
     try {
       const res = await Api.actualizarSolicitudSupervisor(idSolicitud, nuevoEstado);
       if (res.ok) {
-        toast(nuevoEstado === 'aprobada_supervisor'
-          ? 'Solicitud aprobada — ahora la verá la empresa ✓'
-          : 'Solicitud rechazada', 'success');
+        toast(nuevoEstado === 'aprobada_supervisor' ? 'Solicitud aprobada — ahora la verá la empresa ✓' : 'Solicitud rechazada', 'success');
+        cerrarModalSolicitud();
         cargarSolicitudesAlumnos();
       } else {
         toast('Error: ' + res.status, 'error');
       }
+    } catch (e) { toast(e.message, 'error'); }
+  };
+
+  // ─── ACEPTACIONES DE EMPRESA ──────────────────────────────
+  window.cargarAceptacionesEmpresa = async function() {
+    const container = document.getElementById('tablaEmpresas');
+    showLoader(container);
+    try {
+      const res = await Api.getSolicitudesAceptadas(idEmpresa);
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const data = await res.json();
+      const lista = (data.solicitudes ?? data ?? []).filter(s => s.estadoSolicitud?.toLowerCase() === 'aceptada');
+      if (!lista.length) {
+        container.innerHTML = `<div class="empty-state"><h3>Sin aceptaciones aún</h3></div>`;
+        return;
+      }
+      container.innerHTML = `
+        <table class="table">
+          <thead><tr><th>Alumno</th><th>Proyecto</th><th>Estado</th></tr></thead>
+          <tbody>${lista.map(s => `
+            <tr>
+              <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong></td>
+              <td>${s.nombreProyecto ?? 'N/A'}</td>
+              <td>${badgeEstado(s.estadoSolicitud)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
     } catch (e) {
-      toast(e.message, 'error');
+      container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
     }
   };
+
+  // ─── DOCUMENTOS ───────────────────────────────────────────
+  window.cargarDocumentos = async function() {
+    const container = document.getElementById('tablaDocumentos');
+    showLoader(container);
+    try {
+      const res = await Api.getSolicitudesAceptadas(idEmpresa);
+      if (!res.ok) throw new Error('Error ' + res.status);
+        const data = await res.json();
+        const todas = data.solicitudes ?? data ?? [];
+        const aceptados = todas;
+        
+        console.log('Aceptados:', aceptados);
+        console.log('Primer alumno boleta:', aceptados[0]?.boletaAlumno, aceptados[0]?.boleta);
+
+      if (!aceptados.length) {
+        container.innerHTML = `<div class="empty-state"><h3>Sin alumnos aceptados aún</h3><p>Los documentos aparecerán cuando un alumno sea aceptado por una empresa</p></div>`;
+        return;
+      }
+
+      const filas = await Promise.all(aceptados.map(async s => {
+        try {
+          const boleta = s.boletaAlumno ?? s.boleta;
+          const resDocs = await Api.getDocumentos(boleta);
+          const docs = resDocs.ok ? await resDocs.json() : [];
+          return { solicitud: s, docs };
+        } catch { return { solicitud: s, docs: [] }; }
+      }));
+
+      const ESTADOS = {
+        aprobado:  { label: '✓ Aprobado',  cls: 'badge-green'  },
+        rechazado: { label: '✗ Rechazado', cls: 'badge-red'    },
+        pendiente: { label: '⏳ En espera', cls: 'badge-yellow' },
+      };
+
+      container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr><th>Alumno</th><th>Proyecto</th><th>Periodo</th><th>Archivo</th><th>Estado</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>${
+            filas.flatMap(({ solicitud: s, docs }) => {
+              if (!docs.length) return [`
+                <tr>
+                  <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong></td>
+                  <td>${s.nombreProyecto ?? 'N/A'}</td>
+                  <td colspan="4" class="text-muted text-sm">Sin documentos subidos aún</td>
+                </tr>`];
+              return docs.map(d => {
+                const estado = d.estadoDocumento ?? 'pendiente';
+                const est = ESTADOS[estado] ?? ESTADOS.pendiente;
+                return `
+                <tr>
+                  <td><strong>${s.nombreEstudiante ?? 'N/A'}</strong><br><span class="text-xs text-muted">${s.correoEstudiante ?? ''}</span></td>
+                  <td>${s.nombreProyecto ?? 'N/A'}</td>
+                  <td><span class="badge badge-blue">Periodo ${d.periodo}</span></td>
+                  <td class="text-sm">${d.nombreArchivo ?? 'documento.pdf'}<br><span class="text-xs text-muted">${d.fechaSubida ?? ''}</span></td>
+                  <td><span class="badge ${est.cls}">${est.label}</span></td>
+                  <td>
+                    <button class="btn btn-outline btn-sm"
+                      onclick="verPdf(${s.boletaAlumno ?? s.boleta}, ${d.periodo}, '${(d.nombreArchivo ?? 'documento.pdf').replace(/'/g,"\\'")}', '${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}')">
+                      📄 Ver PDF
+                    </button>
+                  </td>
+                </tr>`;
+              });
+            }).join('')
+          }</tbody>
+        </table>`;
+    } catch (e) {
+      container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
+    }
+  };
+
+  // ─── MODAL VISOR PDF ──────────────────────────────────────
+  window.verPdf = async function(boleta, periodo, nombreArchivo, nombreAlumno) {
+    document.getElementById('modal-pdf-titulo').textContent = `${nombreAlumno} — Periodo ${periodo}: ${nombreArchivo}`;
+    const frame = document.getElementById('pdfFrame');
+    frame.src = '';
+    document.getElementById('modalPdf').classList.add('active');
+    try {
+      const res = await fetch(`${BASE_URL}/documento/${boleta}/${periodo}/archivo`);
+      if (!res.ok) throw new Error('No se pudo cargar el PDF');
+      const blob = await res.blob();
+      frame.src = URL.createObjectURL(blob);
+    } catch (e) {
+      toast('Error al cargar el PDF: ' + e.message, 'error');
+    }
+    document.getElementById('modal-pdf-aprobar').onclick  = () => procesarDocumento(boleta, periodo, true);
+    document.getElementById('modal-pdf-rechazar').onclick = () => procesarDocumento(boleta, periodo, false);
+  };
+
+  window.cerrarModalPdf = () => {
+    document.getElementById('modalPdf').classList.remove('active');
+    const frame = document.getElementById('pdfFrame');
+    if (frame.src) URL.revokeObjectURL(frame.src);
+    frame.src = '';
+  };
+
+  async function procesarDocumento(boleta, periodo, aprobado) {
+    const ok = await confirmDialog('Confirmar', `¿Deseas ${aprobado ? 'aprobar' : 'rechazar'} el documento del Periodo ${periodo}?`);
+    if (!ok) return;
+    try {
+      const estado = aprobado ? 'aprobado' : 'rechazado';
+      const resEstado = await fetch(`${BASE_URL}/documento/${boleta}/${periodo}/estado?estado=${estado}`, { method: 'PUT' });
+      if (!resEstado.ok) { toast('Error al actualizar estado', 'error'); return; }
+      try {
+        const resU = await fetch(`${BASE_URL}/usuario/boleta/${boleta}`);
+        if (resU.ok) {
+          const { idUsuario } = await resU.json();
+          await Api.crearNotificacion(idUsuario,
+            aprobado ? `Periodo ${periodo} aprobado ✓` : `Periodo ${periodo} rechazado`,
+            aprobado
+              ? `Tu reporte del Periodo ${periodo} fue aprobado por el supervisor. ¡Sigue así!`
+              : `Tu reporte del Periodo ${periodo} fue rechazado. Por favor sube el documento nuevamente.`
+          );
+        }
+      } catch {}
+      toast(aprobado ? `Periodo ${periodo} aprobado ✓` : `Periodo ${periodo} rechazado`, 'success');
+      cerrarModalPdf();
+      cargarDocumentos();
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
+  }
+
+  // ─── CAMBIOS DE PERFIL ────────────────────────────────────
+  window.cargarCambiosPerfil = async function() {
+    const container = document.getElementById('tablaCambios');
+    showLoader(container);
+    try {
+      const res = await Api.getNotificaciones(Session.idUsuario);
+      if (!res.ok) throw new Error('Error ' + res.status);
+      const text = await res.text();
+      if (!text || text.trim() === '') { renderTablaCambios([], container); return; }
+      const notifs = JSON.parse(text);
+      const cambios = notifs.filter(n =>
+        n.titulo?.includes('Solicitud de cambio de perfil') ||
+        n.titulo?.includes('cambio de perfil')
+      );
+      renderTablaCambios(cambios, container);
+    } catch (e) {
+      container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`;
+    }
+  };
+
+  function renderTablaCambios(lista, container) {
+    if (!lista.length) {
+      container.innerHTML = `<div class="empty-state"><h3>Sin cambios pendientes</h3><p>No hay solicitudes de cambio de perfil por revisar</p></div>`;
+      return;
+    }
+    container.innerHTML = `
+      <table class="table">
+        <thead><tr><th>Tipo</th><th>Detalle</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <tbody>${lista.map(n => {
+          const esEmpresa = n.mensaje?.includes('empresa') && !n.mensaje?.includes('alumno');
+          return `
+          <tr>
+            <td><span class="badge ${esEmpresa ? 'badge-blue' : 'badge-gray'}">${esEmpresa ? '🏢 Empresa' : '🎓 Alumno'}</span></td>
+            <td style="white-space:pre-wrap;font-size:.85rem;max-width:380px">${n.mensaje ?? n.titulo ?? ''}</td>
+            <td class="text-xs text-muted">${n.fechaCreacion ?? ''}</td>
+            <td>
+              ${!n.leida ? `
+              <div class="flex gap-2">
+                <button class="btn btn-success btn-sm" onclick="procesarCambio(${n.idNotificacion}, true)">✓ Aprobar</button>
+                <button class="btn btn-danger btn-sm"  onclick="procesarCambio(${n.idNotificacion}, false)">✕ Rechazar</button>
+              </div>` : '<span class="badge badge-gray">Procesado</span>'}
+            </td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  window.procesarCambio = async function(idNotificacion, aprobado) {
+    const ok = await confirmDialog('Confirmar', `¿Deseas ${aprobado ? 'aprobar' : 'rechazar'} este cambio de perfil?`);
+    if (!ok) return;
+    try {
+      await Api.marcarLeida(idNotificacion);
+      toast(aprobado ? 'Cambio aprobado ✓' : 'Cambio rechazado ✓', 'success');
+      cargarCambiosPerfil();
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
+  };
+
 </script>
 </body>
 </html>

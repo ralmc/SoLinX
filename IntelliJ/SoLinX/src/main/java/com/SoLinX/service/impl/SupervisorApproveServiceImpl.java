@@ -274,6 +274,9 @@ public class SupervisorApproveServiceImpl implements SupervisorApproveService {
                     .nombreProyecto(proyecto.getNombreProyecto())
                     .nombreEmpresa(nombreEmpresa)
                     .correoEmpresa(correoEmpresa)
+                    .boletaAlumno(estudiante.getBoleta())
+                    .carreraAlumno(estudiante.getCarrera())
+                    .carreraEnfocada(proyecto.getCarreraEnfocada())
                     .build();
 
         } catch (Exception e) {

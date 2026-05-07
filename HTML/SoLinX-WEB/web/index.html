@@ -40,6 +40,17 @@
     .req { display:flex;align-items:center;gap:.35rem; }
     .req.ok  { color:var(--success); }
     .req.err { color:var(--danger); }
+
+    /* ── Toggle contraseña ── */
+    .pass-wrap { position:relative; }
+    .pass-wrap .form-input { padding-right:2.5rem; }
+    .pass-toggle {
+      position:absolute; right:.75rem; top:50%; transform:translateY(-50%);
+      background:none; border:none; cursor:pointer; padding:0;
+      color:var(--text-3); display:flex; align-items:center;
+      transition:color .2s;
+    }
+    .pass-toggle:hover { color:var(--brand); }
   </style>
 </head>
 <body>
@@ -74,7 +85,13 @@
       </div>
       <div class="form-group">
         <label class="form-label">Contraseña</label>
-        <input class="form-input" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+        <div class="pass-wrap">
+          <input class="form-input" type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+          <button class="pass-toggle" type="button" onclick="togglePass('login-pass', this)" tabindex="-1">
+            <svg class="ojo-cerrado" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="ojo-abierto" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
       </div>
       <div class="form-group" style="margin-top:1.5rem">
         <button class="btn btn-primary btn-block btn-lg" id="btn-login">Entrar</button>
@@ -129,8 +146,14 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Contraseña</label>
-          <input class="form-input" type="password" id="ra-pass" placeholder="••••••••"
-            oninput="mostrarRequisitos('ra-pass','ra-requisitos','ra')">
+          <div class="pass-wrap">
+            <input class="form-input" type="password" id="ra-pass" placeholder="••••••••"
+              oninput="mostrarRequisitos('ra-pass','ra-requisitos','ra')">
+            <button class="pass-toggle" type="button" onclick="togglePass('ra-pass', this)" tabindex="-1">
+              <svg class="ojo-cerrado" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-abierto" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
           <div class="pass-requisitos" id="ra-requisitos">
             <div class="req" id="ra-req-len">✗ Mínimo 8 caracteres</div>
             <div class="req" id="ra-req-may">✗ Una mayúscula</div>
@@ -141,7 +164,13 @@
         </div>
         <div class="form-group">
           <label class="form-label">Confirmar contraseña</label>
-          <input class="form-input" type="password" id="ra-pass2" placeholder="Repite">
+          <div class="pass-wrap">
+            <input class="form-input" type="password" id="ra-pass2" placeholder="Repite">
+            <button class="pass-toggle" type="button" onclick="togglePass('ra-pass2', this)" tabindex="-1">
+              <svg class="ojo-cerrado" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-abierto" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
         </div>
       </div>
       <button class="btn btn-primary btn-block" id="btn-reg-alumno" style="margin-top:.5rem">Registrar Alumno</button>
@@ -171,8 +200,14 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Contraseña</label>
-          <input class="form-input" type="password" id="re-pass" placeholder="••••••••"
-            oninput="mostrarRequisitos('re-pass','re-requisitos','re')">
+          <div class="pass-wrap">
+            <input class="form-input" type="password" id="re-pass" placeholder="••••••••"
+              oninput="mostrarRequisitos('re-pass','re-requisitos','re')">
+            <button class="pass-toggle" type="button" onclick="togglePass('re-pass', this)" tabindex="-1">
+              <svg class="ojo-cerrado" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-abierto" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
           <div class="pass-requisitos" id="re-requisitos">
             <div class="req" id="re-req-len">✗ Mínimo 8 caracteres</div>
             <div class="req" id="re-req-may">✗ Una mayúscula</div>
@@ -183,7 +218,13 @@
         </div>
         <div class="form-group">
           <label class="form-label">Confirmar contraseña</label>
-          <input class="form-input" type="password" id="re-pass2" placeholder="Repite">
+          <div class="pass-wrap">
+            <input class="form-input" type="password" id="re-pass2" placeholder="Repite">
+            <button class="pass-toggle" type="button" onclick="togglePass('re-pass2', this)" tabindex="-1">
+              <svg class="ojo-cerrado" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="ojo-abierto" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
         </div>
       </div>
       <button class="btn btn-primary btn-block" id="btn-reg-empresa" style="margin-top:.5rem">Registrar Empresa</button>
@@ -205,6 +246,22 @@
   document.getElementById('themeBtn').onclick = () => toggleTheme();
 
   if (Session.isLoggedIn()) redirigirPorRol(Session.rol);
+
+  // ─── Toggle contraseña ────────────────────────────────────
+  window.togglePass = function(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const ojoCerrado = btn.querySelector('.ojo-cerrado');
+    const ojoAbierto = btn.querySelector('.ojo-abierto');
+    if (input.type === 'password') {
+      input.type = 'text';
+      ojoCerrado.style.display = 'none';
+      ojoAbierto.style.display = '';
+    } else {
+      input.type = 'password';
+      ojoCerrado.style.display = '';
+      ojoAbierto.style.display = 'none';
+    }
+  };
 
   // ─── Requisitos de contraseña ──────────────────────────────
   window.mostrarRequisitos = function(inputId, reqId, prefix) {
@@ -321,14 +378,9 @@
     btn.disabled = true; btn.textContent = 'Registrando...';
     try {
       const res = await Api.registrarAlumno({
-        nombreUsuario: nombre,
-        boleta: parseInt(boleta),
-        carrera,
-        escuela,
-        correo,
-        confirmarCorreo: correo2,
-        contraseña: pass,
-        confirmarContraseña: pass2
+        nombreUsuario: nombre, boleta: parseInt(boleta),
+        carrera, escuela, correo, confirmarCorreo: correo2,
+        contraseña: pass, confirmarContraseña: pass2
       });
       if (res.ok) {
         toast('¡Cuenta creada! Ahora registra tu horario disponible.', 'success', 6000);
@@ -365,10 +417,7 @@
     btn.disabled = true; btn.textContent = 'Registrando...';
     try {
       const res = await Api.registrarEmpresa({
-        nombreEmpresa: nombre,
-        correo,
-        telefono: tel,
-        userPassword: pass
+        nombreEmpresa: nombre, correo, telefono: tel, userPassword: pass
       });
       if (res.status === 409) { toast('El correo ya está registrado', 'error', 6000); return; }
       if (res.ok) {
