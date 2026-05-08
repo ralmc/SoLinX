@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface SupervisorApproveService {
 
-    // Métodos NUEVOS para la funcionalidad del menú supervisor
     SupervisorResponseDto getSupervisorData(Integer idUsuario);
     SolicitudesResponseDto getSolicitudesEnviadas(Integer idSupervisor);
     SolicitudesResponseDto getSolicitudesAceptadas(Integer idEmpresa);

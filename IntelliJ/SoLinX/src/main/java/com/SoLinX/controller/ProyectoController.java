@@ -33,14 +33,22 @@ public class ProyectoController {
     @PostMapping("/proyecto")
     public ResponseEntity<ProyectoDto> save(@RequestBody ProyectoDto dto) {
         Proyecto proyecto = convertToEntity(dto);
+        proyecto.setEstadoProyecto("pendiente");
         Proyecto guardado = proyectoService.save(proyecto);
         return ResponseEntity.ok(convertToDto(guardado));
     }
 
     @GetMapping("/proyecto")
-    public ResponseEntity<List<ProyectoDto>> lista() {
+    public ResponseEntity<List<ProyectoDto>> lista(
+            @RequestParam(required = false, defaultValue = "false") Boolean soloAprobados) {
         List<Proyecto> proyectos = proyectoService.getAll();
         if (proyectos.isEmpty()) return ResponseEntity.ok(new ArrayList<>());
+
+        if (soloAprobados) {
+            proyectos = proyectos.stream()
+                    .filter(p -> "aprobado".equals(p.getEstadoProyecto()))
+                    .collect(Collectors.toList());
+        }
 
         List<ProyectoDto> dtos = proyectos.stream()
                 .map(this::convertToDto)
@@ -147,6 +155,17 @@ public class ProyectoController {
         return ResponseEntity.ok("Imagen del proyecto actualizada correctamente.");
     }
 
+    @PutMapping("/proyecto/{id}/estado")
+    public ResponseEntity<Void> actualizarEstado(
+            @PathVariable("id") Integer id,
+            @RequestParam("estado") String estado) {
+        Proyecto proyecto = proyectoService.getById(id);
+        if (proyecto == null) return ResponseEntity.notFound().build();
+        proyecto.setEstadoProyecto(estado);
+        proyectoService.save(proyecto);
+        return ResponseEntity.ok().build();
+    }
+
     private String obtenerTelefonoEmpresa(Integer idEmpresa) {
         try {
             Empresa empresa = empresaRepository.findById(idEmpresa).orElse(null);
@@ -191,6 +210,7 @@ public class ProyectoController {
                 .imagenProyecto(proyecto.getImagenProyecto())
                 .idEmpresa(idEmpresa)
                 .fotoEmpresa(obtenerFotoEmpresa(idEmpresa))
+                .estadoProyecto(proyecto.getEstadoProyecto())
                 .nombreEmpresa(proyecto.getEmpresa() != null ? proyecto.getEmpresa().getNombreEmpresa() : "Sin Empresa")
                 .telefonoEmpresa(idEmpresa != null ? obtenerTelefonoEmpresa(idEmpresa) : "No disponible")
                 .build();
@@ -219,6 +239,7 @@ public class ProyectoController {
                 .imagenRef(imagenFinal)
                 .imagenProyecto(dto.getImagenProyecto())
                 .empresa(empresa)
+                .estadoProyecto(dto.getEstadoProyecto() != null ? dto.getEstadoProyecto() : "pendiente")
                 .build();
     }
 }

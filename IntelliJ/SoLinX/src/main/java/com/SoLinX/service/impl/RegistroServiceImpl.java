@@ -16,6 +16,7 @@ public class RegistroServiceImpl implements RegistroService {
     private final EstudianteRepository estudianteRepository;
     private final UsuarioEstudianteRepository usuarioEstudianteRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final PerfilRepository perfilRepository;
 
     private boolean esPasswordSeguro(String password) {
         if (password == null) return false;
@@ -70,6 +71,11 @@ public class RegistroServiceImpl implements RegistroService {
         usuarioEstudianteRepository.save(UsuarioEstudiante.builder()
                 .idUsuario(u.getIdUsuario())
                 .boleta(est.getBoleta())
+                .build());
+
+        perfilRepository.save(Perfil.builder()
+                .tema("claro")
+                .idUsuario(u.getIdUsuario())
                 .build());
 
         return "Registro exitoso";

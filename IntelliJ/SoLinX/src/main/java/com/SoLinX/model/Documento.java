@@ -38,4 +38,7 @@ public class Documento {
     @ManyToOne
     @JoinColumn(name = "boleta", nullable = false)
     private Estudiante estudiante;
+
+    @Column(name = "estadoDocumento", nullable = false)
+    private String estadoDocumento = "pendiente";
 }

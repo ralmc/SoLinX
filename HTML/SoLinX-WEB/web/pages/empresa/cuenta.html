@@ -6,25 +6,158 @@
   <title>SoLinX — Perfil Empresa</title>
   <link rel="stylesheet" href="../../css/main.css">
   <style>
-    .perfil-header { display:flex; align-items:center; gap:1.5rem; padding:1.5rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:1.5rem; }
-    .perfil-foto-wrap { position:relative; cursor:pointer; }
-    .perfil-foto-wrap:hover .foto-overlay { opacity:1; }
-    .foto-overlay { position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:.2s; color:#fff; font-size:.7rem; text-align:center; }
-    .tema-btns { display:flex; gap:.75rem; }
-    .tema-btn { flex:1; padding:.75rem; border:1.5px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; text-align:center; transition:all .2s; font-size:.85rem; font-weight:600; background:var(--surface); color:var(--text-2); }
-    .tema-btn:hover { border-color:var(--brand); color:var(--brand); }
-    .tema-btn.active { border-color:var(--brand); background:var(--brand-light); color:var(--brand); }
-    .info-row { display:flex; align-items:center; gap:.75rem; padding:.85rem 0; border-bottom:1px solid var(--border); font-size:.9rem; }
-    .info-row:last-child { border-bottom:none; }
-    .info-label { font-weight:600; color:var(--text-2); width:100px; flex-shrink:0; }
-    .info-value { color:var(--text-1); }
+    /* ─── Fix layout: sidebar fijo, main ocupa el resto ─────── */
+    .app-sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .app-main {
+      margin-left: var(--sidebar-w);
+      width: calc(100% - var(--sidebar-w));
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .app-content {
+      max-width: 100% !important;
+      width: 100%;
+      padding: 1.25rem 1.5rem;
+      box-sizing: border-box;
+    }
+
+    /* ─── Perfil header ─────────────────────────────────────── */
+    .perfil-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .perfil-foto-wrap { position: relative; cursor: pointer; }
+    .perfil-foto-wrap:hover .foto-overlay { opacity: 1; }
+    .foto-overlay {
+      position: absolute; inset: 0; border-radius: 50%;
+      background: rgba(0,0,0,.4); display: flex; align-items: center;
+      justify-content: center; opacity: 0; transition: .2s;
+      color: #fff; font-size: .7rem; text-align: center;
+    }
+
+    /* ─── Grid de tarjetas ──────────────────────────────────── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .cards-grid .card { width: 100%; max-width: 100%; box-sizing: border-box; }
+
+    /* ─── Tema ──────────────────────────────────────────────── */
+    .tema-btns { display: flex; gap: .75rem; }
+    .tema-btn {
+      flex: 1; padding: .75rem;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      cursor: pointer; text-align: center; transition: all .2s;
+      font-size: .85rem; font-weight: 600;
+      background: var(--surface); color: var(--text-2);
+    }
+    .tema-btn:hover  { border-color: var(--brand); color: var(--brand); }
+    .tema-btn.active { border-color: var(--brand); background: var(--brand-light); color: var(--brand); }
+
+    /* ─── Campos editables ──────────────────────────────────── */
+    .campo-editable {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .6rem 0; border-bottom: 1px solid var(--border);
+    }
+    .campo-editable:last-child { border-bottom: none; }
+    .campo-label {
+      font-size: .8rem; font-weight: 600; color: var(--text-3);
+      width: 100px; flex-shrink: 0; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .campo-valor { flex: 1; font-size: .9rem; color: var(--text-1); min-width: 0; word-break: break-word; }
+    .campo-btn   { padding: .25rem .6rem; font-size: .75rem; flex-shrink: 0; }
+
+    /* ─── Alerta pendiente ──────────────────────────────────── */
+    .alerta-pendiente {
+      display: flex; align-items: flex-start; gap: .75rem;
+      padding: 1rem; background: var(--brand-light);
+      border: 1.5px solid var(--brand); border-radius: var(--radius);
+      margin-bottom: 1.25rem; font-size: .875rem; color: var(--brand);
+    }
+    .alerta-pendiente svg { flex-shrink: 0; margin-top: 2px; }
+
+    /* ─── Hamburger (solo móvil) ────────────────────────────── */
+    .hamburger {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      padding: .4rem; color: var(--text-1);
+    }
+
+    /* ─── Overlay del sidebar en móvil ─────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
+      z-index: 99;
+    }
+    .sidebar-overlay.active { display: block; }
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — tablet: ≤ 900 px
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .app-sidebar {
+        left: -260px;
+        transition: left .25s ease;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+      }
+      .app-sidebar.open { left: 0; }
+
+      .app-main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .hamburger { display: flex; align-items: center; justify-content: center; }
+
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       RESPONSIVE — móvil: ≤ 600 px
+    ══════════════════════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .app-content { padding: 1rem .75rem; }
+      .perfil-header { flex-direction: column; align-items: flex-start; padding: 1rem; }
+      .campo-editable { flex-wrap: wrap; }
+      .campo-label    { width: 100%; }
+      .tema-btns { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
+
+<!-- Overlay para cerrar sidebar en móvil -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="app-layout">
   <aside class="app-sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-icon" style="background:transparent;padding:0;"><img src="../../img/logo_sf.png" alt="SoLinX" style="width:36px;height:36px;object-fit:contain;border-radius:6px;"></div>
+      <div class="sidebar-logo-icon" style="background:transparent;padding:0;">
+        <img src="../../img/logo_sf.png" alt="SoLinX" style="width:36px;height:36px;object-fit:contain;border-radius:6px;">
+      </div>
       <span class="sidebar-logo-text">SoLinX</span>
     </div>
     <nav class="sidebar-nav">
@@ -34,7 +167,7 @@
         Mis Proyectos
       </a>
       <a class="sidebar-link" href="solicitudes.html">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Solicitudes
       </a>
       <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
@@ -50,41 +183,89 @@
 
   <main class="app-main">
     <header class="app-topbar">
-      <div class="topbar-title">Mi Perfil</div>
+      <div class="topbar-title" style="display:flex;align-items:center;gap:.75rem">
+        <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="3" y1="6"  x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        Mi Perfil
+      </div>
       <div class="topbar-actions">
         <button class="btn-icon" id="themeBtn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1"  x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22"  y1="4.22"  x2="5.64"  y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1"  y1="12" x2="3"  y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36"/>
+            <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"/>
+          </svg>
         </button>
       </div>
     </header>
 
     <div class="app-content">
+
+      <!-- Alerta cambios pendientes -->
+      <div id="alertaPendiente" style="display:none" class="alerta-pendiente">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <strong>Cambios en revisión</strong>
+          <div id="alertaPendienteDetalle" class="text-sm" style="margin-top:.2rem;opacity:.85"></div>
+        </div>
+      </div>
+
+      <!-- Header de perfil -->
       <div class="perfil-header">
         <div class="perfil-foto-wrap" id="fotowrap">
-          <div class="avatar avatar-xl" id="avatarEl" style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem">?</div>
+          <div class="avatar avatar-xl" id="avatarEl"
+               style="background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:2rem">?</div>
           <div class="foto-overlay">📷<br>Cambiar</div>
         </div>
-        <div>
+        <div style="min-width:0;flex:1">
           <h2 id="ph-nombre">Cargando...</h2>
           <p class="text-muted" id="ph-correo">—</p>
           <span class="badge badge-blue" style="margin-top:.5rem">Empresa</span>
         </div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+      <!-- Grid de tarjetas -->
+      <div class="cards-grid">
+
+        <!-- Datos editables -->
         <div class="card">
           <div class="card-header"><h3>Datos de la empresa</h3></div>
-          <div class="card-body" id="datosContainer">
-            <div class="loader-wrap"><div class="spinner"></div></div>
+          <div class="card-body">
+            <div class="campo-editable">
+              <span class="campo-label">Nombre</span>
+              <span class="campo-valor" id="val-nombre">—</span>
+              <button class="btn btn-outline btn-sm campo-btn" onclick="abrirEdicion('nombreEmpresa')">Editar</button>
+            </div>
+            <div class="campo-editable">
+              <span class="campo-label">Teléfono</span>
+              <span class="campo-valor" id="val-telefono">—</span>
+              <button class="btn btn-outline btn-sm campo-btn" onclick="abrirEdicion('telefono')">Editar</button>
+            </div>
+            <div class="campo-editable">
+              <span class="campo-label">Correo</span>
+              <span class="campo-valor" id="val-correo">—</span>
+            </div>
           </div>
         </div>
 
+        <!-- Apariencia + Soporte apilados en la segunda columna -->
         <div style="display:flex;flex-direction:column;gap:1.25rem">
           <div class="card">
             <div class="card-header"><h3>Apariencia</h3></div>
             <div class="card-body">
               <div class="tema-btns">
-                <div class="tema-btn" id="btnTemaClaro" onclick="setTema('light')">☀️ Claro</div>
+                <div class="tema-btn" id="btnTemaClaro"  onclick="setTema('light')">☀️ Claro</div>
                 <div class="tema-btn" id="btnTemaOscuro" onclick="setTema('dark')">🌙 Oscuro</div>
               </div>
             </div>
@@ -98,14 +279,40 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </main>
 </div>
 
+<!-- Modal: Editar campo -->
+<div class="modal-overlay" id="modalEdicion">
+  <div class="modal" style="max-width:440px;width:90%">
+    <div class="modal-header">
+      <h3 id="modal-edicion-titulo">Editar</h3>
+      <button class="btn-icon" onclick="cerrarEdicion()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="text-sm text-muted mb-4">El cambio será enviado al supervisor para su validación. Tu dato actual se mantendrá hasta que sea aprobado.</p>
+      <div class="form-group">
+        <label class="form-label" id="modal-edicion-label">Nuevo valor</label>
+        <input class="form-input" type="text" id="modal-edicion-input" placeholder="">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="cerrarEdicion()">Cancelar</button>
+      <button class="btn btn-primary" id="modal-edicion-btn">Solicitar cambio</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal soporte -->
 <div class="modal-overlay" id="modalSoporte">
-  <div class="modal">
+  <div class="modal" style="width:90%">
     <div class="modal-header"><h3>Contactar Soporte</h3></div>
     <div class="modal-body">
       <div class="form-group">
@@ -123,21 +330,35 @@
 <script type="module">
   import { Api } from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
-  import { toast, initTheme, toggleTheme } from '../../js/utils.js';
+  import { toast, initTheme, toggleTheme, confirmDialog } from '../../js/utils.js';
 
   requireAuth('empresa');
   initTheme();
 
   const idUsuario = Session.idUsuario;
   const idEmpresa = Session.idEmpresa;
-  const nombre    = Session.nombre;
+  let nombre   = Session.nombre;
+  let telefono = '';
+  let correo   = '';
 
   document.getElementById('btn-logout').onclick = () => logout();
   document.getElementById('themeBtn').onclick   = () => { toggleTheme(); actualizarBtnsTheme(); };
-  document.getElementById('ph-nombre').textContent = nombre;
-  document.getElementById('avatarEl').textContent = Session.initials();
 
-  // Foto
+  // ─── Hamburger / sidebar en móvil ─────────────────────
+  const hamburgerBtn   = document.getElementById('hamburgerBtn');
+  const sidebar        = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+  hamburgerBtn.onclick = () => {
+    sidebar.classList.toggle('open');
+    sidebarOverlay.classList.toggle('active');
+  };
+  sidebarOverlay.onclick = () => {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+  };
+
+  // ─── Foto ─────────────────────────────────────────────
   async function cargarFoto() {
     if (!idUsuario) return;
     try {
@@ -171,26 +392,118 @@
     input.click();
   };
 
-  // Datos empresa
+  // ─── Datos empresa ────────────────────────────────────
   async function cargarDatos() {
-    const container = document.getElementById('datosContainer');
     try {
       const res = await Api.obtenerEmpresaPorId(idEmpresa);
       if (!res.ok) throw new Error('Error ' + res.status);
       const e = await res.json();
-      document.getElementById('ph-correo').textContent = e.correo ?? '—';
-      container.innerHTML = `
-        <div class="info-row"><span class="info-label">Nombre</span><span class="info-value">${e.nombreEmpresa ?? 'N/A'}</span></div>
-        <div class="info-row"><span class="info-label">Correo</span><span class="info-value">${e.correo ?? 'N/A'}</span></div>
-        <div class="info-row"><span class="info-label">Teléfono</span><span class="info-value">${e.telefono ?? 'N/A'}</span></div>`;
-    } catch (ex) { container.innerHTML = `<p class="text-muted text-sm">Error al cargar datos: ${ex.message}</p>`; }
+      nombre   = e.nombreEmpresa ?? nombre;
+      telefono = e.telefono ?? '';
+      correo   = e.correo ?? '';
+      document.getElementById('ph-nombre').textContent    = nombre;
+      document.getElementById('ph-correo').textContent    = correo;
+      document.getElementById('val-nombre').textContent   = nombre;
+      document.getElementById('val-telefono').textContent = telefono || 'No registrado';
+      document.getElementById('val-correo').textContent   = correo;
+      document.getElementById('avatarEl').textContent     = Session.initials();
+    } catch (ex) {
+      toast('Error al cargar datos: ' + ex.message, 'error');
+    }
   }
 
-  // Tema
+  // ─── Cambios pendientes en localStorage ───────────────
+  const KEY_PENDIENTES = `solinx_cambios_empresa_${idUsuario}`;
+
+  function getPendientes() {
+    try { return JSON.parse(localStorage.getItem(KEY_PENDIENTES)) ?? []; }
+    catch { return []; }
+  }
+  function setPendientes(lista) {
+    localStorage.setItem(KEY_PENDIENTES, JSON.stringify(lista));
+  }
+  function mostrarAlertaPendientes() {
+    const pendientes = getPendientes();
+    const alerta  = document.getElementById('alertaPendiente');
+    const detalle = document.getElementById('alertaPendienteDetalle');
+    if (!pendientes.length) { alerta.style.display = 'none'; return; }
+    alerta.style.display = 'flex';
+    const nombres = { nombreEmpresa: 'Nombre', telefono: 'Teléfono' };
+    detalle.textContent = `Cambios en espera de aprobación: ${pendientes.map(p => nombres[p.campo]).join(', ')}`;
+  }
+  mostrarAlertaPendientes();
+
+  // ─── Modal edición ────────────────────────────────────
+  const titulos  = { nombreEmpresa: 'Cambiar Nombre', telefono: 'Cambiar Teléfono' };
+  const labels   = { nombreEmpresa: 'Nuevo nombre',   telefono: 'Nuevo teléfono' };
+  const actuales = { nombreEmpresa: () => nombre, telefono: () => telefono };
+  let campoActual = null;
+
+  window.abrirEdicion = function(campo) {
+    const pendientes = getPendientes();
+    if (pendientes.some(p => p.campo === campo)) {
+      toast('Ya tienes un cambio pendiente para este campo', 'error'); return;
+    }
+    campoActual = campo;
+    document.getElementById('modal-edicion-titulo').textContent = titulos[campo];
+    document.getElementById('modal-edicion-label').textContent  = labels[campo];
+    const input = document.getElementById('modal-edicion-input');
+    input.value = actuales[campo]();
+    input.placeholder = actuales[campo]();
+
+    if (campo === 'telefono') {
+      input.type = 'tel'; input.maxLength = 10;
+      input.pattern = '[0-9]{10}';
+      input.oninput = () => { input.value = input.value.replace(/\D/g, '').substring(0, 10); };
+    } else {
+      input.type = 'text'; input.maxLength = 524288;
+      input.pattern = ''; input.oninput = null;
+    }
+    document.getElementById('modalEdicion').classList.add('active');
+  };
+
+  window.cerrarEdicion = function() {
+    document.getElementById('modalEdicion').classList.remove('active');
+    campoActual = null;
+  };
+
+  document.getElementById('modal-edicion-btn').onclick = async () => {
+    if (!campoActual) return;
+    const nuevoValor = document.getElementById('modal-edicion-input').value.trim();
+    if (!nuevoValor) { toast('Ingresa un valor', 'error'); return; }
+    if (nuevoValor === actuales[campoActual]()) { toast('El valor es igual al actual', 'error'); return; }
+    if (campoActual === 'telefono' && !/^\d{10}$/.test(nuevoValor)) {
+      toast('El teléfono debe tener exactamente 10 dígitos', 'error'); return;
+    }
+
+    const ok = await confirmDialog(
+      `¿Solicitar cambio de ${titulos[campoActual].toLowerCase()}?`,
+      `Valor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nEl supervisor deberá aprobar este cambio antes de que se aplique.`
+    );
+    if (!ok) return;
+
+    const pendientes = getPendientes();
+    pendientes.push({ campo: campoActual, valorAnterior: actuales[campoActual](), valorNuevo: nuevoValor, fecha: new Date().toISOString() });
+    setPendientes(pendientes);
+
+    try {
+      const nombresCampo = { nombreEmpresa: 'Nombre de empresa', telefono: 'Teléfono' };
+      await Api.crearNotificacion(12,
+        `Solicitud de cambio de perfil empresa — ${nombresCampo[campoActual]}`,
+        `La empresa ${nombre} solicita cambiar su ${nombresCampo[campoActual].toLowerCase()}.\n\nValor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nRevisa el panel de supervisor para aprobar o rechazar.`
+      );
+    } catch {}
+
+    toast('Solicitud enviada al supervisor ✓', 'success');
+    cerrarEdicion();
+    mostrarAlertaPendientes();
+  };
+
+  // ─── Tema ─────────────────────────────────────────────
   function actualizarBtnsTheme() {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.getElementById('btnTemaClaro').classList.toggle('active', !dark);
-    document.getElementById('btnTemaOscuro').classList.toggle('active', dark);
+    document.getElementById('btnTemaOscuro').classList.toggle('active',  dark);
   }
   window.setTema = function(modo) {
     document.documentElement.setAttribute('data-theme', modo);
@@ -199,7 +512,7 @@
   };
   actualizarBtnsTheme();
 
-  // Soporte
+  // ─── Soporte ──────────────────────────────────────────
   const CORREO_SOPORTE = 'solinx.soporte@gmail.com';
   document.getElementById('btnSoporte').onclick = () => document.getElementById('modalSoporte').classList.add('active');
   document.getElementById('btnEnviarSoporte').onclick = () => {
@@ -210,6 +523,7 @@
     document.getElementById('modalSoporte').classList.remove('active');
   };
 
+  // ─── Init ─────────────────────────────────────────────
   cargarFoto();
   cargarDatos();
 </script>

@@ -108,9 +108,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onFailure(Call<PerfilDTO> call, Throwable t) {
-                // dejar el icono default
-            }
+            public void onFailure(Call<PerfilDTO> call, Throwable t) {}
         });
     }
 
@@ -191,7 +189,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
                     ? proyecto.getFechaTermino().substring(0,10) : "---";
             tvFin.setText("Fin: " + fechaF);
 
-            // Pintar imagen Base64 si existe, si no usar drawable local
             if (proyecto.getImagenProyecto() != null && !proyecto.getImagenProyecto().isEmpty()) {
                 try {
                     byte[] bytes = Base64.decode(proyecto.getImagenProyecto(), Base64.DEFAULT);
@@ -219,6 +216,8 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("ubicacion", proyecto.getUbicacion());
                 intent.putExtra("imagen", proyecto.getImagenRef());
                 intent.putExtra("imagenProyecto", proyecto.getImagenProyecto());
+                intent.putExtra("fechaInicio", proyecto.getFechaInicio());
+                intent.putExtra("fechaTermino", proyecto.getFechaTermino());
                 startActivity(intent);
             });
 

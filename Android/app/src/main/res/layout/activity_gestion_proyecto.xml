@@ -21,6 +21,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="8dp">
+
             <ImageButton
                 android:id="@+id/btnRegresarFlecha"
                 android:layout_width="36dp"
@@ -64,8 +65,6 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1" />
-
-
         </LinearLayout>
 
         <View
@@ -84,67 +83,132 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <!-- Carrera — Dropdown -->
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            android:hint="Carrera enfocada *">
+
+            <AutoCompleteTextView
                 android:id="@+id/etCarrera"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Carrera Enfocada (Ej: Sistemas)"
-                android:inputType="textCapWords"/>
+                android:focusable="false"
+                android:inputType="none"
+                android:cursorVisible="false"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Nombre del proyecto -->
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            android:hint="Nombre del Proyecto *">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombreProyecto"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nombre del Proyecto"/>
+                android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Objetivo -->
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
-            <EditText
+            android:layout_marginBottom="12dp"
+            android:hint="Objetivo del proyecto *">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etObjetivo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Objetivo del proyecto"
                 android:gravity="top"
                 android:inputType="textMultiLine"
                 android:lines="3"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Vacantes y Ubicación en fila -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="12dp">
-            <EditText
-                android:id="@+id/etVacantes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Número de Vacantes (Ej: 3)"
-                android:inputType="number"/>
-        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="15dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Vacantes *">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etVacantes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="Ubicación *">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etUbicacion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Fechas en fila -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginBottom="20dp">
-            <EditText
-                android:id="@+id/etUbicacion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Ubicación"/>
-        </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Sección de Imagen del Proyecto -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Fecha inicio *"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_calendar"
+                app:endIconTint="?attr/colorPrimary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFechaInicio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:cursorVisible="false"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Fecha término *"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_calendar"
+                app:endIconTint="?attr/colorPrimary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFechaTermino"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:cursorVisible="false"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- Imagen del Proyecto -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

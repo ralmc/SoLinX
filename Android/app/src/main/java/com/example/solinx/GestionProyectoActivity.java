@@ -1,6 +1,7 @@
 package com.example.solinx;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -13,8 +14,9 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,10 +32,13 @@ import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
 import com.example.solinx.RESPONSE.ProyectoResponse;
 import com.example.solinx.UTIL.ThemeUtils;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +52,11 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final long MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
 
-    EditText etCarrera, etNombreProyecto, etObjetivo, etVacantes, etUbicacion;
+    AutoCompleteTextView etCarrera;
+    TextInputEditText etNombreProyecto, etObjetivo, etVacantes, etUbicacion;
+    TextInputEditText etFechaInicio, etFechaTermino;
+    TextInputLayout tilFechaInicio, tilFechaTermino;
+
     Button btnGuardar, btnSeleccionarImagen;
     ImageView logoEmpresa, imgPreview;
     TextView tvNotificaciones, tvImagenStatus;
@@ -55,20 +64,34 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     ApiService apiService;
     boolean esEdicion = false;
     int idProyectoEditar = -1;
-    int idEmpresaEditar = -1;
+    int idEmpresaEditar  = -1;
 
     private String imagenBase64 = null;
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
+    private final String[] CARRERAS = {
+            "Ingeniería en Sistemas Computacionales",
+            "Ingeniería en Software",
+            "Ingeniería Industrial",
+            "Ingeniería Mecatrónica",
+            "Ingeniería Informática",
+            "Ingeniería en Inteligencia Artificial",
+            "Ingeniería Aeronáutica",
+            "Ingeniería Biónica",
+            "Programación"
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gestion_proyecto);
 
         inicializarVistas();
+        configurarDropdownCarrera();
+        configurarDatePickers();
         setupImagePicker();
+
         apiService = ApiClient.getClient().create(ApiService.class);
         verificarModoEdicion();
 
@@ -76,28 +99,70 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
         logoEmpresa.setOnClickListener(this);
         tvNotificaciones.setOnClickListener(this);
         btnSeleccionarImagen.setOnClickListener(this);
-    
-        // Botón flecha de regreso
-        try {
-            android.widget.ImageButton btnRegresarFlecha = findViewById(R.id.btnRegresarFlecha);
-            if (btnRegresarFlecha != null) {
-                btnRegresarFlecha.setOnClickListener(v -> finish());
-            }
-        } catch (Exception ignored) {}
-}
+
+        android.widget.ImageButton btnRegresarFlecha = findViewById(R.id.btnRegresarFlecha);
+        if (btnRegresarFlecha != null) {
+            btnRegresarFlecha.setOnClickListener(v -> finish());
+        }
+    }
 
     private void inicializarVistas() {
-        etCarrera = findViewById(R.id.etCarrera);
+        etCarrera        = findViewById(R.id.etCarrera);
         etNombreProyecto = findViewById(R.id.etNombreProyecto);
-        etObjetivo = findViewById(R.id.etObjetivo);
-        etVacantes = findViewById(R.id.etVacantes);
-        etUbicacion = findViewById(R.id.etUbicacion);
-        btnGuardar = findViewById(R.id.btnGuardar);
-        logoEmpresa = findViewById(R.id.logoEmpresa);
+        etObjetivo       = findViewById(R.id.etObjetivo);
+        etVacantes       = findViewById(R.id.etVacantes);
+        etUbicacion      = findViewById(R.id.etUbicacion);
+        etFechaInicio    = findViewById(R.id.etFechaInicio);
+        etFechaTermino   = findViewById(R.id.etFechaTermino);
+        btnGuardar       = findViewById(R.id.btnGuardar);
+        logoEmpresa      = findViewById(R.id.logoEmpresa);
         tvNotificaciones = findViewById(R.id.notificaciones);
         btnSeleccionarImagen = findViewById(R.id.btnSeleccionarImagen);
-        imgPreview = findViewById(R.id.imgPreview);
-        tvImagenStatus = findViewById(R.id.tvImagenStatus);
+        imgPreview       = findViewById(R.id.imgPreview);
+        tvImagenStatus   = findViewById(R.id.tvImagenStatus);
+
+        // Obtener los TextInputLayout de fechas para controlar el ícono
+        tilFechaInicio  = (TextInputLayout) etFechaInicio.getParent().getParent();
+        tilFechaTermino = (TextInputLayout) etFechaTermino.getParent().getParent();
+    }
+
+    private void configurarDropdownCarrera() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_dropdown_item_1line, CARRERAS);
+        etCarrera.setAdapter(adapter);
+        etCarrera.setOnClickListener(v -> etCarrera.showDropDown());
+    }
+
+    private void configurarDatePickers() {
+        etFechaInicio.setOnClickListener(v -> mostrarDatePicker(etFechaInicio, tilFechaInicio));
+        etFechaTermino.setOnClickListener(v -> mostrarDatePicker(etFechaTermino, tilFechaTermino));
+    }
+
+    private void mostrarDatePicker(TextInputEditText campo, TextInputLayout til) {
+        Calendar cal = Calendar.getInstance();
+
+        String fechaActual = campo.getText() != null ? campo.getText().toString() : "";
+        if (!fechaActual.isEmpty()) {
+            try {
+                String[] partes = fechaActual.split("-");
+                cal.set(Integer.parseInt(partes[0]),
+                        Integer.parseInt(partes[1]) - 1,
+                        Integer.parseInt(partes[2]));
+            } catch (Exception ignored) {}
+        }
+
+        DatePickerDialog dialog = new DatePickerDialog(this,
+                (view, year, month, day) -> {
+                    String fecha = String.format("%04d-%02d-%02d", year, month + 1, day);
+                    campo.setText(fecha);
+                    campo.setError(null);
+                    til.setEndIconVisible(true); // ← restaurar ícono al seleccionar fecha
+                },
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH));
+
+        dialog.show();
     }
 
     private void setupImagePicker() {
@@ -109,8 +174,7 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
                             && result.getData().getData() != null) {
                         procesarImagenProyecto(result.getData().getData());
                     }
-                }
-        );
+                });
     }
 
     private int obtenerIdEmpresaActual() {
@@ -119,38 +183,51 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     }
 
     private void verificarModoEdicion() {
-        if (getIntent().hasExtra("idProyecto")) {
-            esEdicion = true;
-            idProyectoEditar = getIntent().getIntExtra("idProyecto", -1);
-            idEmpresaEditar = getIntent().getIntExtra("idEmpresa", -1);
+        if (!getIntent().hasExtra("idProyecto")) return;
 
-            btnGuardar.setText("ACTUALIZAR PROYECTO");
-            etCarrera.setText(getIntent().getStringExtra("carrera"));
-            etNombreProyecto.setText(getIntent().getStringExtra("nombre"));
-            etObjetivo.setText(getIntent().getStringExtra("objetivo"));
-            etVacantes.setText(String.valueOf(getIntent().getIntExtra("vacantes", 1)));
-            etUbicacion.setText(getIntent().getStringExtra("ubicacion"));
+        esEdicion        = true;
+        idProyectoEditar = getIntent().getIntExtra("idProyecto", -1);
+        idEmpresaEditar  = getIntent().getIntExtra("idEmpresa",  -1);
 
-            // Cargar imagen existente del proyecto si hay
-            String imgExistente = getIntent().getStringExtra("imagenProyecto");
-            if (imgExistente != null && !imgExistente.isEmpty()) {
-                try {
-                    byte[] bytes = Base64.decode(imgExistente, Base64.DEFAULT);
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    if (bmp != null) {
-                        imgPreview.setImageBitmap(bmp);
-                        imgPreview.setVisibility(View.VISIBLE);
-                        tvImagenStatus.setText("Imagen actual del proyecto");
-                        imagenBase64 = imgExistente;
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Error cargando imagen existente: " + e.getMessage());
+        btnGuardar.setText("ACTUALIZAR PROYECTO");
+        etCarrera.setText(getIntent().getStringExtra("carrera"), false);
+        etNombreProyecto.setText(getIntent().getStringExtra("nombre"));
+        etObjetivo.setText(getIntent().getStringExtra("objetivo"));
+        etVacantes.setText(String.valueOf(getIntent().getIntExtra("vacantes", 1)));
+        etUbicacion.setText(getIntent().getStringExtra("ubicacion"));
+
+        // Fechas
+        String fi = getIntent().getStringExtra("fechaInicio");
+        String ft = getIntent().getStringExtra("fechaTermino");
+        if (fi != null && !fi.isEmpty()) etFechaInicio.setText(convertirFecha(fi));
+        if (ft != null && !ft.isEmpty()) etFechaTermino.setText(convertirFecha(ft));
+
+        // Imagen existente
+        String imgExistente = getIntent().getStringExtra("imagenProyecto");
+        if (imgExistente != null && !imgExistente.isEmpty()) {
+            try {
+                byte[] bytes = Base64.decode(imgExistente, Base64.DEFAULT);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (bmp != null) {
+                    imgPreview.setImageBitmap(bmp);
+                    imgPreview.setVisibility(View.VISIBLE);
+                    tvImagenStatus.setText("Imagen actual del proyecto");
+                    imagenBase64 = imgExistente;
                 }
+            } catch (Exception e) {
+                Log.e(TAG, "Error cargando imagen: " + e.getMessage());
             }
         }
     }
 
-    // ─── Imagen del Proyecto ──────────────────────────────────────────────────
+    private String convertirFecha(String fecha) {
+        if (fecha == null || fecha.isEmpty()) return "";
+        if (fecha.contains("-")) return fecha.substring(0, 10);
+        String[] p = fecha.split("/");
+        if (p.length == 3) return p[2] + "-" + p[1] + "-" + p[0];
+        return fecha;
+    }
+
     private void seleccionarImagen() {
         String permiso = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
                 ? Manifest.permission.READ_MEDIA_IMAGES
@@ -164,13 +241,16 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE && grantResults.length > 0
+        if (requestCode == PERMISSION_REQUEST_CODE
+                && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             abrirGaleria();
         } else {
-            Toast.makeText(this, "Permiso denegado para acceder a imágenes", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -182,15 +262,14 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
 
     private void procesarImagenProyecto(Uri uri) {
         try {
-            InputStream checkStream = getContentResolver().openInputStream(uri);
-            if (checkStream != null) {
-                int fileSize = checkStream.available();
-                checkStream.close();
-
-                if (fileSize > 10 * 1024 * 1024) {
-                    Toast.makeText(this, "La imagen es demasiado grande. Máximo 10MB.", Toast.LENGTH_LONG).show();
+            InputStream check = getContentResolver().openInputStream(uri);
+            if (check != null) {
+                if (check.available() > 10 * 1024 * 1024) {
+                    check.close();
+                    Toast.makeText(this, "Imagen demasiado grande. Máx 10MB", Toast.LENGTH_LONG).show();
                     return;
                 }
+                check.close();
             }
 
             InputStream stream = getContentResolver().openInputStream(uri);
@@ -202,8 +281,7 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
                 return;
             }
 
-            Bitmap escalado = redimensionar(original, 800, 800);
-
+            Bitmap escalado = recortarA16x9(original, 480, 270);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int calidad = 85;
             escalado.compress(Bitmap.CompressFormat.JPEG, calidad, baos);
@@ -215,44 +293,46 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
             }
 
             if (baos.toByteArray().length > MAX_IMAGE_SIZE_BYTES) {
-                Toast.makeText(this,
-                        "La imagen es demasiado pesada incluso después de comprimir.\nIntenta con una imagen más pequeña.",
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Imagen muy pesada. Usa una más pequeña.", Toast.LENGTH_LONG).show();
                 return;
             }
 
             imagenBase64 = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
-
             imgPreview.setImageBitmap(escalado);
             imgPreview.setVisibility(View.VISIBLE);
 
             float sizeKB = baos.toByteArray().length / 1024f;
-            String sizeText = sizeKB > 1024
-                    ? String.format("%.1f MB", sizeKB / 1024)
-                    : String.format("%.0f KB", sizeKB);
-            tvImagenStatus.setText("Imagen seleccionada (" + sizeText + ")");
+            tvImagenStatus.setText(sizeKB > 1024
+                    ? String.format("Imagen seleccionada (%.1f MB)", sizeKB / 1024)
+                    : String.format("Imagen seleccionada (%.0f KB)", sizeKB));
 
-            Toast.makeText(this, "Imagen cargada correctamente", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Imagen cargada ✓", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
-            Log.e(TAG, "Error al procesar imagen: " + e.getMessage());
-            Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error imagen: " + e.getMessage());
+            Toast.makeText(this, "Error al cargar imagen", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private Bitmap redimensionar(Bitmap bmp, int maxW, int maxH) {
-        int w = bmp.getWidth();
-        int h = bmp.getHeight();
-        if (w <= maxW && h <= maxH) return bmp;
-
-        float ratio = (float) w / h;
-        int newW = maxW, newH = maxH;
-        if ((float) maxW / maxH > ratio) newW = (int) (maxH * ratio);
-        else newH = (int) (maxW / ratio);
-        return Bitmap.createScaledBitmap(bmp, newW, newH, true);
+    private Bitmap recortarA16x9(Bitmap bmp, int targetW, int targetH) {
+        float srcRatio = (float) bmp.getWidth() / bmp.getHeight();
+        float dstRatio = (float) targetW / targetH;
+        int sx, sy, sw, sh;
+        if (srcRatio > dstRatio) {
+            sh = bmp.getHeight();
+            sw = (int) (bmp.getHeight() * dstRatio);
+            sx = (bmp.getWidth() - sw) / 2;
+            sy = 0;
+        } else {
+            sw = bmp.getWidth();
+            sh = (int) (bmp.getWidth() / dstRatio);
+            sx = 0;
+            sy = (bmp.getHeight() - sh) / 2;
+        }
+        Bitmap recortado = Bitmap.createBitmap(bmp, sx, sy, sw, sh);
+        return Bitmap.createScaledBitmap(recortado, targetW, targetH, true);
     }
 
-    // ─── Clicks ───────────────────────────────────────────────────────────────
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -271,50 +351,68 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     }
 
     private boolean validarCampos() {
-        boolean esValido = true;
-        String vacantesTxt = etVacantes.getText().toString().trim();
+        boolean ok = true;
 
-        if (etCarrera.getText().toString().trim().isEmpty()) {
-            etCarrera.setError("Campo de Carrera requerido");
-            esValido = false;
-        }
-        if (etNombreProyecto.getText().toString().trim().isEmpty()) {
-            etNombreProyecto.setError("Campo de Nombre de Proyecto requerido");
-            esValido = false;
-        }
-        if (etObjetivo.getText().toString().trim().isEmpty()) {
-            etObjetivo.setError("Campo de Objetivo requerido");
-            esValido = false;
-        }
-        if (etUbicacion.getText().toString().trim().isEmpty()) {
-            etUbicacion.setError("Campo de Ubicación requerido");
-            esValido = false;
-        }
-        if (vacantesTxt.isEmpty()) {
-            etVacantes.setError("Número de Vacantes requerido");
-            esValido = false;
+        String carrera  = etCarrera.getText() != null ? etCarrera.getText().toString().trim() : "";
+        String nombre   = etNombreProyecto.getText() != null ? etNombreProyecto.getText().toString().trim() : "";
+        String objetivo = etObjetivo.getText() != null ? etObjetivo.getText().toString().trim() : "";
+        String vacTxt   = etVacantes.getText() != null ? etVacantes.getText().toString().trim() : "";
+        String ubic     = etUbicacion.getText() != null ? etUbicacion.getText().toString().trim() : "";
+        String fi       = etFechaInicio.getText() != null ? etFechaInicio.getText().toString().trim() : "";
+        String ft       = etFechaTermino.getText() != null ? etFechaTermino.getText().toString().trim() : "";
+
+        if (carrera.isEmpty())  { etCarrera.setError("Selecciona una carrera"); ok = false; }
+        if (nombre.isEmpty())   { etNombreProyecto.setError("Campo requerido"); ok = false; }
+        if (objetivo.isEmpty()) { etObjetivo.setError("Campo requerido"); ok = false; }
+        if (ubic.isEmpty())     { etUbicacion.setError("Campo requerido"); ok = false; }
+
+        if (vacTxt.isEmpty()) {
+            etVacantes.setError("Campo requerido"); ok = false;
         } else {
             try {
-                int vacantes = Integer.parseInt(vacantesTxt);
-                if (vacantes <= 0) {
-                    etVacantes.setError("El número debe ser mayor a cero");
-                    esValido = false;
-                }
+                int v = Integer.parseInt(vacTxt);
+                if (v <= 0) { etVacantes.setError("Debe ser mayor a 0"); ok = false; }
             } catch (NumberFormatException e) {
-                etVacantes.setError("Debe ser un número entero");
-                esValido = false;
+                etVacantes.setError("Número inválido"); ok = false;
             }
         }
-        return esValido;
+
+        // Fechas — ocultar ícono si hay error, mostrarlo si está bien
+        if (fi.isEmpty()) {
+            etFechaInicio.setError("Selecciona una fecha");
+            tilFechaInicio.setEndIconVisible(false);
+            ok = false;
+        } else {
+            etFechaInicio.setError(null);
+            tilFechaInicio.setEndIconVisible(true);
+        }
+
+        if (ft.isEmpty()) {
+            etFechaTermino.setError("Selecciona una fecha");
+            tilFechaTermino.setEndIconVisible(false);
+            ok = false;
+        } else {
+            etFechaTermino.setError(null);
+            tilFechaTermino.setEndIconVisible(true);
+        }
+
+        if (!fi.isEmpty() && !ft.isEmpty() && ft.compareTo(fi) <= 0) {
+            etFechaTermino.setError("Debe ser posterior a la fecha de inicio");
+            tilFechaTermino.setEndIconVisible(false);
+            ok = false;
+        }
+
+        return ok;
     }
 
     private ProyectoResponse armarObjetoProyecto() {
         ProyectoResponse p = new ProyectoResponse();
-        p.setCarreraEnfocada(etCarrera.getText().toString().trim());
-        p.setNombreProyecto(etNombreProyecto.getText().toString().trim());
-        p.setObjetivo(etObjetivo.getText().toString().trim());
-        p.setUbicacion(etUbicacion.getText().toString().trim());
-
+        p.setCarreraEnfocada(etCarrera.getText() != null ? etCarrera.getText().toString().trim() : "");
+        p.setNombreProyecto(etNombreProyecto.getText() != null ? etNombreProyecto.getText().toString().trim() : "");
+        p.setObjetivo(etObjetivo.getText() != null ? etObjetivo.getText().toString().trim() : "");
+        p.setUbicacion(etUbicacion.getText() != null ? etUbicacion.getText().toString().trim() : "");
+        p.setFechaInicio(etFechaInicio.getText() != null ? etFechaInicio.getText().toString().trim() : "");
+        p.setFechaTermino(etFechaTermino.getText() != null ? etFechaTermino.getText().toString().trim() : "");
         p.setImagenRef("img_default_proyecto");
 
         if (imagenBase64 != null && !imagenBase64.isEmpty()) {
@@ -322,39 +420,32 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
         }
 
         try {
-            String vacantesTxt = etVacantes.getText().toString().trim();
-            p.setVacantes(Integer.parseInt(vacantesTxt));
+            p.setVacantes(Integer.parseInt(
+                    etVacantes.getText() != null ? etVacantes.getText().toString().trim() : "1"));
         } catch (NumberFormatException e) {
             p.setVacantes(1);
         }
 
-        int idEmpresa;
-        if (esEdicion && idEmpresaEditar != -1) {
-            idEmpresa = idEmpresaEditar;
-        } else {
-            idEmpresa = obtenerIdEmpresaActual();
-            if (idEmpresa == -1) {
-                Toast.makeText(this, "Sesión perdida, relogueate", Toast.LENGTH_SHORT).show();
-                idEmpresa = 1;
-            }
-        }
-
+        int idEmpresa = (esEdicion && idEmpresaEditar != -1)
+                ? idEmpresaEditar : obtenerIdEmpresaActual();
+        if (idEmpresa == -1) idEmpresa = 1;
         p.setIdEmpresa(idEmpresa);
+
         return p;
     }
 
     private void crearNuevoProyecto() {
-        ProyectoResponse nuevoProyecto = armarObjetoProyecto();
-        apiService.crearProyecto(nuevoProyecto).enqueue(new Callback<ProyectoResponse>() {
+        ProyectoResponse nuevo = armarObjetoProyecto();
+        apiService.crearProyecto(nuevo).enqueue(new Callback<ProyectoResponse>() {
             @Override
-            public void onResponse(Call<ProyectoResponse> call, Response<ProyectoResponse> response) {
+            public void onResponse(@NonNull Call<ProyectoResponse> call,
+                                   @NonNull Response<ProyectoResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     int idCreado = response.body().getIdProyecto();
-
                     if (imagenBase64 != null && !imagenBase64.isEmpty()) {
                         subirImagenAlProyecto(idCreado);
                     } else {
-                        Toast.makeText(GestionProyectoActivity.this, "Proyecto creado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GestionProyectoActivity.this, "Proyecto creado ✓", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 } else {
@@ -362,23 +453,24 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
                 }
             }
             @Override
-            public void onFailure(Call<ProyectoResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<ProyectoResponse> call, @NonNull Throwable t) {
                 Toast.makeText(GestionProyectoActivity.this, "Error de red", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void actualizarProyecto() {
-        ProyectoResponse proyectoEditado = armarObjetoProyecto();
-        proyectoEditado.setIdProyecto(idProyectoEditar);
-        apiService.actualizarProyecto(idProyectoEditar, proyectoEditado).enqueue(new Callback<ProyectoResponse>() {
+        ProyectoResponse editado = armarObjetoProyecto();
+        editado.setIdProyecto(idProyectoEditar);
+        apiService.actualizarProyecto(idProyectoEditar, editado).enqueue(new Callback<ProyectoResponse>() {
             @Override
-            public void onResponse(Call<ProyectoResponse> call, Response<ProyectoResponse> response) {
+            public void onResponse(@NonNull Call<ProyectoResponse> call,
+                                   @NonNull Response<ProyectoResponse> response) {
                 if (response.isSuccessful()) {
                     if (imagenBase64 != null && !imagenBase64.isEmpty()) {
                         subirImagenAlProyecto(idProyectoEditar);
                     } else {
-                        Toast.makeText(GestionProyectoActivity.this, "Proyecto actualizado", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GestionProyectoActivity.this, "Proyecto actualizado ✓", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 } else {
@@ -386,7 +478,7 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
                 }
             }
             @Override
-            public void onFailure(Call<ProyectoResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<ProyectoResponse> call, @NonNull Throwable t) {
                 Toast.makeText(GestionProyectoActivity.this, "Error de red", Toast.LENGTH_SHORT).show();
             }
         });
@@ -395,20 +487,18 @@ public class GestionProyectoActivity extends AppCompatActivity implements View.O
     private void subirImagenAlProyecto(int idProyecto) {
         Map<String, String> body = new HashMap<>();
         body.put("imagenProyecto", imagenBase64);
-
         apiService.actualizarImagenProyecto(idProyecto, body).enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(GestionProyectoActivity.this, "Proyecto guardado con imagen", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(GestionProyectoActivity.this, "Proyecto guardado, pero error al subir imagen", Toast.LENGTH_SHORT).show();
-                }
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                Toast.makeText(GestionProyectoActivity.this,
+                        response.isSuccessful() ? "Proyecto guardado con imagen ✓" : "Guardado, error al subir imagen",
+                        Toast.LENGTH_SHORT).show();
                 finish();
             }
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(GestionProyectoActivity.this, "Proyecto guardado, pero error de red al subir imagen", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                Toast.makeText(GestionProyectoActivity.this,
+                        "Guardado, error de red al subir imagen", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

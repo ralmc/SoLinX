@@ -2,12 +2,14 @@ package com.SoLinX.controller;
 
 import com.SoLinX.dto.UsuarioDto;
 import com.SoLinX.model.Usuario;
+import com.SoLinX.repository.UsuarioEstudianteRepository;
 import com.SoLinX.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final UsuarioEstudianteRepository usuarioEstudianteRepository;
 
     @GetMapping("/usuario")
     public ResponseEntity<List<UsuarioDto>> lista(
@@ -32,6 +35,14 @@ public class UsuarioController {
     public ResponseEntity<UsuarioDto> getById(@PathVariable Integer id) {
         Usuario u = usuarioService.getById(id);
         return u != null ? ResponseEntity.ok(toDto(u)) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/usuario/boleta/{boleta}")
+    public ResponseEntity<Map<String, Integer>> getIdUsuarioPorBoleta(
+            @PathVariable("boleta") Integer boleta) {
+        return usuarioEstudianteRepository.findByBoleta(boleta)
+                .map(ue -> ResponseEntity.ok(Map.of("idUsuario", ue.getIdUsuario())))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/usuario")

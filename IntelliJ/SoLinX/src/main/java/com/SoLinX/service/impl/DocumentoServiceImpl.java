@@ -18,26 +18,49 @@ public class DocumentoServiceImpl implements DocumentoService {
 
     @Override
     public Documento subirDocumento(Integer boleta, Integer periodo, byte[] archivo, String nombreArchivo) {
-
-        if (periodo < 1 || periodo > 8) {
+        if (periodo < 1 || periodo > 8)
             throw new RuntimeException("El periodo debe estar entre 1 y 8");
-        }
-        if (documentoRepository.existsByEstudiante_BoletaAndPeriodo(boleta, periodo)) {
-            throw new RuntimeException("Ya existe un documento para el periodo " + periodo);
+
+        Documento existente = documentoRepository
+                .findByEstudiante_BoletaAndPeriodo(boleta, periodo).orElse(null);
+
+        if (existente != null) {
+            if (!"rechazado".equalsIgnoreCase(existente.getEstadoDocumento())) {
+                throw new RuntimeException("Ya existe un documento para el periodo " + periodo);
+            }
+            // Reemplazar archivo y resetear estado
+            existente.setArchivo(archivo);
+            existente.setNombreArchivo(nombreArchivo);
+            existente.setFechaSubida(new Date());
+            existente.setEstadoDocumento("pendiente");
+            return documentoRepository.save(existente);
         }
 
         Estudiante estudiante = new Estudiante();
         estudiante.setBoleta(boleta);
-
         Documento documento = Documento.builder()
                 .periodo(periodo)
                 .archivo(archivo)
                 .nombreArchivo(nombreArchivo)
                 .fechaSubida(new Date())
+                .estadoDocumento("pendiente")
                 .estudiante(estudiante)
                 .build();
-
         return documentoRepository.save(documento);
+    }
+
+    @Override
+    public Documento save(Documento documento) {
+        return documentoRepository.save(documento);
+    }
+
+    @Override
+    public Documento actualizarEstado(Integer boleta, Integer periodo, String estado) {
+        Documento doc = documentoRepository
+                .findByEstudiante_BoletaAndPeriodo(boleta, periodo).orElse(null);
+        if (doc == null) return null;
+        doc.setEstadoDocumento(estado);
+        return documentoRepository.save(doc);
     }
 
     @Override

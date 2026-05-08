@@ -65,6 +65,15 @@ public class DocumentoController {
                 .body(doc.getArchivo());
     }
 
+    @PutMapping("/documento/{boleta}/{periodo}/estado")
+    public ResponseEntity<Void> actualizarEstado(
+            @PathVariable("boleta") Integer boleta,
+            @PathVariable("periodo") Integer periodo,
+            @RequestParam("estado") String estado) {
+        Documento doc = documentoService.actualizarEstado(boleta, periodo, estado);
+        return doc != null ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    }
+
     private DocumentoDto convertToDto(Documento doc) {
         return DocumentoDto.builder()
                 .idDocumento(doc.getIdDocumento())
@@ -72,6 +81,7 @@ public class DocumentoController {
                 .nombreArchivo(doc.getNombreArchivo())
                 .fechaSubida(doc.getFechaSubida() != null ? sdf.format(doc.getFechaSubida()) : null)
                 .boleta(doc.getEstudiante().getBoleta())
+                .estadoDocumento(doc.getEstadoDocumento())
                 .build();
     }
 }

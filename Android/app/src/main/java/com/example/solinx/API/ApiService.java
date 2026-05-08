@@ -162,4 +162,8 @@ public interface ApiService {
 
     @PUT("notificacion/usuario/{idUsuario}/leidas")
     Call<Void> marcarTodasComoLeidas(@Path("idUsuario") int idUsuario);
+
+    @POST("notificacion")
+    @Headers("Content-Type: application/json")
+    Call<NotificacionDTO> crearNotificacion(@Body Map<String, String> body);
 }

@@ -54,7 +54,6 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
 
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -66,6 +65,7 @@
                     android:maxLines="1"
                     android:ellipsize="end"
                     android:maxWidth="160dp"/>
+
                 <TextView
                     android:id="@+id/tvNombrePersona"
                     android:layout_width="wrap_content"
@@ -99,13 +99,27 @@
                 android:layout_marginHorizontal="24dp"
                 android:background="?attr/colorPrimary" />
 
+            <!-- ALERTA CAMBIOS PENDIENTES -->
+            <TextView
+                android:id="@+id/tvAlertaPendiente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                android:padding="12dp"
+                android:background="#FFF3CD"
+                android:textColor="#856404"
+                android:textSize="13sp"
+                android:text="⏳ Cambios en revisión por el supervisor"
+                android:visibility="gone"/>
+
             <!-- SELECTOR DE MODO -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="24dp"
                 android:paddingHorizontal="24dp">
 
                 <TextView
@@ -159,6 +173,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="16dp">
 
@@ -178,13 +193,25 @@
                     android:text="Cargando..."
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/btnEditarNombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✏️"
+                    android:textSize="18sp"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
-            <!-- Correo -->
+            <!-- Correo (solo lectura) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="12dp">
 
@@ -204,6 +231,8 @@
                     android:text="Cargando..."
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="16sp"/>
+
+                <!-- Sin botón — correo es solo lectura -->
             </LinearLayout>
 
             <!-- Teléfono -->
@@ -211,8 +240,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="32dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -230,6 +261,17 @@
                     android:text="Cargando..."
                     android:textColor="?android:attr/textColorSecondary"
                     android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/btnEditarTelefono"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✏️"
+                    android:textSize="18sp"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -273,7 +315,6 @@
             android:textColor="?android:attr/textColorSecondary"
             android:gravity="center"
             android:layout_marginBottom="16dp"/>
-
     </LinearLayout>
 
     <!-- FOOTER: CERRAR SESIÓN -->
@@ -298,6 +339,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="8dp"/>
+
         <View
             android:layout_width="180dp"
             android:layout_height="3dp"
