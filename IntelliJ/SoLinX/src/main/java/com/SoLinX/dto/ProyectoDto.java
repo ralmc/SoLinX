@@ -19,6 +19,7 @@ public class ProyectoDto {
     private String imagenProyecto;
     private String nombreEmpresa;
     private String objetivo;
+    private String estadoProyecto;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Mexico_City")
     private Date fechaInicio;

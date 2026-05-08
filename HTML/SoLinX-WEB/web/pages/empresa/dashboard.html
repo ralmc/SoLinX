@@ -82,7 +82,6 @@
       <input type="hidden" id="p-id">
       <input type="hidden" id="p-foto-b64">
 
-      <!-- Foto del proyecto -->
       <div class="form-group">
         <label class="form-label">Foto del proyecto <span class="text-muted text-xs">(opcional)</span></label>
         <img id="foto-preview" class="foto-proyecto-preview" alt="Preview">
@@ -92,7 +91,7 @@
           <div class="text-xs text-muted" style="margin-top:.25rem">JPG, PNG — máx. 2 MB</div>
         </div>
         <button class="btn btn-outline btn-sm" id="btn-quitar-foto" style="display:none;margin-top:.25rem" onclick="quitarFoto()">✕ Quitar foto</button>
-        <p class="text-xs text-muted" style="margin-top:.4rem">⚠️ La imagen se ajustará automáticamente a <strong>480×270 px</strong> (proporción 16:9). Se recomienda usar imágenes horizontales.</p>
+        <p class="text-xs text-muted" style="margin-top:.4rem">⚠️ La imagen se ajustará automáticamente a <strong>480×270 px</strong> (proporción 16:9).</p>
       </div>
 
       <div class="form-row">
@@ -151,11 +150,10 @@
   </div>
 </div>
 
-
 <script type="module">
   import { Api }   from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
-  import { toast, initTheme, toggleTheme, showLoader, fmtFecha, confirmDialog } from '../../js/utils.js';
+  import { toast, initTheme, toggleTheme, showLoader, confirmDialog } from '../../js/utils.js';
 
   requireAuth('empresa');
   initTheme();
@@ -184,35 +182,26 @@
       if (file.size > 10_000_000) { toast('La imagen no puede superar 10 MB', 'error'); return; }
       const reader = new FileReader();
       reader.onload = e => {
-        // Redimensionar automáticamente a 480x270 (16:9)
         const img = new Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          canvas.width  = 480;
-          canvas.height = 270;
+          canvas.width = 480; canvas.height = 270;
           const ctx = canvas.getContext('2d');
-          // Centrar y recortar manteniendo proporción
           const srcRatio = img.width / img.height;
           const dstRatio = 480 / 270;
           let sx, sy, sw, sh;
           if (srcRatio > dstRatio) {
-            sh = img.height;
-            sw = img.height * dstRatio;
-            sx = (img.width - sw) / 2;
-            sy = 0;
+            sh = img.height; sw = img.height * dstRatio;
+            sx = (img.width - sw) / 2; sy = 0;
           } else {
-            sw = img.width;
-            sh = img.width / dstRatio;
-            sx = 0;
-            sy = (img.height - sh) / 2;
+            sw = img.width; sh = img.width / dstRatio;
+            sx = 0; sy = (img.height - sh) / 2;
           }
           ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 480, 270);
           const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          const b64 = dataUrl.split(',')[1];
-          document.getElementById('p-foto-b64').value = b64;
+          document.getElementById('p-foto-b64').value = dataUrl.split(',')[1];
           const preview = document.getElementById('foto-preview');
-          preview.src = dataUrl;
-          preview.style.display = 'block';
+          preview.src = dataUrl; preview.style.display = 'block';
           document.getElementById('foto-wrap').style.display = 'none';
           document.getElementById('btn-quitar-foto').style.display = '';
         };
@@ -245,6 +234,12 @@
     }
   }
 
+  function badgeEstadoProyecto(estado) {
+    if (estado === 'aprobado')  return '<span class="badge badge-green">✓ Aprobado</span>';
+    if (estado === 'rechazado') return '<span class="badge badge-red">✗ Rechazado</span>';
+    return '<span class="badge badge-yellow">⏳ En revisión</span>';
+  }
+
   function renderProyectos(lista, container) {
     if (!lista.length) {
       container.innerHTML = `
@@ -266,7 +261,10 @@
         <div class="proyecto-card-body">
           <div class="flex justify-between items-center" style="margin-bottom:.25rem">
             <span class="text-muted text-xs">#${i+1}</span>
-            <span class="badge badge-blue">${p.carreraEnfocada}</span>
+            <div style="display:flex;gap:.35rem;align-items:center">
+              <span class="badge badge-blue">${p.carreraEnfocada}</span>
+              ${badgeEstadoProyecto(p.estadoProyecto)}
+            </div>
           </div>
           <div class="proyecto-card-title">${p.nombreProyecto}</div>
           <div class="proyecto-card-meta" style="margin:.5rem 0">
@@ -275,10 +273,11 @@
           </div>
           <p class="text-sm text-muted">${(p.objetivo??'').substring(0,90)}${(p.objetivo?.length??0)>90?'...':''}</p>
           <div style="font-size:.75rem;color:var(--text-3);margin:.5rem 0">
-            Inicio: ${p.fechaInicio ?? "N/A"} | Fin: ${p.fechaTermino ?? "N/A"}
+            Inicio: ${p.fechaInicio ?? 'N/A'} | Fin: ${p.fechaTermino ?? 'N/A'}
           </div>
           <div class="proyecto-card-actions">
-            <button class="btn btn-outline btn-sm" onclick='editarProyecto(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Editar</button>
+            ${p.estadoProyecto !== 'aprobado' ? `
+              <button class="btn btn-outline btn-sm" onclick='editarProyecto(${JSON.stringify(p).replace(/'/g,"&#39;")})'>Editar</button>` : ''}
             <button class="btn btn-danger btn-sm" onclick="eliminar(${p.idProyecto})">Eliminar</button>
           </div>
         </div>
@@ -297,7 +296,6 @@
     document.getElementById('btn-guardar').onclick = guardarProyecto;
   };
 
-  // Convierte "DD/MM/YYYY" → "YYYY-MM-DD" para el input date
   function convertirFecha(fecha) {
     if (!fecha) return '';
     if (fecha.includes('-')) return fecha.substring(0, 10);
@@ -315,8 +313,6 @@
     document.getElementById('p-ubicacion').value = p.ubicacion ?? '';
     document.getElementById('p-inicio').value    = convertirFecha(p.fechaInicio);
     document.getElementById('p-termino').value   = convertirFecha(p.fechaTermino);
-
-    // Foto existente
     quitarFoto();
     if (p.imagenProyecto) {
       document.getElementById('p-foto-b64').value = p.imagenProyecto;
@@ -326,7 +322,6 @@
       document.getElementById('foto-wrap').style.display = 'none';
       document.getElementById('btn-quitar-foto').style.display = '';
     }
-
     document.getElementById('modalProyecto').classList.add('active');
     document.getElementById('btn-guardar').onclick = () => actualizarProyecto(p.idProyecto);
   };
@@ -339,8 +334,10 @@
     btn.disabled = true; btn.textContent = 'Guardando...';
     try {
       const res = await Api.crearProyecto(dto);
-      if (res.ok) { toast('Proyecto creado ✓', 'success'); cerrarModal(); cargarProyectos(); }
-      else toast('Error: ' + res.status, 'error');
+      if (res.ok) {
+        toast('Proyecto creado ✓ — en espera de aprobación del supervisor', 'success');
+        cerrarModal(); cargarProyectos();
+      } else toast('Error: ' + res.status, 'error');
     } catch (e) { toast(e.message, 'error'); }
     finally { btn.disabled = false; btn.textContent = 'Guardar'; }
   }
@@ -370,32 +367,25 @@
     const termino   = document.getElementById('p-termino').value;
     const fotob64   = document.getElementById('p-foto-b64').value;
 
-    // Validar campos obligatorios
-    if (!nombre)    { toast('Ingresa el nombre del proyecto', 'error', 6000); return null; }
-    if (!carrera)   { toast('Selecciona una carrera', 'error', 6000); return null; }
-    if (!objetivo)  { toast('Ingresa el objetivo del proyecto', 'error', 6000); return null; }
-    if (!vacantesV || vacantes < 1) { toast('Ingresa al menos 1 vacante', 'error', 6000); return null; }
-    if (!ubicacion) { toast('Ingresa la ubicación', 'error', 6000); return null; }
-    if (!inicio)    { toast('Selecciona la fecha de inicio', 'error', 6000); return null; }
-    if (!termino)   { toast('Selecciona la fecha de término', 'error', 6000); return null; }
-
-    // Validar fecha término después de inicio
-    if (termino <= inicio) { toast('La fecha de término debe ser posterior a la de inicio', 'error', 6000); return null; }
+    if (!nombre)    { toast('Ingresa el nombre del proyecto', 'error'); return null; }
+    if (!carrera)   { toast('Selecciona una carrera', 'error'); return null; }
+    if (!objetivo)  { toast('Ingresa el objetivo del proyecto', 'error'); return null; }
+    if (!vacantesV || vacantes < 1) { toast('Ingresa al menos 1 vacante', 'error'); return null; }
+    if (!ubicacion) { toast('Ingresa la ubicación', 'error'); return null; }
+    if (!inicio)    { toast('Selecciona la fecha de inicio', 'error'); return null; }
+    if (!termino)   { toast('Selecciona la fecha de término', 'error'); return null; }
+    if (termino <= inicio) { toast('La fecha de término debe ser posterior a la de inicio', 'error'); return null; }
 
     return {
-      nombreProyecto: nombre,
-      carreraEnfocada: carrera,
-      objetivo,
-      vacantes,
-      ubicacion,
-      fechaInicio: inicio,
-      fechaTermino: termino,
+      nombreProyecto: nombre, carreraEnfocada: carrera,
+      objetivo, vacantes, ubicacion,
+      fechaInicio: inicio, fechaTermino: termino,
       imagenProyecto: fotob64 || null
     };
   }
 
   window.eliminar = async function(id) {
-    const ok = await confirmDialog('Eliminar proyecto', '¿Estás seguro de eliminar este proyecto? Esta acción no se puede deshacer.');
+    const ok = await confirmDialog('Eliminar proyecto', '¿Estás seguro? Esta acción no se puede deshacer.');
     if (!ok) return;
     try {
       const res = await Api.eliminarProyecto(id);

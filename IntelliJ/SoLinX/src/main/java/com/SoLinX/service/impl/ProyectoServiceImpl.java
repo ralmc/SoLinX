@@ -37,6 +37,8 @@ public class ProyectoServiceImpl implements ProyectoService {
     @Override
     public Proyecto update(Integer id, Proyecto bProyecto) {
 
+        // NO actualizar estadoProyecto en el update normal
+        // aux.setEstadoProyecto ya no se toca aquí
         Proyecto aux = proyectoRepository.findById(id).orElse(null);
 
         if (aux != null) {

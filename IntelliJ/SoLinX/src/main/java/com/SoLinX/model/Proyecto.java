@@ -52,4 +52,7 @@ public class Proyecto {
     @ManyToOne
     @JoinColumn(name = "idEmpresa", nullable = false)
     private Empresa empresa;
+
+    @Column(name = "estadoProyecto", nullable = false)
+    private String estadoProyecto = "pendiente";
 }

@@ -67,6 +67,11 @@ export const Api = {
     },
     actualizarEstadoDocumento: (boleta, periodo, estado) =>
     put(`documento/${boleta}/${periodo}/estado?estado=${encodeURIComponent(estado)}`),
+    
+    getProyectos: () => get('proyecto?soloAprobados=true'),
+    getProyectosAdmin: () => get('proyecto'),
+    actualizarEstadoProyecto: (id, estado) => 
+        put(`proyecto/${id}/estado?estado=${encodeURIComponent(estado)}`),
 
     // ─── Horario ─────────────────────────────────────────────
     getHorario:    (boleta) => get(`horario/${boleta}`),

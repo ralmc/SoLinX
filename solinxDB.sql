@@ -123,6 +123,7 @@ CREATE TABLE Proyecto (
     fechaTermino TIMESTAMP NULL DEFAULT NULL,
     imagenRef VARCHAR(100) DEFAULT 'img_default_proyecto',
     imagenProyecto LONGTEXT DEFAULT NULL,
+    estadoProyecto ENUM('pendiente', 'aprobado', 'rechazado') NOT NULL DEFAULT 'pendiente',
     idEmpresa INT NOT NULL,
     FOREIGN KEY (idEmpresa) REFERENCES Empresa(idEmpresa) ON UPDATE CASCADE ON DELETE CASCADE
 );
@@ -228,58 +229,51 @@ INSERT INTO UsuarioSupervisor (idUsuario, idSupervisor) VALUES
 (12, 1);
 
 -- ─── 6. PROYECTOS (2 por empresa, inicio 23/04/2026, fin 31/07/2026) ──
-INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, fechaInicio, fechaTermino, imagenRef, idEmpresa) VALUES
+INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, fechaInicio, fechaTermino, imagenRef, estadoProyecto, idEmpresa) VALUES
 -- TechNova (2 proyectos)
 ('Ingeniería en Software',
  'Sistema de Gestión Escolar v2.0',
  'Crear un sistema web moderno para la gestión de datos escolares.',
  3, 'Av. IPN 2508, Zacatenco, CDMX',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_gestion', 1),
-
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_gestion', 'aprobado', 1),
 ('Ingeniería Aeronáutica',
  'Proyecto Icarus',
  'Desarrollo e implementación de un dron de uso académico.',
  2, 'Blvd. Miguel de Cervantes 120, Querétaro',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_dron', 1),
-
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_dron', 'aprobado', 1),
 -- AeroDynamics (2 proyectos)
 ('Logística Industrial',
  'App Inventarios FastTrack',
  'App móvil para gestión de inventarios en tiempo real.',
  4, 'Calz. Vallejo 1003, Gustavo A. Madero, CDMX',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_inventario', 2),
-
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_inventario', 'aprobado', 2),
 ('Ingeniería Mecatrónica',
  'Robot Ensamblador v3',
  'Diseño y programación de brazo robótico para línea de ensamble.',
  2, 'Periférico Sur 4349, Jardines del Pedregal, CDMX',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 2),
-
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 'aprobado', 2),
 -- SoftSolutions (2 proyectos)
 ('Ingeniería Eléctrica',
  'EcoMonitor Inteligente',
  'Sistema de monitoreo de consumo eléctrico con alertas automáticas.',
  2, 'Av. Insurgentes Sur 800, Del Valle, Edomex',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_energia', 3),
-
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_energia', 'aprobado', 3),
 ('Ingeniería en Inteligencia Artificial',
  'Chatbot SoftAssist V2',
  'Asistente virtual con procesamiento de lenguaje natural para soporte técnico.',
  3, 'Calle Tokio 35, Juárez, CDMX',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 3),
-
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 'aprobado', 3),
 -- ElectroCorp (2 proyectos)
 ('Desarrollo Backend',
  'API de Pagos Seguros',
  'Crear una API segura para procesamiento de pagos en línea.',
  2, 'Lago Zurich 245, Ampliación Granada, CDMX',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 4),
-
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 'aprobado', 4),
 ('Ingeniería Informática',
  'Dashboard Analytics Pro',
  'Panel de análisis de datos en tiempo real para toma de decisiones empresariales.',
  3, 'Av. Santa Fe 505, Cuajimalpa, CDMX',
- '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 4);
+ '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 'aprobado', 4);
 
 -- ─── 7. PERFILES ───────────────────────────────────────
 INSERT INTO Perfil (tema, idUsuario) VALUES
