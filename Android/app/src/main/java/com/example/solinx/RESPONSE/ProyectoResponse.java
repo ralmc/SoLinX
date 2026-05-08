@@ -18,6 +18,7 @@ public class ProyectoResponse implements Serializable {
     private String nombreEmpresa;
     private String telefonoEmpresa;
     private String fotoEmpresa;
+    private String estadoProyecto;  // pendiente | aprobado | rechazado
 
     public ProyectoResponse() {}
 
@@ -35,28 +36,29 @@ public class ProyectoResponse implements Serializable {
     public String getNombreEmpresa() { return nombreEmpresa; }
     public String getTelefonoEmpresa() { return telefonoEmpresa; }
     public String getFotoEmpresa() { return fotoEmpresa; }
+    public String getEstadoProyecto() { return estadoProyecto; }
 
     public void setIdProyecto(Integer idProyecto) { this.idProyecto = idProyecto; }
-    public void setCarreraEnfocada(String carreraEnfocada) { this.carreraEnfocada = carreraEnfocada; }
-    public void setNombreProyecto(String nombreProyecto) { this.nombreProyecto = nombreProyecto; }
-    public void setObjetivo(String objetivo) { this.objetivo = objetivo; }
-    public void setVacantes(Integer vacantes) { this.vacantes = vacantes; }
-    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
-    public void setFechaInicio(String fechaInicio) { this.fechaInicio = fechaInicio; }
-    public void setFechaTermino(String fechaTermino) { this.fechaTermino = fechaTermino; }
-    public void setImagenRef(String imagenRef) { this.imagenRef = imagenRef; }
-    public void setImagenProyecto(String imagenProyecto) { this.imagenProyecto = imagenProyecto; }
-    public void setIdEmpresa(Integer idEmpresa) { this.idEmpresa = idEmpresa; }
-    public void setNombreEmpresa(String nombreEmpresa) { this.nombreEmpresa = nombreEmpresa; }
-    public void setTelefonoEmpresa(String telefonoEmpresa) { this.telefonoEmpresa = telefonoEmpresa; }
-    public void setFotoEmpresa(String fotoEmpresa) { this.fotoEmpresa = fotoEmpresa; }
+    public void setCarreraEnfocada(String c) { this.carreraEnfocada = c; }
+    public void setNombreProyecto(String n) { this.nombreProyecto = n; }
+    public void setObjetivo(String o) { this.objetivo = o; }
+    public void setVacantes(Integer v) { this.vacantes = v; }
+    public void setUbicacion(String u) { this.ubicacion = u; }
+    public void setFechaInicio(String f) { this.fechaInicio = f; }
+    public void setFechaTermino(String f) { this.fechaTermino = f; }
+    public void setImagenRef(String i) { this.imagenRef = i; }
+    public void setImagenProyecto(String i) { this.imagenProyecto = i; }
+    public void setIdEmpresa(Integer i) { this.idEmpresa = i; }
+    public void setNombreEmpresa(String n) { this.nombreEmpresa = n; }
+    public void setTelefonoEmpresa(String t) { this.telefonoEmpresa = t; }
+    public void setFotoEmpresa(String f) { this.fotoEmpresa = f; }
+    public void setEstadoProyecto(String e) { this.estadoProyecto = e; }
 
     public String getFechasFormateadas() {
-        if (fechaInicio != null && fechaTermino != null) {
+        if (fechaInicio != null && fechaTermino != null)
             return "Fecha: " + fechaInicio + " - " + fechaTermino;
-        } else if (fechaInicio != null) {
+        else if (fechaInicio != null)
             return "Fecha Inicio: " + fechaInicio;
-        }
         return "Fechas no disponibles";
     }
 }

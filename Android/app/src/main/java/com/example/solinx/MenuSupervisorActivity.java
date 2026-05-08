@@ -28,6 +28,7 @@ public class MenuSupervisorActivity extends AppCompatActivity {
     private CardView cardAprobarSolicitudAlumno;
     private CardView cardAprobarAceptacionEmpresa;
     private CardView cardDocumentos;
+    private CardView cardProyectosEmpresas;
 
     private Supervisor supervisor;
     private ApiService apiService;
@@ -52,6 +53,7 @@ public class MenuSupervisorActivity extends AppCompatActivity {
         cardAprobarSolicitudAlumno = findViewById(R.id.card_aprobar_solicitud_alumno);
         cardAprobarAceptacionEmpresa = findViewById(R.id.card_aprobar_aceptacion_empresa);
         cardDocumentos            = findViewById(R.id.card_documentos);
+        cardProyectosEmpresas = findViewById(R.id.card_proyectos_empresas);
     }
 
     private void cargarDatosSupervisor() {
@@ -104,6 +106,16 @@ public class MenuSupervisorActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, AprobarSolicitudesAlumnosActivity.class);
                 intent.putExtra("idSupervisor", supervisor.getIdSupervisor());
                 intent.putExtra("idEmpresa", supervisor.getIdEmpresa());
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Espere a que carguen los datos", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        cardProyectosEmpresas.setOnClickListener(v -> {
+            if (supervisor != null) {
+                Intent intent = new Intent(this, SupervisorProyectosActivity.class);
+                intent.putExtra("idSupervisor", supervisor.getIdSupervisor());
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "Espere a que carguen los datos", Toast.LENGTH_SHORT).show();

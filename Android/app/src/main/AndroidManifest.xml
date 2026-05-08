@@ -25,6 +25,9 @@
             android:name=".SupervisorDocumentos"
             android:exported="false" />
         <activity
+            android:name=".SupervisorProyectosActivity"
+            android:exported="false"/>
+        <activity
             android:name=".CONEXION.InicioHelper"
             android:exported="false" />
         <activity

@@ -125,6 +125,9 @@ public interface ApiService {
     @GET("usuario/boleta/{boleta}")
     Call<Map<String, Integer>> getIdUsuarioPorBoleta(@Path("boleta") int boleta);
 
+    @PUT("proyecto/{id}/estado")
+    Call<Void> actualizarEstadoProyecto(@Path("id") int id, @Query("estado") String estado);
+
     // ── Horario ───────────────────────────────────────────────────────────────
     @GET("horario/{boleta}")
     Call<HorarioDTO> obtenerHorario(@Path("boleta") int boleta);
