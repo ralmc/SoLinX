@@ -56,6 +56,7 @@ public class AlumnoDocumentos extends Fragment {
         pdfLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(), uri -> {
                     if (uri == null || periodoSeleccionado == -1) return;
+
                     // Validar tamaño
                     long tamañoArchivo = 0;
                     Cursor cursorSize = requireContext().getContentResolver()
@@ -68,7 +69,7 @@ public class AlumnoDocumentos extends Fragment {
 
                     if (tamañoArchivo > 1_500_000L) {
                         Toast.makeText(requireContext(),
-                                "El PDF no puede superar 1.5 MB (tamaño actual: " +
+                                "El PDF no puede superar 1.5 MB (actual: " +
                                         String.format("%.2f", tamañoArchivo / 1_000_000.0) + " MB)",
                                 Toast.LENGTH_LONG).show();
                         return;
@@ -102,6 +103,7 @@ public class AlumnoDocumentos extends Fragment {
         recyclerPeriodos = view.findViewById(R.id.recyclerPeriodos);
         recyclerPeriodos.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        // Inicializar con periodos vacíos
         List<DocumentoDTO> periodosVacios = new ArrayList<>();
         for (int i = 0; i < 8; i++) periodosVacios.add(null);
 
@@ -109,14 +111,13 @@ public class AlumnoDocumentos extends Fragment {
             periodoSeleccionado = periodo;
             pdfLauncher.launch("application/pdf");
         });
-
         periodoAdapter.setOnConfirmarClickListener((periodo, uri) -> subirPDF(uri, periodo));
-
         recyclerPeriodos.setAdapter(periodoAdapter);
+
         cargarDocumentos();
     }
 
-    private void cargarDocumentos() {
+    public void cargarDocumentos() {
         if (boleta == null) {
             Log.e(TAG, "Boleta es null");
             return;
@@ -138,47 +139,59 @@ public class AlumnoDocumentos extends Fragment {
                     }
                 }
 
-                int primerPeriodoDisponible = 1;
-                for (int i = 0; i < 8; i++) {
-                    if (periodos.get(i) != null) {
-                        primerPeriodoDisponible = i + 2;
-                    } else {
-                        break;
-                    }
-                }
-                final int periodoDesbloqueado = primerPeriodoDisponible;
+                // ─── Lógica de bloqueo por estado ─────────────────
+                // Un periodo está disponible si:
+                // 1. Es el periodo 1 y no tiene documento
+                // 2. El periodo anterior está APROBADO y este no tiene documento
+                // 3. El periodo actual está RECHAZADO (puede resubir)
+                int periodoDesbloqueado = calcularPeriodoDesbloqueado(periodos);
 
-                periodoAdapter = new PeriodoAdapter(periodos, periodoDesbloqueado, periodo -> {
-                    periodoSeleccionado = periodo;
-                    pdfLauncher.launch("application/pdf");
+                final int periodoFinal = periodoDesbloqueado;
+
+                requireActivity().runOnUiThread(() -> {
+                    periodoAdapter = new PeriodoAdapter(periodos, periodoFinal, periodo -> {
+                        periodoSeleccionado = periodo;
+                        pdfLauncher.launch("application/pdf");
+                    });
+                    periodoAdapter.setOnConfirmarClickListener((periodo, uri) -> subirPDF(uri, periodo));
+                    recyclerPeriodos.setAdapter(periodoAdapter);
                 });
-
-                periodoAdapter.setOnConfirmarClickListener((periodo, uri) -> subirPDF(uri, periodo));
-                recyclerPeriodos.setAdapter(periodoAdapter);
             }
 
             @Override
             public void onFailure(@NonNull Call<List<DocumentoDTO>> call, @NonNull Throwable t) {
                 Log.e(TAG, "Error: " + t.getMessage());
-
-                List<DocumentoDTO> periodos = new ArrayList<>();
-                for (int i = 1; i <= 8; i++) periodos.add(null);
-
-                periodoAdapter = new PeriodoAdapter(periodos, 1, periodo -> {
-                    periodoSeleccionado = periodo;
-                    pdfLauncher.launch("application/pdf");
-                });
-
-                periodoAdapter.setOnConfirmarClickListener((periodo, uri) -> subirPDF(uri, periodo));
-                recyclerPeriodos.setAdapter(periodoAdapter);
-
-                Toast.makeText(requireContext(),
-                        "Error al cargar documentos: " + t.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                requireActivity().runOnUiThread(() ->
+                        Toast.makeText(requireContext(),
+                                "Error al cargar documentos: " + t.getMessage(),
+                                Toast.LENGTH_SHORT).show());
             }
         });
     }
 
+    // ─── Calcular qué periodo está desbloqueado ────────────────────────────
+    private int calcularPeriodoDesbloqueado(List<DocumentoDTO> periodos) {
+        for (int i = 0; i < 8; i++) {
+            DocumentoDTO doc = periodos.get(i);
+            int numeroPeriodo = i + 1;
+
+            if (doc == null) {
+                // Sin documento — disponible si es el primero o el anterior está aprobado
+                if (numeroPeriodo == 1) return 1;
+                DocumentoDTO anterior = periodos.get(i - 1);
+                if (anterior != null && "aprobado".equalsIgnoreCase(anterior.getEstadoDocumento())) {
+                    return numeroPeriodo;
+                }
+                // Si el anterior no está aprobado, está bloqueado
+                return -1; // ninguno disponible por ahora
+            }
+            // Si está rechazado, ese mismo periodo está disponible para resubir
+            // (el PeriodoAdapter lo maneja directamente por el estado del doc)
+        }
+        return -1; // todos subidos
+    }
+
+    // ─── Subir PDF ────────────────────────────────────────────────────────
     private void subirPDF(Uri uri, int periodo) {
         if (boleta == null) return;
 
@@ -190,8 +203,7 @@ public class AlumnoDocumentos extends Fragment {
             inputStream.read(bytes);
             inputStream.close();
 
-            RequestBody requestBody = RequestBody.create(
-                    MediaType.parse("application/pdf"), bytes);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/pdf"), bytes);
             MultipartBody.Part archivoPart = MultipartBody.Part.createFormData(
                     "archivo", nombreArchivo, requestBody);
 
@@ -208,7 +220,7 @@ public class AlumnoDocumentos extends Fragment {
                                 cargarDocumentos();
                             } else if (response.code() == 409) {
                                 Toast.makeText(requireContext(),
-                                        "Ya existe un documento para el Período " + periodo,
+                                        "Error al subir el Período " + periodo,
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(requireContext(),
@@ -218,8 +230,7 @@ public class AlumnoDocumentos extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(@NonNull Call<DocumentoDTO> call,
-                                              @NonNull Throwable t) {
+                        public void onFailure(@NonNull Call<DocumentoDTO> call, @NonNull Throwable t) {
                             Toast.makeText(requireContext(),
                                     "Error de red: " + t.getMessage(),
                                     Toast.LENGTH_SHORT).show();

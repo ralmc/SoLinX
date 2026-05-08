@@ -34,7 +34,7 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
     private OnConfirmarClickListener listenerConfirmar;
     private final int periodoDesbloqueado;
 
-    private final Map<Integer, Uri> urisTemp = new HashMap<>();
+    private final Map<Integer, Uri>    urisTemp    = new HashMap<>();
     private final Map<Integer, String> nombresTemp = new HashMap<>();
 
     public PeriodoAdapter(List<DocumentoDTO> periodos,
@@ -78,58 +78,107 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
 
         holder.tvPeriodo.setText("Periodo " + numeroPeriodo);
 
-        // ─── Ya subido ─────────────────────────────────────
+        // ─── Ya subido — mostrar según estado ─────────────────
         if (doc != null) {
-            holder.tvEstado.setText(doc.getNombreArchivo());
-            holder.tvEstado.setVisibility(View.VISIBLE);
-            holder.btnSubir.setVisibility(View.GONE);
-            holder.layoutPrevia.setVisibility(View.GONE);
-            setCardEstado(holder, true);
+            String estado = doc.getEstadoDocumento();
+            if (estado == null) estado = "pendiente";
 
-            // ─── Tiene previa pendiente de confirmar ───────────
+            switch (estado) {
+                case "aprobado":
+                    // Verde — aprobado, no puede resubir
+                    holder.tvEstado.setText("✓ " + doc.getNombreArchivo());
+                    holder.tvEstado.setTextColor(0xFF38A169);
+                    holder.tvEstado.setVisibility(View.VISIBLE);
+                    holder.btnSubir.setVisibility(View.GONE);
+                    holder.layoutPrevia.setVisibility(View.GONE);
+                    holder.tvEstadoBadge.setText("✓ Aprobado");
+                    holder.tvEstadoBadge.setBackgroundTintList(ColorStateList.valueOf(0xFF38A169));
+                    holder.tvEstadoBadge.setVisibility(View.VISIBLE);
+                    setCardColor(holder, 0x2038A169);
+                    holder.itemView.setAlpha(1.0f);
+                    break;
+
+                case "rechazado":
+                    // Rojo — rechazado, puede resubir
+                    holder.tvEstado.setText("✗ " + doc.getNombreArchivo() + " — Rechazado");
+                    holder.tvEstado.setTextColor(0xFFE53E3E);
+                    holder.tvEstado.setVisibility(View.VISIBLE);
+                    holder.btnSubir.setVisibility(View.VISIBLE);
+                    holder.btnSubir.setText("↑ Resubir");
+                    holder.btnSubir.setEnabled(true);
+                    holder.btnSubir.setBackgroundTintList(ColorStateList.valueOf(0xFFE53E3E));
+                    holder.btnSubir.setOnClickListener(v -> listenerSubir.onSubir(numeroPeriodo));
+                    holder.layoutPrevia.setVisibility(View.GONE);
+                    holder.tvEstadoBadge.setText("✗ Rechazado");
+                    holder.tvEstadoBadge.setBackgroundTintList(ColorStateList.valueOf(0xFFE53E3E));
+                    holder.tvEstadoBadge.setVisibility(View.VISIBLE);
+                    setCardColor(holder, 0x20E53E3E);
+                    holder.itemView.setAlpha(1.0f);
+                    break;
+
+                default:
+                    // Amarillo — pendiente, en revisión, no puede resubir
+                    holder.tvEstado.setText("⏳ " + doc.getNombreArchivo() + " — En revisión");
+                    holder.tvEstado.setTextColor(0xFFD69E2E);
+                    holder.tvEstado.setVisibility(View.VISIBLE);
+                    holder.btnSubir.setVisibility(View.GONE);
+                    holder.layoutPrevia.setVisibility(View.GONE);
+                    holder.tvEstadoBadge.setText("⏳ En revisión");
+                    holder.tvEstadoBadge.setBackgroundTintList(ColorStateList.valueOf(0xFFD69E2E));
+                    holder.tvEstadoBadge.setVisibility(View.VISIBLE);
+                    setCardColor(holder, 0x20D69E2E);
+                    holder.itemView.setAlpha(1.0f);
+                    break;
+            }
+
+            // ─── Tiene previa pendiente de confirmar ───────────────
         } else if (uriTemp != null) {
             holder.tvEstado.setVisibility(View.GONE);
+            holder.tvEstadoBadge.setVisibility(View.GONE);
             holder.btnSubir.setVisibility(View.GONE);
             holder.layoutPrevia.setVisibility(View.VISIBLE);
             holder.tvNombreArchivo.setText("📄 " + (nombreTemp != null ? nombreTemp : "archivo.pdf"));
-            setCardEstado(holder, true);
+            setCardColor(holder, 0x00000000);
+            holder.itemView.setAlpha(1.0f);
 
             holder.btnConfirmar.setOnClickListener(v -> {
-                if (listenerConfirmar != null) {
-                    listenerConfirmar.onConfirmar(numeroPeriodo, uriTemp);
-                }
+                if (listenerConfirmar != null) listenerConfirmar.onConfirmar(numeroPeriodo, uriTemp);
             });
+            holder.btnCambiar.setOnClickListener(v -> listenerSubir.onSubir(numeroPeriodo));
 
-            holder.btnCambiar.setOnClickListener(v -> {
-                listenerSubir.onSubir(numeroPeriodo);
-            });
-
-            // ─── Período desbloqueado sin archivo ──────────────
+            // ─── Período disponible para subir ────────────────────
         } else if (numeroPeriodo == periodoDesbloqueado) {
             holder.tvEstado.setVisibility(View.GONE);
+            holder.tvEstadoBadge.setVisibility(View.GONE);
             holder.layoutPrevia.setVisibility(View.GONE);
             holder.btnSubir.setVisibility(View.VISIBLE);
+            holder.btnSubir.setText("Subir PDF");
             holder.btnSubir.setEnabled(true);
+            holder.btnSubir.setBackgroundTintList(ColorStateList.valueOf(0xFF1497B9));
             holder.btnSubir.setOnClickListener(v -> listenerSubir.onSubir(numeroPeriodo));
-            setCardEstado(holder, true);
+            setCardColor(holder, 0x00000000);
+            holder.itemView.setAlpha(1.0f);
 
-            // ─── Período bloqueado ─────────────────────────────
+            // ─── Período bloqueado ────────────────────────────────
         } else {
             holder.tvEstado.setVisibility(View.GONE);
+            holder.tvEstadoBadge.setVisibility(View.GONE);
             holder.layoutPrevia.setVisibility(View.GONE);
             holder.btnSubir.setVisibility(View.VISIBLE);
+            holder.btnSubir.setText("🔒 Bloqueado");
             holder.btnSubir.setEnabled(false);
-            setCardEstado(holder, false);
+            holder.btnSubir.setBackgroundTintList(ColorStateList.valueOf(0xFFAAAAAA));
+            setCardColor(holder, 0x00000000);
+            holder.itemView.setAlpha(0.35f);
         }
     }
 
-    private void setCardEstado(PeriodoViewHolder holder, boolean activo) {
-        if (activo) {
-            holder.itemView.setAlpha(1.0f);
-            holder.btnSubir.setBackgroundTintList(ColorStateList.valueOf(0xFF1497B9));
+    private void setCardColor(PeriodoViewHolder holder, int color) {
+        // Solo colorear si el color no es transparente
+        if (color != 0x00000000) {
+            holder.itemView.setBackgroundColor(color);
         } else {
-            holder.itemView.setAlpha(0.35f);
-            holder.btnSubir.setBackgroundTintList(ColorStateList.valueOf(0xFFAAAAAA));
+            holder.itemView.setBackgroundColor(0x00000000);
         }
     }
 
@@ -139,14 +188,15 @@ public class PeriodoAdapter extends RecyclerView.Adapter<PeriodoAdapter.PeriodoV
     }
 
     static class PeriodoViewHolder extends RecyclerView.ViewHolder {
-        TextView    tvPeriodo, tvEstado, tvNombreArchivo;
-        Button      btnSubir, btnConfirmar, btnCambiar;
+        TextView     tvPeriodo, tvEstado, tvNombreArchivo, tvEstadoBadge;
+        Button       btnSubir, btnConfirmar, btnCambiar;
         LinearLayout layoutPrevia;
 
         PeriodoViewHolder(@NonNull View itemView) {
             super(itemView);
             tvPeriodo       = itemView.findViewById(R.id.tvPeriodo);
             tvEstado        = itemView.findViewById(R.id.tvEstado);
+            tvEstadoBadge   = itemView.findViewById(R.id.tvEstadoBadge);
             btnSubir        = itemView.findViewById(R.id.btnSubir);
             layoutPrevia    = itemView.findViewById(R.id.layoutPrevia);
             tvNombreArchivo = itemView.findViewById(R.id.tvNombreArchivo);

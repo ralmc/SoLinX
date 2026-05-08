@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    android:layout_marginBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Fila 1: Nombre alumno + badge estado -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/tv_nombre_alumno"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nombre Alumno"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"/>
+
+            <TextView
+                android:id="@+id/tv_estado_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏳ En revisión"
+                android:textSize="11sp"
+                android:textColor="#FFFFFF"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:background="@drawable/bg_badge_rounded"
+                android:backgroundTint="#D69E2E"/>
+        </LinearLayout>
+
+        <!-- Correo -->
+        <TextView
+            android:id="@+id/tv_correo_alumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="correo@ejemplo.com"
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginBottom="4dp"/>
+
+        <!-- Proyecto -->
+        <TextView
+            android:id="@+id/tv_nombre_proyecto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Proyecto: N/A"
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Fila: Periodo + Archivo + Fecha -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/tv_periodo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Periodo 1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:background="@drawable/bg_badge_rounded"
+                android:backgroundTint="#1497B9"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_nombre_archivo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="documento.pdf"
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:ellipsize="end"
+                    android:maxLines="1"/>
+
+                <TextView
+                    android:id="@+id/tv_fecha"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="01/01/2026"
+                    android:textSize="11sp"
+                    android:textColor="?android:attr/textColorSecondary"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Botones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <TextView
+                android:id="@+id/btn_rechazar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rechazar"
+                android:textSize="15sp"
+                android:textColor="@color/color_rechazar"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:layout_marginEnd="12dp"
+                android:background="?attr/selectableItemBackground"/>
+
+            <TextView
+                android:id="@+id/btn_aprobar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aprobar ✓"
+                android:textSize="15sp"
+                android:textColor="@color/color_aprobar"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackground"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

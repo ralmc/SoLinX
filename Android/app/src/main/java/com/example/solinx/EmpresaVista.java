@@ -3,6 +3,7 @@ package com.example.solinx;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -37,7 +38,6 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_empresa_vista_menu);
 
@@ -49,18 +49,15 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
     private void gestionarSesion() {
         SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-
         if (getIntent().hasExtra("ID_EMPRESA_ACTUAL")) {
             int idRecibido = getIntent().getIntExtra("ID_EMPRESA_ACTUAL", -1);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("id_empresa_activa", idRecibido);
-            editor.commit();
+            prefs.edit().putInt("id_empresa_activa", idRecibido).commit();
         }
     }
 
     private int obtenerIdEmpresaActual() {
-        SharedPreferences prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE);
-        return prefs.getInt("id_empresa_activa", -1);
+        return getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                .getInt("id_empresa_activa", -1);
     }
 
     @Override
@@ -72,75 +69,63 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
 
     private void inicializarVistas() {
         contenedorProyectos = findViewById(R.id.contenedorProyectos);
-        tvMensajeVacio = findViewById(R.id.tvMensajeVacio);
-        btnAñadir = findViewById(R.id.btnAñadir);
-        logoEmpresa = findViewById(R.id.logoEmpresa);
-        btnotificaciones = findViewById(R.id.notificaciones);
-        imgPerfilEmpresa = findViewById(R.id.imgPerfilEmpresa);
+        tvMensajeVacio      = findViewById(R.id.tvMensajeVacio);
+        btnAñadir           = findViewById(R.id.btnAñadir);
+        logoEmpresa         = findViewById(R.id.logoEmpresa);
+        btnotificaciones    = findViewById(R.id.notificaciones);
+        imgPerfilEmpresa    = findViewById(R.id.imgPerfilEmpresa);
 
         btnAñadir.setOnClickListener(this);
         logoEmpresa.setOnClickListener(this);
         btnotificaciones.setOnClickListener(this);
-        if (imgPerfilEmpresa != null) {
-            imgPerfilEmpresa.setOnClickListener(this);
-        }
+        if (imgPerfilEmpresa != null) imgPerfilEmpresa.setOnClickListener(this);
     }
 
     private void cargarFotoPerfil() {
         if (imgPerfilEmpresa == null) return;
-
-        int idUsuario = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
-                .getInt("idUsuario", -1);
+        int idUsuario = getSharedPreferences("sesion_usuario", MODE_PRIVATE).getInt("idUsuario", -1);
         if (idUsuario == -1) return;
 
-        ApiService api = ApiClient.getClient().create(ApiService.class);
-        api.obtenerPerfil(idUsuario).enqueue(new Callback<PerfilDTO>() {
-            @Override
-            public void onResponse(Call<PerfilDTO> call, Response<PerfilDTO> response) {
-                if (response.isSuccessful() && response.body() != null
-                        && response.body().getFoto() != null
-                        && !response.body().getFoto().isEmpty()) {
-                    String b64 = response.body().getFoto();
-                    byte[] bytes = Base64.decode(b64, Base64.DEFAULT);
-                    Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    runOnUiThread(() -> imgPerfilEmpresa.setImageBitmap(bmp));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PerfilDTO> call, Throwable t) {}
-        });
+        ApiClient.getClient().create(ApiService.class).obtenerPerfil(idUsuario)
+                .enqueue(new Callback<PerfilDTO>() {
+                    @Override
+                    public void onResponse(Call<PerfilDTO> call, Response<PerfilDTO> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getFoto() != null
+                                && !response.body().getFoto().isEmpty()) {
+                            byte[] bytes = Base64.decode(response.body().getFoto(), Base64.DEFAULT);
+                            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            runOnUiThread(() -> imgPerfilEmpresa.setImageBitmap(bmp));
+                        }
+                    }
+                    @Override public void onFailure(Call<PerfilDTO> call, Throwable t) {}
+                });
     }
 
     private void cargarDatosDelBackend() {
         int idActual = obtenerIdEmpresaActual();
-
         if (idActual == -1) {
-            Toast.makeText(this, "Error de sesión. Vuelve a iniciar sesión.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error de sesión.", Toast.LENGTH_LONG).show();
             tvMensajeVacio.setVisibility(View.VISIBLE);
-            tvMensajeVacio.setText("Error: No se pudo cargar la sesión");
             return;
         }
 
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        apiService.obtenerProyectosPorEmpresa(idActual).enqueue(new Callback<List<ProyectoResponse>>() {
-            @Override
-            public void onResponse(Call<List<ProyectoResponse>> call, Response<List<ProyectoResponse>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    renderizarProyectos(response.body());
-                } else {
-                    renderizarProyectos(java.util.Collections.emptyList());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<ProyectoResponse>> call, Throwable t) {
-                Toast.makeText(EmpresaVista.this, "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                tvMensajeVacio.setVisibility(View.VISIBLE);
-                tvMensajeVacio.setText("Error de conexión. Intenta de nuevo.");
-            }
-        });
+        ApiClient.getClient().create(ApiService.class)
+                .obtenerProyectosPorEmpresa(idActual)
+                .enqueue(new Callback<List<ProyectoResponse>>() {
+                    @Override
+                    public void onResponse(Call<List<ProyectoResponse>> call, Response<List<ProyectoResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null)
+                            renderizarProyectos(response.body());
+                        else
+                            renderizarProyectos(java.util.Collections.emptyList());
+                    }
+                    @Override
+                    public void onFailure(Call<List<ProyectoResponse>> call, Throwable t) {
+                        Toast.makeText(EmpresaVista.this, "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                        tvMensajeVacio.setVisibility(View.VISIBLE);
+                    }
+                });
     }
 
     private void renderizarProyectos(List<ProyectoResponse> lista) {
@@ -152,52 +137,47 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
         }
         tvMensajeVacio.setVisibility(View.GONE);
 
-        int contadorVisual = 1;
-
+        int contador = 1;
         for (ProyectoResponse proyecto : lista) {
+            View tarjeta = LayoutInflater.from(this)
+                    .inflate(R.layout.activity_item_proyecto_card, contenedorProyectos, false);
 
-            View tarjeta = LayoutInflater.from(this).inflate(R.layout.activity_item_proyecto_card, contenedorProyectos, false);
+            TextView tvId          = tarjeta.findViewById(R.id.tvIdProyecto);
+            TextView tvCarrera     = tarjeta.findViewById(R.id.tvCarreraEnfocada);
+            TextView tvNombre      = tarjeta.findViewById(R.id.tvNombreProyecto);
+            TextView tvEmpresa     = tarjeta.findViewById(R.id.tvNombreEmpresa);
+            TextView tvObjetivo    = tarjeta.findViewById(R.id.tvObjetivo);
+            TextView tvVacantes    = tarjeta.findViewById(R.id.tvVacantes);
+            TextView tvUbicacion   = tarjeta.findViewById(R.id.tvUbicacion);
+            TextView tvInicio      = tarjeta.findViewById(R.id.tvFechaInicio);
+            TextView tvFin         = tarjeta.findViewById(R.id.tvFechaFin);
+            ImageView img          = tarjeta.findViewById(R.id.imgProyecto);
+            ImageView btnEdit      = tarjeta.findViewById(R.id.btnEditar);
+            TextView btnEliminar   = tarjeta.findViewById(R.id.tvEliminar);
+            TextView tvEstado      = tarjeta.findViewById(R.id.tvEstadoProyecto);
 
-            TextView tvId = tarjeta.findViewById(R.id.tvIdProyecto);
-            TextView tvCarrera = tarjeta.findViewById(R.id.tvCarreraEnfocada);
-            TextView tvNombre = tarjeta.findViewById(R.id.tvNombreProyecto);
-            TextView tvEmpresa = tarjeta.findViewById(R.id.tvNombreEmpresa);
-            TextView tvObjetivo = tarjeta.findViewById(R.id.tvObjetivo);
-            TextView tvVacantes = tarjeta.findViewById(R.id.tvVacantes);
-            TextView tvUbicacion = tarjeta.findViewById(R.id.tvUbicacion);
-            TextView tvInicio = tarjeta.findViewById(R.id.tvFechaInicio);
-            TextView tvFin = tarjeta.findViewById(R.id.tvFechaFin);
-            ImageView img = tarjeta.findViewById(R.id.imgProyecto);
-            ImageView btnEdit = tarjeta.findViewById(R.id.btnEditar);
-            TextView btnEliminar = tarjeta.findViewById(R.id.tvEliminar);
-
-            tvId.setText("# " + contadorVisual);
-            contadorVisual++;
-
+            tvId.setText("# " + contador++);
             tvCarrera.setText("Carrera: " + proyecto.getCarreraEnfocada());
             tvNombre.setText("Proyecto: " + proyecto.getNombreProyecto());
-            tvEmpresa.setText("Empresa: " + (proyecto.getNombreEmpresa() != null ? proyecto.getNombreEmpresa() : "TechNova"));
+            tvEmpresa.setText("Empresa: " + (proyecto.getNombreEmpresa() != null ? proyecto.getNombreEmpresa() : "N/A"));
             tvObjetivo.setText("Obj: " + proyecto.getObjetivo());
             tvVacantes.setText("Vacantes: " + proyecto.getVacantes());
             tvUbicacion.setText("Ubic: " + proyecto.getUbicacion());
 
-            String fechaI = (proyecto.getFechaInicio() != null && proyecto.getFechaInicio().length()>=10)
-                    ? proyecto.getFechaInicio().substring(0,10) : "N/A";
-            tvInicio.setText("Inicio: " + fechaI);
+            String fi = proyecto.getFechaInicio() != null && proyecto.getFechaInicio().length() >= 10
+                    ? proyecto.getFechaInicio().substring(0, 10) : "N/A";
+            String ff = proyecto.getFechaTermino() != null && proyecto.getFechaTermino().length() >= 10
+                    ? proyecto.getFechaTermino().substring(0, 10) : "---";
+            tvInicio.setText("Inicio: " + fi);
+            tvFin.setText("Fin: " + ff);
 
-            String fechaF = (proyecto.getFechaTermino() != null && proyecto.getFechaTermino().length()>=10)
-                    ? proyecto.getFechaTermino().substring(0,10) : "---";
-            tvFin.setText("Fin: " + fechaF);
-
+            // ─── Imagen ───────────────────────────────────────
             if (proyecto.getImagenProyecto() != null && !proyecto.getImagenProyecto().isEmpty()) {
                 try {
                     byte[] bytes = Base64.decode(proyecto.getImagenProyecto(), Base64.DEFAULT);
                     Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    if (bmp != null) {
-                        img.setImageBitmap(bmp);
-                    } else {
-                        img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
-                    }
+                    if (bmp != null) img.setImageBitmap(bmp);
+                    else img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
                 } catch (Exception e) {
                     img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
                 }
@@ -205,19 +185,44 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
                 img.setImageResource(obtenerIdImagen(this, proyecto.getImagenRef()));
             }
 
+            // ─── Badge estado proyecto ────────────────────────
+            String estado = proyecto.getEstadoProyecto() != null ? proyecto.getEstadoProyecto() : "pendiente";
+            switch (estado) {
+                case "aprobado":
+                    tvEstado.setText("✓ Aprobado");
+                    tvEstado.setBackgroundTintList(ColorStateList.valueOf(0xFF38A169));
+                    tvEstado.setVisibility(View.VISIBLE);
+                    // Aprobado → NO puede editar
+                    btnEdit.setVisibility(View.GONE);
+                    break;
+                case "rechazado":
+                    tvEstado.setText("✗ Rechazado");
+                    tvEstado.setBackgroundTintList(ColorStateList.valueOf(0xFFE53E3E));
+                    tvEstado.setVisibility(View.VISIBLE);
+                    btnEdit.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    tvEstado.setText("⏳ En revisión");
+                    tvEstado.setBackgroundTintList(ColorStateList.valueOf(0xFFD69E2E));
+                    tvEstado.setVisibility(View.VISIBLE);
+                    btnEdit.setVisibility(View.VISIBLE);
+                    break;
+            }
+
+            // ─── Listeners ────────────────────────────────────
             btnEdit.setOnClickListener(v -> {
                 Intent intent = new Intent(EmpresaVista.this, GestionProyectoActivity.class);
-                intent.putExtra("idProyecto", proyecto.getIdProyecto());
-                intent.putExtra("idEmpresa", proyecto.getIdEmpresa());
-                intent.putExtra("carrera", proyecto.getCarreraEnfocada());
-                intent.putExtra("nombre", proyecto.getNombreProyecto());
-                intent.putExtra("objetivo", proyecto.getObjetivo());
-                intent.putExtra("vacantes", proyecto.getVacantes());
-                intent.putExtra("ubicacion", proyecto.getUbicacion());
-                intent.putExtra("imagen", proyecto.getImagenRef());
-                intent.putExtra("imagenProyecto", proyecto.getImagenProyecto());
-                intent.putExtra("fechaInicio", proyecto.getFechaInicio());
-                intent.putExtra("fechaTermino", proyecto.getFechaTermino());
+                intent.putExtra("idProyecto",      proyecto.getIdProyecto());
+                intent.putExtra("idEmpresa",       proyecto.getIdEmpresa());
+                intent.putExtra("carrera",         proyecto.getCarreraEnfocada());
+                intent.putExtra("nombre",          proyecto.getNombreProyecto());
+                intent.putExtra("objetivo",        proyecto.getObjetivo());
+                intent.putExtra("vacantes",        proyecto.getVacantes());
+                intent.putExtra("ubicacion",       proyecto.getUbicacion());
+                intent.putExtra("imagen",          proyecto.getImagenRef());
+                intent.putExtra("imagenProyecto",  proyecto.getImagenProyecto());
+                intent.putExtra("fechaInicio",     proyecto.getFechaInicio());
+                intent.putExtra("fechaTermino",    proyecto.getFechaTermino());
                 startActivity(intent);
             });
 
@@ -227,44 +232,41 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
     }
 
     private void eliminarProyecto(int idProyecto) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        apiService.eliminarProyecto(idProyecto).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(EmpresaVista.this, "Proyecto eliminado", Toast.LENGTH_SHORT).show();
-                    cargarDatosDelBackend();
-                } else {
-                    Toast.makeText(EmpresaVista.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(EmpresaVista.this, "Fallo de red", Toast.LENGTH_SHORT).show();
-            }
-        });
+        ApiClient.getClient().create(ApiService.class)
+                .eliminarProyecto(idProyecto)
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(EmpresaVista.this, "Proyecto eliminado", Toast.LENGTH_SHORT).show();
+                            cargarDatosDelBackend();
+                        } else {
+                            Toast.makeText(EmpresaVista.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Toast.makeText(EmpresaVista.this, "Fallo de red", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private int obtenerIdImagen(Context context, String nombreImagen) {
         if (nombreImagen == null || nombreImagen.isEmpty()) return R.drawable.img_default_proyecto;
         int resId = context.getResources().getIdentifier(nombreImagen, "drawable", context.getPackageName());
-        return (resId != 0) ? resId : R.drawable.img_default_proyecto;
+        return resId != 0 ? resId : R.drawable.img_default_proyecto;
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-
         if (id == R.id.btnAñadir) {
             startActivity(new Intent(this, GestionProyectoActivity.class));
-
         } else if (id == R.id.logoEmpresa) {
             Toast.makeText(this, "Actualizando...", Toast.LENGTH_SHORT).show();
             cargarDatosDelBackend();
-
         } else if (id == R.id.notificaciones) {
             startActivity(new Intent(this, EmpresaNotificaciones.class));
-
         } else if (id == R.id.imgPerfilEmpresa) {
             startActivity(new Intent(this, EmpresaVistaCuenta.class));
         }

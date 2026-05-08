@@ -28,7 +28,7 @@ public class SolicitudesAlumnoAdapter extends RecyclerView.Adapter<SolicitudesAl
 
     public SolicitudesAlumnoAdapter(List<Solicitudes> solicitudes, OnClickListener listener) {
         this.solicitudes = solicitudes;
-        this.listener = listener;
+        this.listener    = listener;
     }
 
     @NonNull
@@ -43,20 +43,21 @@ public class SolicitudesAlumnoAdapter extends RecyclerView.Adapter<SolicitudesAl
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Solicitudes s = solicitudes.get(position);
 
-        holder.tvSolicitudId.setText("Solicitud #" + s.getIdSolicitud());
-        holder.tvNombreAlumno.setText("Alumno: " + (s.getNombreEstudiante() != null ? s.getNombreEstudiante() : "N/A"));
-        holder.tvBoletaAlumno.setText("Boleta: " + s.getBoleta());
+        // ─── Info siempre visible ──────────────────────────────
+        holder.tvNombreAlumno.setText(s.getNombreEstudiante() != null ? s.getNombreEstudiante() : "N/A");
+        holder.tvCorreoAlumno.setText(s.getCorreoEstudiante() != null ? s.getCorreoEstudiante() : "N/A");
+        holder.tvCarreraAlumno.setText("Carrera: " + (s.getCarrera() != null ? s.getCarrera() : "N/A"));
+
+        // ─── Info expandible ───────────────────────────────────
+        holder.tvCarreraEnfocada.setText("Carrera enfocada: " + (s.getCarreraEnfocada() != null ? s.getCarreraEnfocada() : "N/A"));
+        holder.tvNombreProyecto.setText("Proyecto: " + (s.getNombreProyecto() != null ? s.getNombreProyecto() : "N/A"));
         holder.tvNombreEmpresa.setText("Empresa: " + (s.getNombreEmpresa() != null ? s.getNombreEmpresa() : "N/A"));
 
-        // Detalles expandibles
-        holder.tvDetalleProyecto.setText("Proyecto: " + (s.getNombreProyecto() != null ? s.getNombreProyecto() : "N/A"));
-        holder.tvDetalleObjetivos.setText("Carrera: " + (s.getCarrera() != null ? s.getCarrera() : "N/A"));
-        holder.tvDetalleHoras.setText("Escuela: " + (s.getEscuela() != null ? s.getEscuela() : "N/A"));
-
-        // Toggle expandir/contraer
+        // ─── Toggle expandir ───────────────────────────────────
         holder.btnExpandir.setOnClickListener(v -> {
             boolean visible = holder.layoutDetallesExpandibles.getVisibility() == View.VISIBLE;
             holder.layoutDetallesExpandibles.setVisibility(visible ? View.GONE : View.VISIBLE);
+            holder.btnExpandir.setRotation(visible ? 0f : 180f);
         });
 
         holder.btnAprobar.setOnClickListener(v -> listener.onAprobar(s));
@@ -65,30 +66,27 @@ public class SolicitudesAlumnoAdapter extends RecyclerView.Adapter<SolicitudesAl
     }
 
     @Override
-    public int getItemCount() {
-        return solicitudes.size();
-    }
+    public int getItemCount() { return solicitudes.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSolicitudId, tvNombreAlumno, tvBoletaAlumno, tvNombreEmpresa;
-        TextView tvDetalleProyecto, tvDetalleObjetivos, tvDetalleHoras;
-        TextView btnAprobar, btnRechazar, btnEnviarCorreo;
-        ImageButton btnExpandir;
+        TextView     tvNombreAlumno, tvCorreoAlumno, tvCarreraAlumno;
+        TextView     tvCarreraEnfocada, tvNombreProyecto, tvNombreEmpresa;
+        TextView     btnAprobar, btnRechazar, btnEnviarCorreo;
+        ImageButton  btnExpandir;
         LinearLayout layoutDetallesExpandibles;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvSolicitudId       = itemView.findViewById(R.id.tv_solicitud_id);
-            tvNombreAlumno      = itemView.findViewById(R.id.tv_nombre_alumno);
-            tvBoletaAlumno      = itemView.findViewById(R.id.tv_boleta_alumno);
-            tvNombreEmpresa     = itemView.findViewById(R.id.tv_nombre_empresa);
-            tvDetalleProyecto   = itemView.findViewById(R.id.tv_detalle_proyecto);
-            tvDetalleObjetivos  = itemView.findViewById(R.id.tv_detalle_objetivos);
-            tvDetalleHoras      = itemView.findViewById(R.id.tv_detalle_horas);
-            btnAprobar          = itemView.findViewById(R.id.btn_aprobar);
-            btnRechazar         = itemView.findViewById(R.id.btn_rechazar);
-            btnEnviarCorreo     = itemView.findViewById(R.id.btn_enviar_correo);
-            btnExpandir         = itemView.findViewById(R.id.btn_expandir_detalles);
+            tvNombreAlumno          = itemView.findViewById(R.id.tv_nombre_alumno);
+            tvCorreoAlumno          = itemView.findViewById(R.id.tv_correo_alumno);
+            tvCarreraAlumno         = itemView.findViewById(R.id.tv_carrera_alumno);
+            tvCarreraEnfocada       = itemView.findViewById(R.id.tv_carrera_enfocada);
+            tvNombreProyecto        = itemView.findViewById(R.id.tv_nombre_proyecto);
+            tvNombreEmpresa         = itemView.findViewById(R.id.tv_nombre_empresa);
+            btnAprobar              = itemView.findViewById(R.id.btn_aprobar);
+            btnRechazar             = itemView.findViewById(R.id.btn_rechazar);
+            btnEnviarCorreo         = itemView.findViewById(R.id.btn_enviar_correo);
+            btnExpandir             = itemView.findViewById(R.id.btn_expandir_detalles);
             layoutDetallesExpandibles = itemView.findViewById(R.id.layout_detalles_expandibles);
         }
     }

@@ -16,6 +16,7 @@ public class Solicitudes implements Serializable {
     private String nombreProyecto;
     private String nombreEmpresa;
     private String correoEmpresa;
+    private String carreraEnfocada;
 
     public int getIdSolicitud() { return idSolicitud; }
     public void setIdSolicitud(int idSolicitud) { this.idSolicitud = idSolicitud; }
@@ -55,4 +56,7 @@ public class Solicitudes implements Serializable {
 
     public String getCorreoEmpresa() { return correoEmpresa; }
     public void setCorreoEmpresa(String correoEmpresa) { this.correoEmpresa = correoEmpresa; }
+
+    public String getCarreraEnfocada() { return carreraEnfocada; }
+    public void setCarreraEnfocada(String carreraEnfocada) { this.carreraEnfocada = carreraEnfocada; }
 }

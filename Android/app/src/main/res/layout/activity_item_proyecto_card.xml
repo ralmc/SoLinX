@@ -16,6 +16,7 @@
         android:orientation="vertical"
         android:padding="12dp">
 
+        <!-- Fila superior: imagen + id + editar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +28,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/img_default_proyecto" />
+                android:src="@drawable/img_default_proyecto"/>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -51,8 +52,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="# 001"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textColor="?attr/colorOnSurface"/>
             </LinearLayout>
+
+            <!-- Badge estado -->
+            <TextView
+                android:id="@+id/tvEstadoProyecto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏳ En revisión"
+                android:textSize="11sp"
+                android:textColor="#FFFFFF"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:background="@drawable/bg_badge_rounded"
+                android:backgroundTint="#D69E2E"
+                android:layout_marginEnd="8dp"/>
 
             <ImageView
                 android:id="@+id/btnEditar"
@@ -69,43 +84,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"/>
 
         <TextView
             android:id="@+id/tvNombreEmpresa"
             tools:text="Empresa: TechNova"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvFechaInicio"
             tools:text="Inicio: 2023-01-01"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvFechaFin"
             tools:text="Fin: 2023-06-01"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvVacantes"
             tools:text="Vacantes: 3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvUbicacion"
             tools:text="Ubicación: CDMX"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvObjetivo"
             tools:text="Objetivo..."
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvNombreProyecto"
@@ -118,7 +133,7 @@
             android:id="@+id/tvApoyo"
             tools:text="Apoyo: Beca"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
