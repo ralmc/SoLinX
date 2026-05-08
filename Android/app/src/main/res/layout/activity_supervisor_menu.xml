@@ -50,7 +50,7 @@
             android:scaleType="centerCrop"
             android:clickable="true"
             android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:background="?attr/selectableItemBackgroundBorderless"/>
     </LinearLayout>
 
     <View
@@ -61,7 +61,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@id/top_bar_layout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/tv_menu_title"
@@ -75,7 +75,7 @@
         android:layout_marginTop="24dp"
         app:layout_constraintTop_toBottomOf="@id/divider_top"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
         android:id="@+id/menu_options_layout"
@@ -87,7 +87,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- CARD 1 -->
+        <!-- CARD 1: Solicitudes de Alumnos -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_aprobar_solicitud_alumno"
             android:layout_width="match_parent"
@@ -101,7 +101,7 @@
                 android:id="@+id/option_aprobar_solicitud_alumno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Aprobar Solicitudes de Alumnos"
+                android:text="Solicitudes de Alumnos"
                 android:textSize="20sp"
                 android:textColor="@color/card_text"
                 android:textStyle="bold"
@@ -111,11 +111,12 @@
                 android:gravity="center_vertical"/>
         </androidx.cardview.widget.CardView>
 
-        <!-- CARD 2 -->
+        <!-- CARD 2: Aceptaciones de Empresa -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_aprobar_aceptacion_empresa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
             app:cardBackgroundColor="@color/card_background">
@@ -124,7 +125,30 @@
                 android:id="@+id/option_aprobar_aceptacion_empresa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Aprobar Aceptaciones de Empresas"
+                android:text="Aceptaciones Empresa"
+                android:textSize="20sp"
+                android:textColor="@color/card_text"
+                android:textStyle="bold"
+                android:padding="16dp"
+                android:drawableStart="@drawable/icon_task_scaled"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"/>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CARD 3: Documentos -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_documentos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/card_background">
+
+            <TextView
+                android:id="@+id/option_documentos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Documentos"
                 android:textSize="20sp"
                 android:textColor="@color/card_text"
                 android:textStyle="bold"

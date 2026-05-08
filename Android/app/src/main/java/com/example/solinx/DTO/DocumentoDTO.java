@@ -6,6 +6,7 @@ public class DocumentoDTO {
     private String nombreArchivo;
     private String fechaSubida;
     private Integer boleta;
+    private String estadoDocumento;
 
     public DocumentoDTO() {}
 
@@ -19,4 +20,6 @@ public class DocumentoDTO {
     public void setFechaSubida(String fechaSubida) { this.fechaSubida = fechaSubida; }
     public Integer getBoleta() { return boleta; }
     public void setBoleta(Integer boleta) { this.boleta = boleta; }
+    public String getEstadoDocumento() { return estadoDocumento; }
+    public void setEstadoDocumento(String estadoDocumento) { this.estadoDocumento = estadoDocumento; }
 }

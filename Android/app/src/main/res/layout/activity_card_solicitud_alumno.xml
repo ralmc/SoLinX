@@ -2,30 +2,19 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
-    android:fitsSystemWindows="true"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="12dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tv_solicitud_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Solicitud #001"
-            android:textSize="18sp"
-            android:textColor="?attr/colorOnSurface"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
+        <!-- Botón expandir (flecha) -->
         <ImageButton
             android:id="@+id/btn_expandir_detalles"
             android:layout_width="40dp"
@@ -34,59 +23,62 @@
             android:contentDescription="Ver más detalles"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Resumen siempre visible -->
+        <!-- ─── Info siempre visible ─────────────────────────── -->
         <LinearLayout
-            android:id="@+id/layout_detalles_resumen"
+            android:id="@+id/layout_resumen"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="12dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_solicitud_id"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toStartOf="@id/btn_expandir_detalles">
 
+            <!-- Nombre alumno en grande -->
             <TextView
                 android:id="@+id/tv_nombre_alumno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Alumno: Nombre Apellido Alumno"
+                android:text="Nombre Alumno"
+                android:textSize="17sp"
+                android:textStyle="bold"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
                 android:layout_marginBottom="4dp"/>
 
+            <!-- Correo -->
             <TextView
-                android:id="@+id/tv_boleta_alumno"
+                android:id="@+id/tv_correo_alumno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Boleta: 202409XXXX"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
+                android:text="correo@ejemplo.com"
+                android:textSize="13sp"
+                android:textColor="?android:attr/textColorSecondary"
                 android:layout_marginBottom="4dp"/>
 
+            <!-- Carrera del alumno -->
             <TextView
-                android:id="@+id/tv_nombre_empresa"
+                android:id="@+id/tv_carrera_alumno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Empresa: Nombre de la Empresa"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
-                android:layout_marginBottom="4dp"/>
+                android:text="Carrera: Ingeniería en Software"
+                android:textSize="13sp"
+                android:textColor="?android:attr/textColorSecondary"/>
         </LinearLayout>
 
-        <!-- Detalles expandibles -->
+        <!-- ─── Info expandible ──────────────────────────────── -->
         <LinearLayout
             android:id="@+id/layout_detalles_expandibles"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
-            android:paddingTop="8dp"
+            android:layout_marginTop="12dp"
+            android:paddingTop="10dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:background="?attr/colorSurfaceVariant"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:layout_constraintTop_toBottomOf="@id/layout_detalles_resumen"
+            app:layout_constraintTop_toBottomOf="@id/layout_resumen"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -97,50 +89,43 @@
                 android:layout_marginBottom="8dp"/>
 
             <TextView
-                android:id="@+id/tv_detalle_proyecto"
+                android:id="@+id/tv_carrera_enfocada"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Proyecto:"
-                android:textColor="?android:attr/textColorSecondary"
+                android:text="Carrera enfocada: N/A"
                 android:textSize="14sp"
-                android:layout_marginBottom="4dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
+                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginBottom="4dp"/>
 
             <TextView
-                android:id="@+id/tv_detalle_objetivos"
+                android:id="@+id/tv_nombre_proyecto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Carrera: "
-                android:textColor="?android:attr/textColorSecondary"
+                android:text="Proyecto: N/A"
                 android:textSize="14sp"
-                android:layout_marginBottom="4dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
+                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginBottom="4dp"/>
 
             <TextView
-                android:id="@+id/tv_detalle_horas"
+                android:id="@+id/tv_nombre_empresa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Escuela:"
-                android:textColor="?android:attr/textColorSecondary"
+                android:text="Empresa: N/A"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"/>
-
+                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginBottom="10dp"/>
         </LinearLayout>
 
-        <!-- Botones: Correo (izquierda) y Aprobar/Rechazar (derecha) -->
+        <!-- ─── Botones ──────────────────────────────────────── -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintTop_toBottomOf="@id/layout_detalles_expandibles"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
@@ -148,13 +133,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="✉ Correo"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textColor="?attr/colorPrimary"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="8dp"
-                android:background="?attr/selectableItemBackground" />
+                android:background="?attr/selectableItemBackground"/>
 
             <View
                 android:layout_width="0dp"
@@ -166,28 +151,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rechazar"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textColor="@color/color_rechazar"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="8dp"
-                android:layout_marginEnd="16dp"
-                android:background="?attr/selectableItemBackground" />
+                android:layout_marginEnd="12dp"
+                android:background="?attr/selectableItemBackground"/>
 
             <TextView
                 android:id="@+id/btn_aprobar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Aprobar"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textColor="@color/color_aprobar"
                 android:textStyle="bold"
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="8dp"
-                android:background="?attr/selectableItemBackground" />
-
+                android:background="?attr/selectableItemBackground"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

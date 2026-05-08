@@ -3,17 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/Theme.SoLinX">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
-        android:enableOnBackInvokedCallback="true"
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_solinx_logo"
         android:label="@string/app_name"
@@ -22,6 +21,9 @@
         android:theme="@style/Theme.SoLinX"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".SupervisorDocumentos"
+            android:exported="false" />
         <activity
             android:name=".CONEXION.InicioHelper"
             android:exported="false" />
@@ -74,8 +76,10 @@
         <activity
             android:name=".AprobarAceptacionesEmpresaActivity"
             android:exported="false" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
     </application>
+
 </manifest>

@@ -27,6 +27,7 @@ public class MenuSupervisorActivity extends AppCompatActivity {
     private ImageView ivProfileMenu;
     private CardView cardAprobarSolicitudAlumno;
     private CardView cardAprobarAceptacionEmpresa;
+    private CardView cardDocumentos;
 
     private Supervisor supervisor;
     private ApiService apiService;
@@ -35,7 +36,6 @@ public class MenuSupervisorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_supervisor_menu);
 
@@ -47,16 +47,16 @@ public class MenuSupervisorActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        tvNombreSupervisor = findViewById(R.id.tv_nombre_supervisor);
-        ivProfileMenu = findViewById(R.id.iv_profile_menu);
+        tvNombreSupervisor        = findViewById(R.id.tv_nombre_supervisor);
+        ivProfileMenu             = findViewById(R.id.iv_profile_menu);
         cardAprobarSolicitudAlumno = findViewById(R.id.card_aprobar_solicitud_alumno);
         cardAprobarAceptacionEmpresa = findViewById(R.id.card_aprobar_aceptacion_empresa);
+        cardDocumentos            = findViewById(R.id.card_documentos);
     }
 
     private void cargarDatosSupervisor() {
         idUsuarioActual = getIntent().getIntExtra("idUsuario", -1);
 
-        // Si no viene en el intent, intentar de SharedPreferences
         if (idUsuarioActual == -1) {
             idUsuarioActual = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
                     .getInt("idUsuario", -1);
@@ -68,37 +68,22 @@ public class MenuSupervisorActivity extends AppCompatActivity {
             return;
         }
 
-        // Guardar idUsuario en SharedPreferences para que SupervisorVistaCuenta lo lea
         getSharedPreferences("sesion_usuario", MODE_PRIVATE)
                 .edit()
                 .putInt("idUsuario", idUsuarioActual)
                 .apply();
 
-        Call<SupervisorResponse> call = apiService.getSupervisorData(idUsuarioActual);
-
-        call.enqueue(new Callback<SupervisorResponse>() {
+        apiService.getSupervisorData(idUsuarioActual).enqueue(new Callback<SupervisorResponse>() {
             @Override
             public void onResponse(Call<SupervisorResponse> call, Response<SupervisorResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    SupervisorResponse supervisorResponse = response.body();
-
-                    if (supervisorResponse.isSuccess()) {
-                        supervisor = supervisorResponse.getSupervisor();
-                        tvNombreSupervisor.setText(supervisor.getNombre());
-
-                        Toast.makeText(MenuSupervisorActivity.this,
-                                "Bienvenido, " + supervisor.getNombre(),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(MenuSupervisorActivity.this,
-                                supervisorResponse.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    supervisor = response.body().getSupervisor();
+                    tvNombreSupervisor.setText(supervisor.getNombre());
+                    Toast.makeText(MenuSupervisorActivity.this,
+                            "Bienvenido, " + supervisor.getNombre(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MenuSupervisorActivity.this,
-                            "Error al cargar datos",
-                            Toast.LENGTH_SHORT).show();
+                            "Error al cargar datos", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
@@ -107,8 +92,7 @@ public class MenuSupervisorActivity extends AppCompatActivity {
             public void onFailure(Call<SupervisorResponse> call, Throwable t) {
                 Log.e(TAG, "Error: " + t.getMessage());
                 Toast.makeText(MenuSupervisorActivity.this,
-                        "Error de conexión",
-                        Toast.LENGTH_LONG).show();
+                        "Error de conexión", Toast.LENGTH_LONG).show();
                 finish();
             }
         });
@@ -136,7 +120,17 @@ public class MenuSupervisorActivity extends AppCompatActivity {
             }
         });
 
-        // Abrir el perfil del supervisor al picar el ícono
+        cardDocumentos.setOnClickListener(v -> {
+            if (supervisor != null) {
+                Intent intent = new Intent(this, SupervisorDocumentos.class);
+                intent.putExtra("idSupervisor", supervisor.getIdSupervisor());
+                intent.putExtra("idEmpresa", supervisor.getIdEmpresa());
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Espere a que carguen los datos", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         ivProfileMenu.setOnClickListener(v -> {
             Intent intent = new Intent(this, SupervisorVistaCuenta.class);
             startActivity(intent);

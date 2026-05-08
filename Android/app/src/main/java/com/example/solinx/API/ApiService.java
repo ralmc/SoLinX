@@ -122,6 +122,9 @@ public interface ApiService {
             @Field("nuevoEstado") String nuevoEstado
     );
 
+    @GET("usuario/boleta/{boleta}")
+    Call<Map<String, Integer>> getIdUsuarioPorBoleta(@Path("boleta") int boleta);
+
     // ── Horario ───────────────────────────────────────────────────────────────
     @GET("horario/{boleta}")
     Call<HorarioDTO> obtenerHorario(@Path("boleta") int boleta);
@@ -136,6 +139,13 @@ public interface ApiService {
             @Path("boleta") Integer boleta,
             @Path("periodo") Integer periodo,
             @Part MultipartBody.Part archivo
+    );
+
+    @PUT("documento/{boleta}/{periodo}/estado")
+    Call<Void> actualizarEstadoDocumento(
+            @Path("boleta") Integer boleta,
+            @Path("periodo") Integer periodo,
+            @Query("estado") String estado
     );
 
     // ── Perfil ────────────────────────────────────────────────────────────────
