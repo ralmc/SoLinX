@@ -3,7 +3,7 @@
  * Cambia BASE_URL por la IP de tu computadora
  */
  
-const BASE_URL = 'http://192.168.1.97:8080/SoLinX/api';
+const BASE_URL = 'http://192.168.1.69:8080/SoLinX/api';
  
 async function request(method, endpoint, body = null, isMultipart = false) {
   const headers = {};

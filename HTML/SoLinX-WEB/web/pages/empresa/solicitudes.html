@@ -121,7 +121,7 @@
           <div class="flex gap-2">
             ${conBotones ? `
               <button class="btn btn-success btn-sm"
-                onclick="cambiarEstado(${s.idSolicitud},'aceptada','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}',${s.boletaAlumno})">
+                onclick="cambiarEstado(${s.idSolicitud},'aceptada','${(s.nombreEstudiante ?? '').replace(/'/g,"\\'")}',${s.boletaAlumno},'${(s.nombreProyecto ?? '').replace(/'/g,"\\'")}')">
                 Aceptar
               </button>
               <button class="btn btn-danger btn-sm"
@@ -154,23 +154,32 @@
       </table>`;
   }
 
-  window.cambiarEstado = async function(idSolicitud, nuevoEstado, nombre) {
+  window.cambiarEstado = async function(idSolicitud, nuevoEstado, nombre, boleta, nombreProyecto) {
     const accion = nuevoEstado === 'aceptada' ? 'aceptar' : 'rechazar';
     const ok = await confirmDialog('Confirmar', `¿Deseas ${accion} la solicitud de ${nombre}?`);
     if (!ok) return;
     try {
       const res = await Api.actualizarEstadoSolicitud(idSolicitud, nuevoEstado);
       if (res.ok) {
+        // ─── Notificación al alumno ───────────────────────
+        try {
+          const resU = await Api.getIdUsuarioPorBoleta(boleta);
+          if (resU.ok) {
+            const { idUsuario } = await resU.json();
+            const aceptada = nuevoEstado === 'aceptada';
+            await Api.crearNotificacion(
+              idUsuario,
+              aceptada ? '¡Felicidades! Fuiste aceptado en un proyecto 🎉' : 'Solicitud no aceptada por la empresa',
+              aceptada
+                ? `La empresa ${Session.nombre} aceptó tu solicitud en el proyecto ${nombreProyecto}. ¡Ya puedes subir tus documentos!`
+                : `La empresa ${Session.nombre} no aceptó tu solicitud en este momento. Puedes postularte a otro proyecto.`
+            );
+          }
+        } catch {}
         toast(nuevoEstado === 'aceptada'
           ? '¡Alumno aceptado en el proyecto! ✓'
           : 'Solicitud rechazada', 'success');
-        window.contactarAlumno = function(correo, nombre, proyecto) {
-    const subject = encodeURIComponent(`SoLinX - Proyecto: ${proyecto}`);
-    const body = encodeURIComponent(`Hola ${nombre},\n\nTe contactamos desde SoLinX en relación al proyecto "${proyecto}".\n\nSaludos,\n${Session.nombre}`);
-    window.open(`mailto:${correo}?subject=${subject}&body=${body}`, '_blank');
-  };
-
-  cargarSolicitudes();
+        cargarSolicitudes();
       } else {
         toast('Error: ' + res.status, 'error');
       }
