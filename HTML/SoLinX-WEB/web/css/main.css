@@ -638,6 +638,50 @@ h4 { font-size: 1rem; }
   .proyectos-grid { grid-template-columns: 1fr; }
 }
 
+/* ─── Formatos descargables ──────────────────────────────── */
+.formato-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: .85rem;
+}
+.formato-card {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: .9rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-decoration: none;
+  color: var(--text-1);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  cursor: pointer;
+}
+.formato-card:hover {
+  border-color: var(--brand);
+  box-shadow: 0 2px 12px rgba(20,151,185,.13);
+  background: var(--brand-light);
+}
+.formato-icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: var(--brand-light);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--brand);
+}
+.formato-info { flex: 1; min-width: 0; }
+.formato-nombre {
+  font-weight: 600;
+  font-size: .875rem;
+  color: var(--text-1);
+}
+.formato-desc {
+  font-size: .775rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
 /* ─── Utilidades ─────────────────────────────────────────── */
 .flex        { display: flex; }
 .items-center{ align-items: center; }

@@ -39,10 +39,12 @@
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Documentos
       </a>
+      <!--
       <a class="sidebar-link" href="#" id="link-cambios" onclick="mostrarPanel('cambios')">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Aprobar Cambios
       </a>
+      -->
       <div class="sidebar-section-label" style="margin-top:1rem">Mi cuenta</div>
       <a class="sidebar-link" href="cuenta.html">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -114,6 +116,7 @@
               <p class="text-muted text-sm mt-2">Revisa reportes por periodo</p>
             </div>
           </div>
+          <!--
           <div class="card" style="cursor:pointer" onclick="mostrarPanel('cambios')">
             <div class="card-body" style="text-align:center;padding:2rem">
               <div style="width:52px;height:52px;border-radius:50%;background:var(--brand-light);color:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
@@ -123,6 +126,7 @@
               <p class="text-muted text-sm mt-2">Cambios de datos</p>
             </div>
           </div>
+          -->
         </div>
       </div>
 
@@ -163,6 +167,7 @@
       </div>
 
       <!-- Panel: Aprobar Cambios -->
+      <!--
       <div id="panel-cambios" style="display:none">
         <div class="flex justify-between items-center mb-4">
           <div><h2>Aprobar Cambios de Perfil</h2><p class="text-muted text-sm mt-1">Solicitudes de cambio de datos</p></div>
@@ -170,7 +175,7 @@
         </div>
         <div class="card"><div class="card-body table-wrap" id="tablaCambios"><div class="loader-wrap"><div class="spinner"></div></div></div></div>
       </div>
-
+      -->
     </div>
   </main>
 </div>
@@ -234,7 +239,7 @@
   import { Session, requireAuth, logout } from '../../js/auth.js';
   import { toast, initTheme, toggleTheme, showLoader, badgeEstado, confirmDialog } from '../../js/utils.js';
 
-  const BASE_URL = 'http://192.168.1.97:8080/SoLinX/api';
+  const BASE_URL = 'http://192.168.1.69:8080/SoLinX/api';
 
   requireAuth('supervisor');
   initTheme();
@@ -250,8 +255,8 @@
   document.getElementById('themeBtn').onclick   = () => toggleTheme();
 
   // ─── Panels ───────────────────────────────────────────────
-  const panels = { home:'panel-home', alumnos:'panel-alumnos', proyectos:'panel-proyectos', empresas:'panel-empresas', docs:'panel-docs', cambios:'panel-cambios' };
-  const titles  = { home:'Panel Supervisor', alumnos:'Solicitudes de Alumnos', proyectos:'Proyectos de Empresas', empresas:'Aceptaciones de Empresa', docs:'Documentos de Alumnos', cambios:'Aprobar Cambios' };
+  const panels = { home:'panel-home', alumnos:'panel-alumnos', proyectos:'panel-proyectos', empresas:'panel-empresas', docs:'panel-docs' };
+  const titles  = { home:'Panel Supervisor', alumnos:'Solicitudes de Alumnos', proyectos:'Proyectos de Empresas', empresas:'Aceptaciones de Empresa', docs:'Documentos de Alumnos' };
 
   window.mostrarPanel = function(panel) {
     Object.values(panels).forEach(id => document.getElementById(id).style.display = 'none');
@@ -263,7 +268,6 @@
     if (panel === 'proyectos') cargarProyectosEmpresa();
     if (panel === 'empresas')  cargarAceptacionesEmpresa();
     if (panel === 'docs')      cargarDocumentos();
-    if (panel === 'cambios')   cargarCambiosPerfil();
   };
 
   // ─── SOLICITUDES DE ALUMNOS ───────────────────────────────
@@ -291,7 +295,7 @@
     } catch (e) { container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`; }
   };
 
-  window.verDetalleSolicitud = function(s) {
+  window.verDetalleSolicitud = function(s) {      
     document.getElementById('modal-sol-titulo').textContent = `Solicitud — ${s.nombreEstudiante ?? 'Alumno'}`;
     document.getElementById('modal-sol-body').innerHTML = `
       <div class="detalle-grid">
@@ -302,20 +306,35 @@
         <div class="detalle-item"><div class="detalle-label">Proyecto</div><div class="detalle-valor">${s.nombreProyecto ?? 'N/A'}</div></div>
         <div class="detalle-item"><div class="detalle-label">Empresa</div><div class="detalle-valor">${s.nombreEmpresa ?? 'N/A'}</div></div>
       </div>`;
-    document.getElementById('modal-sol-aprobar').onclick  = () => procesarSolicitud(s.idSolicitud, 'aprobada_supervisor', s.nombreEstudiante);
-    document.getElementById('modal-sol-rechazar').onclick = () => procesarSolicitud(s.idSolicitud, 'rechazada_supervisor', s.nombreEstudiante);
+    document.getElementById('modal-sol-aprobar').onclick  = () => procesarSolicitud(s.idSolicitud, 'aprobada_supervisor', s.nombreEstudiante, s.boletaAlumno ?? s.boleta);
+    document.getElementById('modal-sol-rechazar').onclick = () => procesarSolicitud(s.idSolicitud, 'rechazada_supervisor', s.nombreEstudiante, s.boletaAlumno ?? s.boleta);
     document.getElementById('modalSolicitud').classList.add('active');
   };
 
   window.cerrarModalSolicitud = () => document.getElementById('modalSolicitud').classList.remove('active');
 
-  window.procesarSolicitud = async function(idSolicitud, nuevoEstado, nombreAlumno) {
-    const ok = await confirmDialog('Confirmar', `¿Deseas ${nuevoEstado === 'aprobada_supervisor' ? 'aprobar y enviar a empresa' : 'rechazar'} la solicitud de ${nombreAlumno}?`);
+  window.procesarSolicitud = async function(idSolicitud, nuevoEstado, nombreAlumno, boletaAlumno) {
+    const aprobado = nuevoEstado === 'aprobada_supervisor';
+    const ok = await confirmDialog('Confirmar', `¿Deseas ${aprobado ? 'aprobar y enviar a empresa' : 'rechazar'} la solicitud de ${nombreAlumno}?`);
     if (!ok) return;
     try {
       const res = await Api.actualizarSolicitudSupervisor(idSolicitud, nuevoEstado);
       if (res.ok) {
-        toast(nuevoEstado === 'aprobada_supervisor' ? 'Solicitud aprobada ✓' : 'Solicitud rechazada', 'success');
+        // ─── Notificación al alumno ───────────────────────
+        try {
+          const resU = await fetch(`${BASE_URL}/usuario/boleta/${boletaAlumno}`);
+          if (resU.ok) {
+            const { idUsuario } = await resU.json();
+            await Api.crearNotificacion(
+              idUsuario,
+              aprobado ? 'Solicitud aprobada por el Supervisor ✓' : 'Solicitud rechazada por el Supervisor',
+              aprobado
+                ? `Tu solicitud fue aprobada por el supervisor y enviada a la empresa. ¡Espera su respuesta!`
+                : `Tu solicitud fue rechazada por el supervisor. Puedes postularte a otro proyecto.`
+            );
+          }
+        } catch {}
+        toast(aprobado ? 'Solicitud aprobada ✓' : 'Solicitud rechazada', 'success');
         cerrarModalSolicitud(); cargarSolicitudesAlumnos();
       } else { toast('Error: ' + res.status, 'error'); }
     } catch (e) { toast(e.message, 'error'); }
@@ -381,7 +400,6 @@
     const btnAprobar  = document.getElementById('modal-proy-aprobar');
     const btnRechazar = document.getElementById('modal-proy-rechazar');
 
-    // Si ya está procesado, deshabilitar botones
     if (estado === 'aprobado' || estado === 'rechazado') {
       btnAprobar.disabled  = estado === 'aprobado';
       btnRechazar.disabled = estado === 'rechazado';
@@ -531,52 +549,6 @@
       cerrarModalPdf(); cargarDocumentos();
     } catch (e) { toast('Error: ' + e.message, 'error'); }
   }
-
-  // ─── CAMBIOS DE PERFIL ────────────────────────────────────
-  window.cargarCambiosPerfil = async function() {
-    const container = document.getElementById('tablaCambios');
-    showLoader(container);
-    try {
-      const res = await Api.getNotificaciones(Session.idUsuario);
-      if (!res.ok) throw new Error('Error ' + res.status);
-      const text = await res.text();
-      if (!text || text.trim() === '') { renderTablaCambios([], container); return; }
-      const notifs = JSON.parse(text);
-      renderTablaCambios(notifs.filter(n => n.titulo?.includes('cambio de perfil') || n.titulo?.includes('Solicitud de cambio')), container);
-    } catch (e) { container.innerHTML = `<div class="empty-state"><h3>Error</h3><p>${e.message}</p></div>`; }
-  };
-
-  function renderTablaCambios(lista, container) {
-    if (!lista.length) { container.innerHTML = `<div class="empty-state"><h3>Sin cambios pendientes</h3></div>`; return; }
-    container.innerHTML = `
-      <table class="table">
-        <thead><tr><th>Tipo</th><th>Detalle</th><th>Fecha</th><th>Acciones</th></tr></thead>
-        <tbody>${lista.map(n => {
-          const esEmpresa = n.mensaje?.includes('empresa') && !n.mensaje?.includes('alumno');
-          return `<tr>
-            <td><span class="badge ${esEmpresa ? 'badge-blue' : 'badge-gray'}">${esEmpresa ? '🏢 Empresa' : '🎓 Alumno'}</span></td>
-            <td style="white-space:pre-wrap;font-size:.85rem;max-width:380px">${n.mensaje ?? n.titulo ?? ''}</td>
-            <td class="text-xs text-muted">${n.fechaCreacion ?? ''}</td>
-            <td>${!n.leida ? `
-              <div class="flex gap-2">
-                <button class="btn btn-success btn-sm" onclick="procesarCambio(${n.idNotificacion}, true)">✓ Aprobar</button>
-                <button class="btn btn-danger btn-sm"  onclick="procesarCambio(${n.idNotificacion}, false)">✕ Rechazar</button>
-              </div>` : '<span class="badge badge-gray">Procesado</span>'}
-            </td>
-          </tr>`;
-        }).join('')}</tbody>
-      </table>`;
-  }
-
-  window.procesarCambio = async function(idNotificacion, aprobado) {
-    const ok = await confirmDialog('Confirmar', `¿Deseas ${aprobado ? 'aprobar' : 'rechazar'} este cambio?`);
-    if (!ok) return;
-    try {
-      await Api.marcarLeida(idNotificacion);
-      toast(aprobado ? 'Cambio aprobado ✓' : 'Cambio rechazado ✓', 'success');
-      cargarCambiosPerfil();
-    } catch (e) { toast('Error: ' + e.message, 'error'); }
-  };
 
 </script>
 </body>

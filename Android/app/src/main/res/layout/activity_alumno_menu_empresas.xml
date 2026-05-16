@@ -8,74 +8,66 @@
     android:fitsSystemWindows="true"
     tools:context=".AlumnoMenuEmpresas">
 
+    <!-- TOPBAR -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="20dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/solinx_logo"
+            android:src="@drawable/solinx_logo_sf"
             android:contentDescription="Logo SoLinX" />
 
-        <View
+        <TextView
             android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="SoLinX"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary"
+            android:fontFamily="sans-serif-medium"/>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvNombreAlumnoHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:text="Alumno"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginEnd="12dp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hola, "
-                android:textSize="16sp"
-                android:textColor="?attr/colorOnBackground"
-                android:textStyle="bold"
-                android:fontFamily="@font/molgan"/>
-            <TextView
-                android:id="@+id/tvNombreAlumnoHeader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nombre Alumno"
-                android:textSize="16sp"
-                android:textColor="?attr/colorOnBackground"
-                android:textStyle="bold"
-                android:fontFamily="@font/molgan"
-                android:layout_marginEnd="12dp" />
+        <ImageView
+            android:id="@+id/fotoperfil"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/imagen_prederterminada"
+            android:contentDescription="Foto de perfil" />
 
-            <ImageView
-                android:id="@+id/fotoperfil"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/imagen_prederterminada"
-                android:contentDescription="Foto de perfil" />
-
-        </LinearLayout>
     </LinearLayout>
 
+    <!-- DIVIDER -->
     <View
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@drawable/barra_azul"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_height="1dp"
+        android:background="?attr/colorOutline"
+        android:alpha="0.3"/>
 
+    <!-- TABS -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="8dp">
+        android:background="?attr/colorSurface">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -88,21 +80,21 @@
                 android:id="@+id/btnTabEmpresas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Empresas"
-                android:textSize="18sp"
+                android:text="Proyectos"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorOnBackground"
-                android:padding="10dp"
+                android:textColor="?attr/colorPrimary"
+                android:paddingVertical="14dp"
+                android:paddingHorizontal="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:fontFamily="@font/molgan"/>
+                android:background="?attr/selectableItemBackgroundBorderless"/>
 
             <View
                 android:id="@+id/lineaTabEmpresas"
-                android:layout_width="80dp"
-                android:layout_height="3dp"
-                android:background="?attr/colorOnBackground"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?attr/colorPrimary"
                 android:visibility="visible"/>
         </LinearLayout>
 
@@ -118,20 +110,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Documentos"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textStyle="normal"
                 android:textColor="?android:attr/textColorSecondary"
-                android:padding="10dp"
+                android:paddingVertical="14dp"
+                android:paddingHorizontal="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:fontFamily="@font/molgan"/>
+                android:background="?attr/selectableItemBackgroundBorderless"/>
 
             <View
                 android:id="@+id/lineaTabDocumentos"
-                android:layout_width="80dp"
-                android:layout_height="3dp"
-                android:background="?attr/colorOnBackground"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?attr/colorPrimary"
                 android:visibility="invisible"/>
         </LinearLayout>
 
@@ -147,28 +139,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Avisos"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textStyle="normal"
                 android:textColor="?android:attr/textColorSecondary"
-                android:padding="10dp"
+                android:paddingVertical="14dp"
+                android:paddingHorizontal="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:fontFamily="@font/molgan"/>
+                android:background="?attr/selectableItemBackgroundBorderless"/>
 
             <View
                 android:id="@+id/lineaTabNotificaciones"
-                android:layout_width="80dp"
-                android:layout_height="3dp"
-                android:background="?attr/colorOnBackground"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?attr/colorPrimary"
                 android:visibility="invisible"/>
         </LinearLayout>
 
     </LinearLayout>
 
+    <!-- DIVIDER -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorOutline"
+        android:alpha="0.3"/>
+
+    <!-- CONTENIDO -->
     <FrameLayout
         android:id="@+id/frameAlumno"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
+
 </LinearLayout>

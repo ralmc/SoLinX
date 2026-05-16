@@ -172,28 +172,28 @@ CREATE TABLE Documento (
 -- ============================================
 -- ─── 1. ESTUDIANTES ────────────────────────────────────
 INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
-(2023000001, 'Ingeniería en Software',              'ESCOM'),
-(2023000002, 'Ingeniería Industrial',               'UPIICSA'),
-(2023000003, 'Ingeniería Mecatrónica',              'UPIITA'),
-(2023000004, 'Ingeniería Informática',              'UPIICSA'),
-(2023000005, 'Ingeniería Aeronáutica',              'ESIA Ticomán'),
+(2023000001, 'Ingeniería en Software',               'ESCOM'),
+(2023000002, 'Ingeniería Industrial',                'UPIICSA'),
+(2023000003, 'Ingeniería Mecatrónica',               'UPIITA'),
+(2023000004, 'Ingeniería Informática',               'UPIICSA'),
+(2023000005, 'Ingeniería Aeronáutica',               'ESIA Ticomán'),
 (2023000006, 'Ingeniería en Inteligencia Artificial','ESCOM'),
-(2023000007, 'Ingeniería Biónica',                  'UPIBI');
+(2023000007, 'Ingeniería Biónica',                   'UPIBI');
 
--- ─── 2. EMPRESAS (con teléfonos y direcciones falsas) ──
+-- ─── 2. EMPRESAS ───────────────────────────────────────
 INSERT INTO Empresa (nombreEmpresa, telefono) VALUES
-('TechNova Solutions',   '5512348765'),   -- idEmpresa 1
-('AeroDynamics MX',      '5598761234'),   -- idEmpresa 2
-('SoftSolutions Corp',   '5534129876'),   -- idEmpresa 3
-('ElectroCorp SA',       '5567893412');   -- idEmpresa 4
+('TechNova Solutions', '5512348765'),
+('AeroDynamics MX',    '5598761234'),
+('SoftSolutions Corp', '5534129876'),
+('ElectroCorp SA',     '5567893412');
 
 -- ─── 3. SUPERVISORES ───────────────────────────────────
 INSERT INTO Supervisor (area, idEmpresa) VALUES
-('Recursos Humanos', 1);
+('Recursos Humanos', 1); 
 
 -- ─── 4. USUARIOS ───────────────────────────────────────
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol, verificado) VALUES
--- Estudiantes
+-- Estudiantes (idUsuario 1-7)
 ('Mauro López',       'mauro@correo.com',    '5512345678', 'pass123',    'estudiante', TRUE),
 ('Sofía Ramírez',     'sofia@correo.com',    '5544332211', 'pass123',    'estudiante', TRUE),
 ('Luis Herrera',      'luis@correo.com',     '5533334444', 'pass123',    'estudiante', TRUE),
@@ -201,13 +201,13 @@ INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol, verificado) VA
 ('Pedro Jiménez',     'pedro@correo.com',    '5577778888', 'pass123',    'estudiante', TRUE),
 ('Carlos Mendoza',    'carlos@correo.com',   '5511223344', 'pass123',    'estudiante', TRUE),
 ('Diana Torres',      'diana@correo.com',    '5599887766', 'pass123',    'estudiante', TRUE),
--- Empresas
+-- Empresas (idUsuario 8-11)
 ('Laura Tech',        'laura@technova.com',  '5588991122', 'empresa123', 'empresa',    TRUE),
 ('Empresa Aero',      'aero@aero.com',       '5598761234', 'empresa123', 'empresa',    TRUE),
 ('Empresa Soft',      'soft@soft.com',       '5534129876', 'empresa123', 'empresa',    TRUE),
 ('Empresa Electro',   'electro@electro.com', '5567893412', 'empresa123', 'empresa',    TRUE),
--- Supervisor
-('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123',     'supervisor', TRUE); 
+-- Supervisor (idUsuario 12)
+('Carlos Supervisor', 'carlos@technova.com', '5599001122', 'sup123',     'supervisor', TRUE);
 
 -- ─── 5. VINCULACIÓN USUARIOS ↔ ROLES ───────────────────
 INSERT INTO UsuarioEstudiante (idUsuario, boleta) VALUES
@@ -228,9 +228,9 @@ INSERT INTO UsuarioEmpresa (idUsuario, idEmpresa) VALUES
 INSERT INTO UsuarioSupervisor (idUsuario, idSupervisor) VALUES
 (12, 1);
 
--- ─── 6. PROYECTOS (2 por empresa, inicio 23/04/2026, fin 31/07/2026) ──
+-- ─── 6. PROYECTOS ──────────────────────────────────────
 INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubicacion, fechaInicio, fechaTermino, imagenRef, estadoProyecto, idEmpresa) VALUES
--- TechNova (2 proyectos)
+-- TechNova (idProyecto 1-2)
 ('Ingeniería en Software',
  'Sistema de Gestión Escolar v2.0',
  'Crear un sistema web moderno para la gestión de datos escolares.',
@@ -241,7 +241,7 @@ INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubica
  'Desarrollo e implementación de un dron de uso académico.',
  2, 'Blvd. Miguel de Cervantes 120, Querétaro',
  '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_dron', 'aprobado', 1),
--- AeroDynamics (2 proyectos)
+-- AeroDynamics (idProyecto 3-4)
 ('Logística Industrial',
  'App Inventarios FastTrack',
  'App móvil para gestión de inventarios en tiempo real.',
@@ -252,7 +252,7 @@ INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubica
  'Diseño y programación de brazo robótico para línea de ensamble.',
  2, 'Periférico Sur 4349, Jardines del Pedregal, CDMX',
  '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 'aprobado', 2),
--- SoftSolutions (2 proyectos)
+-- SoftSolutions (idProyecto 5-6)
 ('Ingeniería Eléctrica',
  'EcoMonitor Inteligente',
  'Sistema de monitoreo de consumo eléctrico con alertas automáticas.',
@@ -263,7 +263,7 @@ INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubica
  'Asistente virtual con procesamiento de lenguaje natural para soporte técnico.',
  3, 'Calle Tokio 35, Juárez, CDMX',
  '2026-04-23 09:00:00', '2026-07-31 18:00:00', 'img_default_proyecto', 'aprobado', 3),
--- ElectroCorp (2 proyectos)
+-- ElectroCorp (idProyecto 7-8)
 ('Desarrollo Backend',
  'API de Pagos Seguros',
  'Crear una API segura para procesamiento de pagos en línea.',
@@ -277,24 +277,13 @@ INSERT INTO Proyecto (carreraEnfocada, nombreProyecto, objetivo, vacantes, ubica
 
 -- ─── 7. PERFILES ───────────────────────────────────────
 INSERT INTO Perfil (tema, idUsuario) VALUES
-('claro',  1),
-('claro',  2),
-('claro',  3),
-('claro',  4),
-('claro',  5),
-('claro',  6),
-('claro',  7),
-('claro',  8),
-('claro',  9),
-('claro', 10),
-('claro', 11),
-('claro', 12);
+('claro',  1), ('claro',  2), ('claro',  3), ('claro',  4),
+('claro',  5), ('claro',  6), ('claro',  7), ('claro',  8),
+('claro',  9), ('claro', 10), ('claro', 11), ('claro', 12);
 
 -- ─── 8. HORARIOS ───────────────────────────────────────
 INSERT INTO Horario (lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierFinal, jueInicio, jueFinal, vieInicio, vieFinal) VALUES
-('08:00:00', '14:00:00', '08:00:00', '14:00:00', '08:00:00', '14:00:00', '08:00:00', '14:00:00', '08:00:00', '14:00:00');
-
-INSERT INTO Horario (lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierFinal, jueInicio, jueFinal, vieInicio, vieFinal) VALUES
+('08:00:00', '14:00:00', '08:00:00', '14:00:00', '08:00:00', '14:00:00', '08:00:00', '14:00:00', '08:00:00', '14:00:00'),
 ('14:00:00', '20:00:00', '14:00:00', '20:00:00', '14:00:00', '20:00:00', '14:00:00', '20:00:00', '14:00:00', '20:00:00');
 
 INSERT INTO Horario (lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierFinal, jueInicio, jueFinal, vieInicio, vieFinal, sabInicio, sabFinal) VALUES
@@ -302,34 +291,56 @@ INSERT INTO Horario (lunInicio, lunFinal, marInicio, marFinal, mierInicio, mierF
 
 -- ─── 9. HORARIOS DE ESTUDIANTES ────────────────────────
 INSERT INTO HorarioEstudiante (boleta, idHorario) VALUES
-(2023000001, 1),
-(2023000002, 2),
-(2023000003, 3),
-(2023000004, 1),
-(2023000005, 2),
-(2023000006, 1),
-(2023000007, 3);
+(2023000001, 1), (2023000002, 2), (2023000003, 3),
+(2023000004, 1), (2023000005, 2), (2023000006, 1), (2023000007, 3);
 
 -- ─── 10. SOLICITUDES ───────────────────────────────────
+-- Mauro (idUsuario 1, boleta 2023000001) → aceptado en proyecto 1
 INSERT INTO Solicitud (estadoSolicitud, fechaAceptacion, boleta, idProyecto) VALUES
-('aceptada',        '2026-04-23 10:00:00', 2023000001, 1),
-('enviada',          NULL,                 2023000005, 2),
-('rechazada_empresa',NULL,                 2023000002, 3);
+('aceptada', '2026-04-23 10:00:00', 2023000001, 1);
+
+-- Sofía (idUsuario 2, boleta 2023000005) → enviada al supervisor (pendiente de revisión)
+INSERT INTO Solicitud (estadoSolicitud, boleta, idProyecto) VALUES
+('enviada', 2023000005, 2);
+
+-- Luis (idUsuario 3, boleta 2023000002) → rechazada por empresa
+INSERT INTO Solicitud (estadoSolicitud, boleta, idProyecto) VALUES
+('rechazada_empresa', 2023000002, 3);
+
+-- Ana (idUsuario 4, boleta 2023000003) → aprobada por supervisor, esperando empresa
+INSERT INTO Solicitud (estadoSolicitud, boleta, idProyecto) VALUES
+('aprobada_supervisor', 2023000003, 1);
+
+-- Pedro (idUsuario 5, boleta 2023000004) → rechazada por supervisor
+INSERT INTO Solicitud (estadoSolicitud, boleta, idProyecto) VALUES
+('rechazada_supervisor', 2023000004, 2);
 
 -- ─── 11. NOTIFICACIONES ────────────────────────────────
 INSERT INTO Notificacion (titulo, mensaje, leida, idUsuario) VALUES
--- Mauro: fue aceptado
-('¡Solicitud aceptada!',
- 'Tu solicitud para el proyecto "Sistema de Gestión Escolar v2.0" de TechNova Solutions ha sido aceptada. Bienvenido al equipo. Por favor sube tu documentación del período 1 para continuar.',
+-- Mauro: aceptado por empresa
+('¡Felicidades! Fuiste aceptado en un proyecto 🎉',
+ 'La empresa Laura Tech aceptó tu solicitud en el proyecto Sistema de Gestión Escolar v2.0. ¡Ya puedes subir tus documentos!',
  FALSE, 1),
--- Sofía: solicitud en revisión
+
+-- Sofía: solicitud en revisión por supervisor
 ('Solicitud en proceso',
- 'Tu solicitud para el proyecto "Proyecto Icarus" está siendo revisada. Te notificaremos cuando haya una actualización.',
+ 'Tu solicitud para el proyecto "Proyecto Icarus" está siendo revisada por el supervisor. Te notificaremos cuando haya una actualización.',
  FALSE, 2),
--- Luis: solicitud rechazada
-('Solicitud no aceptada',
- 'Lamentablemente tu solicitud para el proyecto "App Inventarios FastTrack" no fue aceptada en esta ocasión. Puedes postularte a otros proyectos disponibles.',
- FALSE, 3);
+
+-- Luis: rechazada por empresa
+('Solicitud no aceptada por la empresa',
+ 'La empresa Empresa Aero no aceptó tu solicitud en este momento. Puedes postularte a otro proyecto.',
+ FALSE, 3),
+
+-- Ana: aprobada por supervisor, esperando empresa
+('Solicitud aprobada por el Supervisor ✓',
+ 'Tu solicitud fue aprobada por el supervisor y enviada a la empresa. ¡Espera su respuesta!',
+ FALSE, 4),
+
+-- Pedro: rechazada por supervisor
+('Solicitud rechazada por el Supervisor',
+ 'Tu solicitud fue rechazada por el supervisor. Puedes postularte a otro proyecto.',
+ FALSE, 5);
 
 -- ============================================
 -- VERIFICACIÓN
@@ -340,6 +351,8 @@ SELECT * FROM Perfil;
 SELECT * FROM Usuario;
 SELECT * FROM Solicitud;
 SELECT * FROM Documento;
+SELECT * FROM Notificacion;
+
 /* ===========================================================
 TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
 ===========================================================

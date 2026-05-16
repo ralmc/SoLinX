@@ -10,141 +10,15 @@
     android:fitsSystemWindows="true"
     tools:context=".EmpresaCrear">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="24dp">
-        <TextView
-            android:id="@+id/tv_title_register"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Crear cuenta empresa"
-            android:fontFamily="@font/fonts"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            android:layout_marginStart="16dp"
-            android:textColor="?attr/colorOnBackground"
-            android:layout_marginTop="36dp"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="40dp">
 
-        <!-- NOMBRE EMPRESA -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_nombre_empresa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:layout_constraintTop_toBottomOf="@id/tv_title_register">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_nombre_empresa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Nombre de la Empresa"
-                android:inputType="textCapWords"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- CORREO -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_email_empresa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:layout_constraintTop_toBottomOf="@id/til_nombre_empresa">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_email_empresa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Correo Electrónico"
-                android:inputType="textEmailAddress"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- CONFIRMAR CORREO -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_confirm_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:layout_constraintTop_toBottomOf="@id/til_email_empresa">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_confirm_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Confirmar Correo Electrónico"
-                android:inputType="textEmailAddress"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- TELEFONO -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_telefono"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:layout_constraintTop_toBottomOf="@id/til_confirm_email">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_telefono"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Teléfono"
-                android:inputType="phone"
-                android:maxLength="10"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- PASSWORD -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_password_register"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:passwordToggleEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:layout_constraintTop_toBottomOf="@id/til_telefono">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_password_register"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Contraseña"
-                android:inputType="textPassword"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- CONFIRMAR PASSWORD -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_confirm_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:passwordToggleEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:layout_constraintTop_toBottomOf="@id/til_password_register">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_confirm_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Confirmar Contraseña"
-                android:inputType="textPassword"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- BOTÓN Y LOGO -->
-        <LinearLayout
-            android:id="@+id/layout_bottom_actions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="32dp"
-            app:layout_constraintTop_toBottomOf="@id/til_confirm_password"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+        <!-- BOTÓN REGRESAR -->
         <ImageButton
             android:id="@+id/btnRegresarFlecha"
             android:layout_width="40dp"
@@ -152,16 +26,187 @@
             android:src="@drawable/flechaizq"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:layout_marginTop="1dp"
-            android:layout_marginStart="16dp"
+            android:layout_gravity="start"
             android:contentDescription="Regresar"
             app:tint="@color/flecha_color"/>
 
+        <View android:layout_width="match_parent" android:layout_height="32dp" />
+
+        <!-- TÍTULO -->
+        <TextView
+            android:id="@+id/tv_title_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Crear cuenta empresa"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnBackground"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Completa los datos de tu empresa"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginBottom="28dp"/>
+
+        <!-- NOMBRE EMPRESA -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_nombre_empresa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorSecondary"
+            app:startIconDrawable="@android:drawable/ic_menu_edit"
+            app:startIconTint="?attr/colorSecondary">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_nombre_empresa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nombre de la Empresa"
+                android:inputType="textCapWords"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- CORREO -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_email_empresa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorSecondary"
+            app:startIconDrawable="@android:drawable/ic_dialog_email"
+            app:startIconTint="?attr/colorSecondary">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_email_empresa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Correo Electrónico"
+                android:inputType="textEmailAddress"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- CONFIRMAR CORREO -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_confirm_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorSecondary"
+            app:startIconDrawable="@android:drawable/ic_dialog_email"
+            app:startIconTint="?attr/colorSecondary">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_confirm_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirmar Correo Electrónico"
+                android:inputType="textEmailAddress"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- TELÉFONO -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_telefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorSecondary"
+            app:startIconDrawable="@android:drawable/ic_menu_call"
+            app:startIconTint="?attr/colorSecondary">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_telefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Teléfono"
+                android:inputType="phone"
+                android:maxLength="10"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- CONTRASEÑA -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_password_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorSecondary"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="?attr/colorSecondary"
+            app:startIconDrawable="@android:drawable/ic_lock_lock"
+            app:startIconTint="?attr/colorSecondary">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_password_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Contraseña"
+                android:inputType="textPassword"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- CONFIRMAR CONTRASEÑA -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="28dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            app:boxStrokeColor="@color/input_stroke_secondary"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:hintTextColor="?attr/colorSecondary"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="?attr/colorSecondary"
+            app:startIconDrawable="@android:drawable/ic_lock_lock"
+            app:startIconTint="?attr/colorSecondary">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirmar Contraseña"
+                android:inputType="textPassword"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- BOTÓN + LOGO -->
+        <LinearLayout
+            android:id="@+id/layout_bottom_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
 
             <ImageView
                 android:id="@+id/logo_bottom_left"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
                 android:src="@drawable/solinx_logo"
                 android:contentDescription="Logo pequeño"
                 android:layout_marginEnd="16dp"/>
@@ -171,26 +216,26 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Enviar"
-                android:textColor="?attr/colorOnSecondary"
-                android:padding="14dp"
-                android:textSize="18sp"
-                android:backgroundTint="?attr/colorSecondary"
-                app:cornerRadius="8dp"/>
+                android:text="Crear Cuenta"
+                android:textColor="#FFFFFF"
+                android:paddingVertical="14dp"
+                android:textSize="16sp"
+                android:textAllCaps="false"
+                android:backgroundTint="?attr/colorPrimary"
+                app:cornerRadius="10dp"
+                style="@style/Widget.Material3.Button"/>
         </LinearLayout>
 
+        <!-- LINK LOGIN -->
         <TextView
             android:id="@+id/tv_login_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="¿Ya tienes cuenta? Inicia sesión aquí."
-            android:textColor="?attr/colorSecondary"
+            android:textColor="?attr/colorPrimary"
             android:padding="8dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/layout_bottom_actions"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:textSize="14sp"
+            android:layout_gravity="center_horizontal"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </ScrollView>

@@ -14,36 +14,44 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:padding="30dp">
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="40dp">
 
-
+        <!-- BOTÓN REGRESAR -->
         <ImageButton
             android:id="@+id/btnRegresarFlecha"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:contentDescription="Regresar"
             android:scaleType="fitCenter"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:src="@drawable/flechaizq"
-            app:tint="@color/flecha_color"
-            />
+            app:tint="@color/flecha_color"/>
 
-        <View android:layout_width="match_parent" android:layout_height="20dp" />
+        <View android:layout_width="match_parent" android:layout_height="32dp" />
 
+        <!-- TÍTULO -->
         <TextView
             android:id="@+id/tvTitulo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Crear Cuenta"
-            android:textSize="35sp"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:textColor="?attr/colorOnBackground"
-            android:layout_marginBottom="30dp" />
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Nombre de Usuario -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Completa tus datos para registrarte"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginBottom="28dp"/>
+
+        <!-- Nombre -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_nombre_usuario"
             android:layout_width="match_parent"
@@ -56,7 +64,6 @@
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_menu_edit"
             app:startIconTint="?attr/colorSecondary">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombreUsuario"
                 android:layout_width="match_parent"
@@ -80,7 +87,6 @@
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             app:startIconTint="?attr/colorSecondary">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etBoleta"
                 android:layout_width="match_parent"
@@ -104,7 +110,6 @@
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_dialog_map"
             app:startIconTint="?attr/colorSecondary">
-
             <AutoCompleteTextView
                 android:id="@+id/spEscuela"
                 android:layout_width="match_parent"
@@ -130,7 +135,6 @@
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_menu_agenda"
             app:startIconTint="?attr/colorSecondary">
-
             <AutoCompleteTextView
                 android:id="@+id/spCarrera"
                 android:layout_width="match_parent"
@@ -156,7 +160,6 @@
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_dialog_email"
             app:startIconTint="?attr/colorSecondary">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCorreo"
                 android:layout_width="match_parent"
@@ -180,7 +183,6 @@
             app:hintTextColor="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_dialog_email"
             app:startIconTint="?attr/colorSecondary">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConfirmarCorreo"
                 android:layout_width="match_parent"
@@ -206,7 +208,6 @@
             app:passwordToggleTint="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_lock_lock"
             app:startIconTint="?attr/colorSecondary">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etContrasena"
                 android:layout_width="match_parent"
@@ -222,7 +223,7 @@
             android:id="@+id/til_confirmar_contrasena"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="28dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:boxStrokeColor="@color/input_stroke_secondary"
             app:boxStrokeWidth="1dp"
@@ -232,7 +233,6 @@
             app:passwordToggleTint="?attr/colorSecondary"
             app:startIconDrawable="@android:drawable/ic_lock_lock"
             app:startIconTint="?attr/colorSecondary">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConfirmarContrasena"
                 android:layout_width="match_parent"
@@ -243,18 +243,18 @@
                 android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- BOTÓN + LOGO -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="30dp">
+            android:layout_marginBottom="20dp">
 
             <ImageView
                 android:id="@+id/imgLogo"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/solinx_logo"
                 android:contentDescription="Logo SoLinX" />
@@ -266,25 +266,25 @@
                 android:layout_weight="1"
                 android:text="Crear Cuenta"
                 android:textAllCaps="false"
-                android:textSize="18sp"
-                android:padding="14dp"
-                android:backgroundTint="?attr/colorSecondary"
-                android:textColor="?attr/colorOnSecondary"
-                app:cornerRadius="8dp" />
+                android:textSize="16sp"
+                android:paddingVertical="14dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="10dp"
+                style="@style/Widget.Material3.Button"/>
         </LinearLayout>
 
+        <!-- LINK LOGIN -->
         <TextView
             android:id="@+id/tvLoginLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="¿Ya tienes cuenta? Inicia sesión aquí."
-            android:textColor="?attr/colorSecondary"
+            android:textColor="?attr/colorPrimary"
             android:padding="8dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:clickable="true"
             android:focusable="true" />
-
-        <View android:layout_width="match_parent" android:layout_height="20dp" />
 
     </LinearLayout>
 </ScrollView>
