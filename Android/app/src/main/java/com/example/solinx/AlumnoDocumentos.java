@@ -1,5 +1,6 @@
 package com.example.solinx;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -57,7 +58,6 @@ public class AlumnoDocumentos extends Fragment {
                 new ActivityResultContracts.GetContent(), uri -> {
                     if (uri == null || periodoSeleccionado == -1) return;
 
-                    // Validar tamaño
                     long tamañoArchivo = 0;
                     Cursor cursorSize = requireContext().getContentResolver()
                             .query(uri, null, null, null, null);
@@ -103,6 +103,18 @@ public class AlumnoDocumentos extends Fragment {
         recyclerPeriodos = view.findViewById(R.id.recyclerPeriodos);
         recyclerPeriodos.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        // ─── Clicks de descarga de formatos ──────────────────────
+        view.findViewById(R.id.cardGuiaLlenado).setOnClickListener(v ->
+                abrirPdf("Llenado_de_reportes.pdf"));
+        view.findViewById(R.id.cardReporteMensual).setOnClickListener(v ->
+                abrirPdf("Reporte_Mensual_de_Actividades.pdf"));
+        view.findViewById(R.id.cardControlAsistencia).setOnClickListener(v ->
+                abrirPdf("Control_de_Asistencia.pdf"));
+        view.findViewById(R.id.cardReporteGlobal).setOnClickListener(v ->
+                abrirPdf("Reporte_Global_de_Actividades.pdf"));
+        view.findViewById(R.id.cardEvaluacion).setOnClickListener(v ->
+                abrirPdf("EVALUACION.pdf"));
+
         // Inicializar con periodos vacíos
         List<DocumentoDTO> periodosVacios = new ArrayList<>();
         for (int i = 0; i < 8; i++) periodosVacios.add(null);
@@ -115,6 +127,35 @@ public class AlumnoDocumentos extends Fragment {
         recyclerPeriodos.setAdapter(periodoAdapter);
 
         cargarDocumentos();
+    }
+
+    // ─── Descargar PDF y abrir con visor nativo ───────────────────────────────
+    private void abrirPdf(String nombreArchivo) {
+        try {
+            java.io.InputStream input = requireContext().getAssets()
+                    .open("docs/" + nombreArchivo);
+
+            java.io.File outputFile = new java.io.File(
+                    requireContext().getCacheDir(), nombreArchivo);
+            java.io.FileOutputStream output = new java.io.FileOutputStream(outputFile);
+            byte[] buffer = new byte[4096];
+            int len;
+            while ((len = input.read(buffer)) != -1) output.write(buffer, 0, len);
+            input.close(); output.close();
+
+            android.net.Uri fileUri = androidx.core.content.FileProvider.getUriForFile(
+                    requireContext(),
+                    requireContext().getPackageName() + ".provider",
+                    outputFile);
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri, "application/pdf");
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "abrirPdf: " + e.getMessage(), e);
+        }
     }
 
     public void cargarDocumentos() {
@@ -139,13 +180,7 @@ public class AlumnoDocumentos extends Fragment {
                     }
                 }
 
-                // ─── Lógica de bloqueo por estado ─────────────────
-                // Un periodo está disponible si:
-                // 1. Es el periodo 1 y no tiene documento
-                // 2. El periodo anterior está APROBADO y este no tiene documento
-                // 3. El periodo actual está RECHAZADO (puede resubir)
                 int periodoDesbloqueado = calcularPeriodoDesbloqueado(periodos);
-
                 final int periodoFinal = periodoDesbloqueado;
 
                 requireActivity().runOnUiThread(() -> {
@@ -169,29 +204,23 @@ public class AlumnoDocumentos extends Fragment {
         });
     }
 
-    // ─── Calcular qué periodo está desbloqueado ────────────────────────────
     private int calcularPeriodoDesbloqueado(List<DocumentoDTO> periodos) {
         for (int i = 0; i < 8; i++) {
             DocumentoDTO doc = periodos.get(i);
             int numeroPeriodo = i + 1;
 
             if (doc == null) {
-                // Sin documento — disponible si es el primero o el anterior está aprobado
                 if (numeroPeriodo == 1) return 1;
                 DocumentoDTO anterior = periodos.get(i - 1);
                 if (anterior != null && "aprobado".equalsIgnoreCase(anterior.getEstadoDocumento())) {
                     return numeroPeriodo;
                 }
-                // Si el anterior no está aprobado, está bloqueado
-                return -1; // ninguno disponible por ahora
+                return -1;
             }
-            // Si está rechazado, ese mismo periodo está disponible para resubir
-            // (el PeriodoAdapter lo maneja directamente por el estado del doc)
         }
-        return -1; // todos subidos
+        return -1;
     }
 
-    // ─── Subir PDF ────────────────────────────────────────────────────────
     private void subirPDF(Uri uri, int periodo) {
         if (boleta == null) return;
 

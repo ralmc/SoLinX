@@ -170,7 +170,6 @@ CREATE TABLE Documento (
 -- ============================================
 -- DATOS SEED
 -- ============================================
-
 -- ─── 1. ESTUDIANTES ────────────────────────────────────
 INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
 (2023000001, 'Ingeniería en Software',               'ESCOM'),
@@ -183,14 +182,14 @@ INSERT INTO Estudiante (boleta, carrera, escuela) VALUES
 
 -- ─── 2. EMPRESAS ───────────────────────────────────────
 INSERT INTO Empresa (nombreEmpresa, telefono) VALUES
-('TechNova Solutions', '5512348765'),   -- idEmpresa 1
-('AeroDynamics MX',    '5598761234'),   -- idEmpresa 2
-('SoftSolutions Corp', '5534129876'),   -- idEmpresa 3
-('ElectroCorp SA',     '5567893412');   -- idEmpresa 4
+('TechNova Solutions', '5512348765'),
+('AeroDynamics MX',    '5598761234'),
+('SoftSolutions Corp', '5534129876'),
+('ElectroCorp SA',     '5567893412');
 
 -- ─── 3. SUPERVISORES ───────────────────────────────────
 INSERT INTO Supervisor (area, idEmpresa) VALUES
-('Recursos Humanos', 1);               -- idSupervisor 1
+('Recursos Humanos', 1); 
 
 -- ─── 4. USUARIOS ───────────────────────────────────────
 INSERT INTO Usuario (nombre, correo, telefono, userPassword, rol, verificado) VALUES

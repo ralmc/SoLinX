@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout_vcalumno"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,22 +20,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="50dp">
+            android:paddingBottom="24dp">
 
-            <!-- HEADER -->
+            <!-- ─── TOPBAR ─── -->
             <LinearLayout
-                android:id="@+id/header_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="64dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginTop="40dp"
-                android:paddingHorizontal="24dp">
+                android:paddingHorizontal="20dp"
+                android:background="?attr/colorSurface"
+                android:elevation="2dp">
 
                 <ImageButton
                     android:id="@+id/regresar"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:src="@drawable/flechaizq"
                     android:background="@android:color/transparent"
                     android:scaleType="fitCenter"
@@ -44,35 +44,38 @@
 
                 <ImageView
                     android:id="@+id/imgLogoAve"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="10dp"
                     android:src="@drawable/solinx_logo"
                     android:scaleType="fitCenter"
                     android:contentDescription="Logo SoLinX" />
 
-                <Space android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Mi Perfil"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    android:fontFamily="sans-serif-medium"/>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvBoleta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:layout_marginEnd="12dp">
-                    <TextView
-                        android:id="@+id/tvBoleta"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2023XXXXXX"
-                        android:textSize="18sp"
-                        android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold"/>
-                </LinearLayout>
+                    android:text="2023XXXXXX"
+                    android:textSize="13sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="12dp"/>
 
                 <ImageView
                     android:id="@+id/imgPerfil"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/imagen_prederterminada"
                     android:clickable="true"
@@ -80,53 +83,53 @@
                     android:contentDescription="Foto de perfil"/>
             </LinearLayout>
 
-            <!-- BARRA SEPARADORA -->
+            <!-- DIVIDER -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginHorizontal="24dp"
-                android:background="?attr/colorPrimary" />
+                android:layout_height="1dp"
+                android:background="?attr/colorOutline"
+                android:alpha="0.3"/>
 
-            <!-- ALERTA CAMBIOS PENDIENTES -->
+            <!-- ─── ALERTA CAMBIOS PENDIENTES ─── -->
             <TextView
                 android:id="@+id/tvAlertaPendiente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
                 android:padding="12dp"
-                android:background="#FFF3CD"
-                android:textColor="#856404"
+                android:background="@color/color_warning_bg"
+                android:textColor="@color/color_warning_text"
                 android:textSize="13sp"
                 android:text="⏳ Cambios en revisión por el supervisor"
-                android:visibility="gone"
-                android:drawablePadding="8dp"/>
+                android:visibility="gone"/>
 
-            <!-- SELECTOR DE MODO -->
-            <LinearLayout
+            <!-- ─── MODO (TEMA) ─── -->
+            <androidx.cardview.widget.CardView
+                xmlns:app2="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="24dp"
-                android:paddingHorizontal="24dp">
-
-                <TextView
-                    android:id="@+id/tvModo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Modo"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app2:cardCornerRadius="12dp"
+                app2:cardElevation="1dp">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvModo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tema"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
 
                     <View
                         android:id="@+id/viewModoClaro"
@@ -135,7 +138,7 @@
                         android:background="@drawable/circle_light"
                         android:clickable="true"
                         android:focusable="true"
-                        android:layout_marginEnd="12dp" />
+                        android:layout_marginEnd="12dp"/>
 
                     <View
                         android:id="@+id/viewModoOscuro"
@@ -143,378 +146,408 @@
                         android:layout_height="28dp"
                         android:background="@drawable/circle_dark"
                         android:clickable="true"
-                        android:focusable="true"
-                        android:layout_marginStart="12dp" />
+                        android:focusable="true"/>
                 </LinearLayout>
-            </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            <!-- SECCIÓN: INFORMACIÓN DEL ALUMNADO -->
+            <!-- ─── INFORMACIÓN DEL ALUMNADO ─── -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Información del alumnado"
+                android:text="Información personal"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="20sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp" />
+                android:letterSpacing="0.08"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"/>
 
-            <!-- Nombre -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                xmlns:app3="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginHorizontal="16dp"
+                app3:cardCornerRadius="12dp"
+                app3:cardElevation="1dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nombre: "
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvNombre"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cargando..."
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="16sp"/>
+                    <!-- Nombre -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
 
-                <TextView
-                    android:id="@+id/btnEditarNombre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✏️"
-                    android:textSize="18sp"
-                    android:padding="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"/>
-            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nombre"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:id="@+id/tvNombre"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="15sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
 
-            <!-- Correo (solo lectura) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="12dp">
+                        <TextView
+                            android:id="@+id/btnEditarNombre"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✏️"
+                            android:textSize="18sp"
+                            android:padding="8dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground"/>
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Correo: "
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"
+                        android:layout_marginHorizontal="16dp"/>
 
-                <TextView
-                    android:id="@+id/tvCorreo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cargando..."
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="16sp"/>
-            </LinearLayout>
+                    <!-- Correo -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
 
-            <!-- Escuela -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="12dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Correo"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:id="@+id/tvCorreo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="15sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Escuela: "
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"
+                        android:layout_marginHorizontal="16dp"/>
 
-                <TextView
-                    android:id="@+id/tvEscuela"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cargando..."
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="16sp"/>
+                    <!-- Escuela -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
 
-                <TextView
-                    android:id="@+id/btnEditarEscuela"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✏️"
-                    android:textSize="18sp"
-                    android:padding="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"/>
-            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Escuela"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:id="@+id/tvEscuela"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="15sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
 
-            <!-- Carrera -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="24dp">
+                        <TextView
+                            android:id="@+id/btnEditarEscuela"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✏️"
+                            android:textSize="18sp"
+                            android:padding="8dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground"/>
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Carrera: "
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="16sp"
-                    android:textStyle="bold"/>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"
+                        android:layout_marginHorizontal="16dp"/>
 
-                <TextView
-                    android:id="@+id/tvCarrera"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Cargando..."
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="16sp"/>
+                    <!-- Carrera -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
 
-                <TextView
-                    android:id="@+id/btnEditarCarrera"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✏️"
-                    android:textSize="18sp"
-                    android:padding="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground"/>
-            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Carrera"
+                                android:textColor="?attr/colorPrimary"
+                                android:textSize="12sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:id="@+id/tvCarrera"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cargando..."
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="15sp"
+                                android:layout_marginTop="2dp"/>
+                        </LinearLayout>
 
-            <!-- SECCIÓN: STATUS -->
+                        <TextView
+                            android:id="@+id/btnEditarCarrera"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✏️"
+                            android:textSize="18sp"
+                            android:padding="8dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ─── STATUS DE SOLICITUDES ─── -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Status de solicitudes"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="20sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:layout_marginStart="24dp" />
+                android:letterSpacing="0.08"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"/>
 
-            <TextView
-                android:id="@+id/tvPuntosStatus"
+            <androidx.cardview.widget.CardView
+                xmlns:app4="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cargando solicitudes..."
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="16sp"
-                android:lineSpacingExtra="4dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginHorizontal="16dp"
+                app4:cardCornerRadius="12dp"
+                app4:cardElevation="1dp">
 
-            <!-- SECCIÓN: HORARIO -->
+                <TextView
+                    android:id="@+id/tvPuntosStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cargando solicitudes..."
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"
+                    android:padding="16dp"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- ─── HORARIO ─── -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mi Horario"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="20sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp" />
+                android:letterSpacing="0.08"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="8dp"
-                android:background="?attr/colorPrimary" />
-
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                xmlns:app5="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginHorizontal="16dp"
+                app5:cardCornerRadius="12dp"
+                app5:cardElevation="1dp">
 
-                <!-- LUNES -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:paddingVertical="10dp">
-                    <TextView android:layout_width="90dp" android:layout_height="wrap_content"
-                        android:text="Lunes" android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" android:textSize="15sp"/>
-                    <TextView android:id="@+id/tvHorarioLunes" android:layout_width="0dp"
-                        android:layout_height="wrap_content" android:layout_weight="1"
-                        android:text="Sin clase" android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="15sp"/>
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="?attr/colorPrimary" android:alpha="0.15"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp">
 
-                <!-- MARTES -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:paddingVertical="10dp">
-                    <TextView android:layout_width="90dp" android:layout_height="wrap_content"
-                        android:text="Martes" android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" android:textSize="15sp"/>
-                    <TextView android:id="@+id/tvHorarioMartes" android:layout_width="0dp"
-                        android:layout_height="wrap_content" android:layout_weight="1"
-                        android:text="Sin clase" android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="15sp"/>
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="?attr/colorPrimary" android:alpha="0.15"/>
+                    <!-- LUNES -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:paddingVertical="12dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                            android:text="Lunes" android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvHorarioLunes" android:layout_width="0dp"
+                            android:layout_height="wrap_content" android:layout_weight="1"
+                            android:text="Sin clase" android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"/>
 
-                <!-- MIÉRCOLES -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:paddingVertical="10dp">
-                    <TextView android:layout_width="90dp" android:layout_height="wrap_content"
-                        android:text="Miércoles" android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" android:textSize="15sp"/>
-                    <TextView android:id="@+id/tvHorarioMiercoles" android:layout_width="0dp"
-                        android:layout_height="wrap_content" android:layout_weight="1"
-                        android:text="Sin clase" android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="15sp"/>
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="?attr/colorPrimary" android:alpha="0.15"/>
+                    <!-- MARTES -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:paddingVertical="12dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                            android:text="Martes" android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvHorarioMartes" android:layout_width="0dp"
+                            android:layout_height="wrap_content" android:layout_weight="1"
+                            android:text="Sin clase" android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"/>
 
-                <!-- JUEVES -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:paddingVertical="10dp">
-                    <TextView android:layout_width="90dp" android:layout_height="wrap_content"
-                        android:text="Jueves" android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" android:textSize="15sp"/>
-                    <TextView android:id="@+id/tvHorarioJueves" android:layout_width="0dp"
-                        android:layout_height="wrap_content" android:layout_weight="1"
-                        android:text="Sin clase" android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="15sp"/>
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="?attr/colorPrimary" android:alpha="0.15"/>
+                    <!-- MIÉRCOLES -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:paddingVertical="12dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                            android:text="Miércoles" android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvHorarioMiercoles" android:layout_width="0dp"
+                            android:layout_height="wrap_content" android:layout_weight="1"
+                            android:text="Sin clase" android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"/>
 
-                <!-- VIERNES -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:paddingVertical="10dp">
-                    <TextView android:layout_width="90dp" android:layout_height="wrap_content"
-                        android:text="Viernes" android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" android:textSize="15sp"/>
-                    <TextView android:id="@+id/tvHorarioViernes" android:layout_width="0dp"
-                        android:layout_height="wrap_content" android:layout_weight="1"
-                        android:text="Sin clase" android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="15sp"/>
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="?attr/colorPrimary" android:alpha="0.15"/>
+                    <!-- JUEVES -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:paddingVertical="12dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                            android:text="Jueves" android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvHorarioJueves" android:layout_width="0dp"
+                            android:layout_height="wrap_content" android:layout_weight="1"
+                            android:text="Sin clase" android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"/>
 
-                <!-- SÁBADO -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:paddingVertical="10dp">
-                    <TextView android:layout_width="90dp" android:layout_height="wrap_content"
-                        android:text="Sábado" android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" android:textSize="15sp"/>
-                    <TextView android:id="@+id/tvHorarioSabado" android:layout_width="0dp"
-                        android:layout_height="wrap_content" android:layout_weight="1"
-                        android:text="Sin clase" android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="15sp"/>
-                </LinearLayout>
-                <View android:layout_width="match_parent" android:layout_height="1dp"
-                    android:background="?attr/colorPrimary" android:alpha="0.15"/>
+                    <!-- VIERNES -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:paddingVertical="12dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                            android:text="Viernes" android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvHorarioViernes" android:layout_width="0dp"
+                            android:layout_height="wrap_content" android:layout_weight="1"
+                            android:text="Sin clase" android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"/>
 
-                <!-- DOMINGO -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:paddingVertical="10dp">
-                    <TextView android:layout_width="90dp" android:layout_height="wrap_content"
-                        android:text="Domingo" android:textColor="?attr/colorPrimary"
-                        android:textStyle="bold" android:textSize="15sp"/>
-                    <TextView android:id="@+id/tvHorarioDomingo" android:layout_width="0dp"
-                        android:layout_height="wrap_content" android:layout_weight="1"
-                        android:text="Sin clase" android:textColor="?android:attr/textColorSecondary"
-                        android:textSize="15sp"/>
+                    <!-- SÁBADO -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:paddingVertical="12dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                            android:text="Sábado" android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvHorarioSabado" android:layout_width="0dp"
+                            android:layout_height="wrap_content" android:layout_weight="1"
+                            android:text="Sin clase" android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp"
+                        android:background="?attr/colorOutline" android:alpha="0.2"/>
+
+                    <!-- DOMINGO -->
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:paddingVertical="12dp">
+                        <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                            android:text="Domingo" android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold" android:textSize="14sp"/>
+                        <TextView android:id="@+id/tvHorarioDomingo" android:layout_width="0dp"
+                            android:layout_height="wrap_content" android:layout_weight="1"
+                            android:text="Sin clase" android:textColor="?attr/colorOnSurface"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+
                 </LinearLayout>
-            </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- CONTACTAR SOPORTE -->
+    <!-- ─── FOOTER ─── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="24dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="24dp"
+        android:paddingTop="12dp"
+        android:background="?attr/colorSurface">
 
         <View android:layout_width="match_parent" android:layout_height="1dp"
-            android:background="?attr/colorPrimary" android:alpha="0.2"
-            android:layout_marginBottom="16dp"/>
+            android:background="?attr/colorOutline" android:alpha="0.2"
+            android:layout_marginBottom="12dp"/>
 
-        <TextView
+        <Button
             android:id="@+id/btnContactarSoporte"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="✉  Contactar Soporte"
-            android:textSize="16sp"
-            android:textColor="?attr/colorSecondary"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingVertical="14dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="¿Necesitas ayuda? Envía un correo al supervisor"
-            android:textSize="12sp"
-            android:textColor="?android:attr/textColorSecondary"
-            android:gravity="center"
-            android:layout_marginBottom="16dp"/>
-    </LinearLayout>
-
-    <!-- FOOTER: CERRAR SESIÓN -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="24dp"
-        android:layout_marginBottom="24dp"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+            android:textSize="14sp"
+            android:textColor="?attr/colorPrimary"
+            android:backgroundTint="@android:color/transparent"
+            android:layout_marginBottom="8dp"
+            style="@style/Widget.Material3.Button.OutlinedButton"/>
 
         <Button
             android:id="@+id/btnCerrarSesion"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cerrar Sesión"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/molgan"
-            android:background="@android:color/transparent"
-            android:padding="8dp"/>
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="@color/color_rechazar"
+            style="@style/Widget.Material3.Button"/>
 
-        <View
-            android:layout_width="180dp"
-            android:layout_height="3dp"
-            android:background="?attr/colorPrimary" />
     </LinearLayout>
 </LinearLayout>
