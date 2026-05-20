@@ -5,128 +5,175 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="10dp"
     android:backgroundTint="?attr/colorSurface"
     app:cardCornerRadius="12dp"
-    android:fitsSystemWindows="true"
-    app:cardElevation="4dp">
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:orientation="vertical"
+        android:padding="14dp">
 
-        <ImageView
-            android:id="@+id/imgFotoEstudiante"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/imagen_prederterminada"
-            android:contentDescription="Foto" />
-
+        <!-- Fila superior: número + estado -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:id="@+id/tvNumeroSolicitud"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 tools:text="Solicitud #1"
                 android:text="Cargando..."
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="4dp"
-                android:visibility="visible" />
-
-            <TextView
-                android:id="@+id/tvNombreProyecto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Proyecto: Sistema"
-                android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tvBoleta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Boleta: 123"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tvCarreraAlumno"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Carrera: Sistemas"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp" />
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/tvEstadoSolicitud"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="Estado: Enviada"
+                tools:text="⏳ Pendiente"
                 android:textColor="@color/color_estado_pendiente"
                 android:textStyle="bold"
                 android:textSize="12sp"
-                android:layout_marginTop="4dp" />
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:background="@drawable/bg_badge_rounded"
+                android:backgroundTint="@color/color_estado_pendiente_bg"/>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorOutline"
+            android:alpha="0.2"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Fila: foto + info -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgFotoEstudiante"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/imagen_prederterminada"
+                android:contentDescription="Foto"
+                android:layout_marginEnd="12dp"/>
 
             <LinearLayout
-                android:id="@+id/layoutBotonesAccion"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/btnAdmitir"
+                    android:id="@+id/tvNombreProyecto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Admitir"
-                    android:textColor="@color/color_admitir"
+                    tools:text="Sistema de Gestión Escolar"
+                    android:textColor="?attr/colorPrimary"
                     android:textStyle="bold"
-                    android:padding="8dp"/>
+                    android:textSize="14sp"
+                    android:layout_marginBottom="2dp"/>
 
                 <TextView
+                    android:id="@+id/tvBoleta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="|"
-                    android:paddingHorizontal="4dp"/>
+                    tools:text="Boleta: 2023000001"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="2dp"/>
 
                 <TextView
-                    android:id="@+id/btnRechazar"
+                    android:id="@+id/tvCarreraAlumno"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rechazar"
-                    android:textColor="@color/color_rechazar_soft"
-                    android:textStyle="bold"
-                    android:padding="8dp"/>
-
+                    tools:text="Ingeniería en Software"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="12sp"/>
             </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?attr/colorOutline"
+            android:alpha="0.2"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- Botones de acción -->
+        <LinearLayout
+            android:id="@+id/layoutBotonesAccion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
 
             <TextView
-                android:id="@+id/btnEnviarCorreoAlumno"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnAdmitir"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="✉ Enviar Correo al Alumno"
-                android:textSize="13sp"
-                android:textColor="?attr/colorPrimary"
+                android:layout_weight="1"
+                android:text="✓ Admitir"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:padding="8dp"
-                android:layout_marginTop="4dp"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:background="@drawable/bg_badge_rounded"
+                android:backgroundTint="@color/color_aprobar"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackground"/>
+                android:layout_marginEnd="8dp"/>
 
+            <TextView
+                android:id="@+id/btnRechazar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="✕ Rechazar"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:background="@drawable/bg_badge_rounded"
+                android:backgroundTint="@color/color_rechazar"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
+
+        <!-- Correo -->
+        <TextView
+            android:id="@+id/btnEnviarCorreoAlumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="✉ Enviar correo al alumno"
+            android:textSize="13sp"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingVertical="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>
