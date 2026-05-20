@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -261,39 +262,59 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
             return;
         }
 
-        btnEnviar.setEnabled(false);
-        btnEnviar.setText("ENVIANDO...");
+        // ─── Dialog de confirmación ───────────────────────────
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_confirmar_solicitud, null);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        SolicitudDTO solicitudDTO = new SolicitudDTO();
-        solicitudDTO.setBoletaAlumno(boletaAlumno);
-        solicitudDTO.setIdProyecto(proyectoId);
-        solicitudDTO.setEstadoSolicitud("enviada");
-        solicitudDTO.setFechaSolicitud(null);
+        TextView tvMensaje = dialogView.findViewById(R.id.tvMensajeConfirmacion);
+        tvMensaje.setText("¿Deseas enviar tu solicitud para el proyecto\n\"" + txtNombreProyecto.getText() + "\"?");
 
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        apiService.enviarSolicitud(solicitudDTO).enqueue(new Callback<SolicitudDTO>() {
-            @Override
-            public void onResponse(Call<SolicitudDTO> call, Response<SolicitudDTO> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(AlumnoEnviarSolicitud.this,
-                            "¡Solicitud enviada con éxito!", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(AlumnoEnviarSolicitud.this,
-                            "Error al enviar la solicitud (Código: " + response.code() + ")",
-                            Toast.LENGTH_LONG).show();
-                    btnEnviar.setEnabled(true);
-                    btnEnviar.setText("ENVIAR SOLICITUD");
+        dialogView.findViewById(R.id.btnCancelar).setOnClickListener(v -> dialog.dismiss());
+        dialogView.findViewById(R.id.btnConfirmar).setOnClickListener(v -> {
+            dialog.dismiss();
+            btnEnviar.setEnabled(false);
+            btnEnviar.setText("Enviando...");
+
+            SolicitudDTO solicitudDTO = new SolicitudDTO();
+            solicitudDTO.setBoletaAlumno(boletaAlumno);
+            solicitudDTO.setIdProyecto(proyectoId);
+            solicitudDTO.setEstadoSolicitud("enviada");
+            solicitudDTO.setFechaSolicitud(null);
+
+            ApiService apiService = ApiClient.getClient().create(ApiService.class);
+            apiService.enviarSolicitud(solicitudDTO).enqueue(new Callback<SolicitudDTO>() {
+                @Override
+                public void onResponse(Call<SolicitudDTO> call, Response<SolicitudDTO> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Toast.makeText(AlumnoEnviarSolicitud.this,
+                                "¡Solicitud enviada con éxito! ✓", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(AlumnoEnviarSolicitud.this,
+                                "Error al enviar (Código: " + response.code() + ")",
+                                Toast.LENGTH_LONG).show();
+                        btnEnviar.setEnabled(true);
+                        btnEnviar.setText("Enviar Solicitud");
+                    }
                 }
-            }
-
-            @Override
-            public void onFailure(Call<SolicitudDTO> call, Throwable t) {
-                Toast.makeText(AlumnoEnviarSolicitud.this,
-                        "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                btnEnviar.setEnabled(true);
-                btnEnviar.setText("ENVIAR SOLICITUD");
-            }
+                @Override
+                public void onFailure(Call<SolicitudDTO> call, Throwable t) {
+                    Toast.makeText(AlumnoEnviarSolicitud.this,
+                            "Error de conexión: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    btnEnviar.setEnabled(true);
+                    btnEnviar.setText("Enviar Solicitud");
+                }
+            });
         });
+        dialog.show();
+        dialog.getWindow().setLayout(
+                (int)(getResources().getDisplayMetrics().widthPixels * 0.85),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        );
     }
 }

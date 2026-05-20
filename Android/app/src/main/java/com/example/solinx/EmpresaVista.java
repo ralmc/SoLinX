@@ -70,7 +70,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
     private void inicializarVistas() {
         contenedorProyectos = findViewById(R.id.contenedorProyectos);
         tvMensajeVacio      = findViewById(R.id.tvMensajeVacio);
-        btnAñadir           = findViewById(R.id.btnAñadir);
+        btnAñadir           = findViewById(R.id.btnAnadir);
         logoEmpresa         = findViewById(R.id.logoEmpresa);
         btnotificaciones    = findViewById(R.id.notificaciones);
         imgPerfilEmpresa    = findViewById(R.id.imgPerfilEmpresa);
@@ -260,7 +260,7 @@ public class EmpresaVista extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.btnAñadir) {
+        if (id == R.id.btnAnadir) {
             startActivity(new Intent(this, GestionProyectoActivity.class));
         } else if (id == R.id.logoEmpresa) {
             Toast.makeText(this, "Actualizando...", Toast.LENGTH_SHORT).show();

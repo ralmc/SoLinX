@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -678,15 +679,18 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
 
     // ─── SOPORTE ──────────────────────────────────────────────────────────────
     private void contactarSoporte() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Contactar Soporte");
-        final EditText input = new EditText(this);
-        input.setHint("Describe tu problema o consulta...");
-        input.setMinLines(3);
-        input.setPadding(40, 20, 40, 20);
-        builder.setView(input);
-        builder.setPositiveButton("Enviar", (dialog, which) -> {
-            String mensaje = input.getText().toString().trim();
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_contactar_soporte, null);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        EditText etMensaje = dialogView.findViewById(R.id.etMensaje);
+        dialogView.findViewById(R.id.btnCancelar).setOnClickListener(v -> dialog.dismiss());
+        dialogView.findViewById(R.id.btnEnviar).setOnClickListener(v -> {
+            String mensaje = etMensaje.getText().toString().trim();
             if (mensaje.isEmpty()) { Toast.makeText(this, "Escribe un mensaje", Toast.LENGTH_SHORT).show(); return; }
             String cuerpo = "Alumno: " + nombre + "\nBoleta: " + boleta
                     + "\nCarrera: " + carrera + "\nEscuela: " + escuela
@@ -696,35 +700,43 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                     + "&body=" + Uri.encode(cuerpo);
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
             emailIntent.setData(Uri.parse(mailtoUri));
-            try { startActivity(Intent.createChooser(emailIntent, "Enviar correo con...")); }
+            try { startActivity(Intent.createChooser(emailIntent, "Enviar correo con...")); dialog.dismiss(); }
             catch (Exception e) { Toast.makeText(this, "No hay app de correo disponible", Toast.LENGTH_SHORT).show(); }
         });
-        builder.setNegativeButton("Cancelar", null);
-        builder.show();
+        dialog.show();
     }
 
     // ─── CERRAR SESIÓN ────────────────────────────────────────────────────────
     private void cerrarSesion() {
-        new AlertDialog.Builder(this)
-                .setTitle("Cerrar sesión")
-                .setMessage("¿Seguro que quieres salir?")
-                .setPositiveButton("Sí", (d, w) -> {
-                    try { ThemeUtils.forceLightModeLocal(this); } catch (Exception ignored) {}
-                    try {
-                        Intent intent = new Intent(this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    } catch (Exception ignored) {}
-                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                        try {
-                            getSharedPreferences("SoLinXPrefs", MODE_PRIVATE).edit().clear().apply();
-                            getSharedPreferences("sesion_usuario", MODE_PRIVATE).edit().clear().apply();
-                            getSharedPreferences("SoLinXCambiosPendientes", MODE_PRIVATE).edit().clear().apply();
-                        } catch (Exception ignored) {}
-                    }, 300);
-                    finish();
-                })
-                .setNegativeButton("No", null)
-                .show();
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_cerrar_sesion, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
+
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        dialogView.findViewById(R.id.btnNo).setOnClickListener(v -> dialog.dismiss());
+        dialogView.findViewById(R.id.btnSi).setOnClickListener(v -> {
+            dialog.dismiss();
+            try { ThemeUtils.forceLightModeLocal(this); } catch (Exception ignored) {}
+            try {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            } catch (Exception ignored) {}
+            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                try {
+                    getSharedPreferences("SoLinXPrefs", MODE_PRIVATE).edit().clear().apply();
+                    getSharedPreferences("sesion_usuario", MODE_PRIVATE).edit().clear().apply();
+                    getSharedPreferences("SoLinXCambiosPendientes", MODE_PRIVATE).edit().clear().apply();
+                } catch (Exception ignored) {}
+            }, 300);
+            finish();
+        });
+
+        dialog.show();
     }
 }

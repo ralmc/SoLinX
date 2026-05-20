@@ -1,230 +1,278 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="?android:attr/windowBackground"
-    android:padding="16dp"
     android:fitsSystemWindows="true"
     tools:context=".AlumnoEnviarSolicitud">
 
+    <!-- TOPBAR -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp">
 
-        <!-- Header -->
+        <ImageView
+            android:id="@+id/btnRegresar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/flechaizq"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Regresar"
+            android:scaleType="fitCenter"
+            app:tint="@color/flecha_color"/>
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/solinx_logo"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text=""
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:fontFamily="sans-serif-medium"/>
+
+        <TextView
+            android:id="@+id/btnboleta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BOLETA"
+            android:textSize="13sp"
+            android:textColor="?attr/colorPrimary"
+            android:textStyle="bold"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+
+        <ImageView
+            android:id="@+id/fotoPerfilHeader"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/imagen_prederterminada"
+            android:contentDescription="Avatar"/>
+
+    </LinearLayout>
+
+    <!-- DIVIDER -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorOutline"
+        android:alpha="0.3"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="8dp">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp">
 
-            <ImageView
-                android:id="@+id/btnRegresar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/flechaizq"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:contentDescription="regresar"
-                android:padding="8dp"
-                app:tint="@color/flecha_color"/>
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/solinx_logo"
-                android:layout_marginStart="16dp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:id="@+id/btnboleta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="BOLETA"
-                    android:textSize="14sp"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:padding="12dp"
-                    android:background="?attr/selectableItemBackground" />
-
-                <!-- ← CAMBIO: agregado android:id="@+id/fotoPerfilHeader" -->
-                <ImageView
-                    android:id="@+id/fotoPerfilHeader"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/imagen_prederterminada"
-                    android:contentDescription="Avatar"
-                    android:layout_marginStart="8dp" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@drawable/barra_azul"
-            android:layout_marginVertical="12dp" />
-
-        <!-- Card Principal -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:backgroundTint="?attr/colorSurface"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
+            <!-- Card principal -->
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:backgroundTint="?attr/colorSurface"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
 
-                <ImageView
-                    android:id="@+id/imgLogoProyecto"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/solinx_logo"
-                    android:contentDescription="Logo del Proyecto"
-                    android:background="?attr/colorSurface"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/txtNombreEmpresa"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Empresa: Nombre"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/txtNombreProyecto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Proyecto: Nombre del Proyecto"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
-
-                <TextView
-                    android:id="@+id/fechini"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fecha Inicio: 18/10/2025"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/fechfin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Fecha Termino: 18/10/2026"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/txtCarreraEnfocada"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Carrera Enfocada: Ingeniería en Software"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/telefono"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Teléfono: +52 55 1234 5678"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/vacantes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vacantes: 9"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/ubicacion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ubicación: Ciudad de México"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/objetivo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Objetivo: Crear una aplicación..."
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="13sp"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:id="@+id/btnEnviar"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ENVIAR SOLICITUD"
-                    android:textSize="18sp"
-                    android:textColor="?attr/colorOnPrimary"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:background="@drawable/barra_azul"
-                    android:paddingVertical="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/btnEnviarCorreo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="✉  Enviar Correo a Empresa"
-                    android:textSize="15sp"
-                    android:textColor="?attr/colorPrimary"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:paddingVertical="14dp"
-                    android:layout_marginTop="10dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground" />
+                    <!-- Imagen del proyecto -->
+                    <ImageView
+                        android:id="@+id/imgLogoProyecto"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/solinx_logo"
+                        android:contentDescription="Logo del Proyecto"/>
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
-</ScrollView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <!-- Empresa -->
+                        <TextView
+                            android:id="@+id/txtNombreEmpresa"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Empresa"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="2dp"/>
+
+                        <!-- Nombre del proyecto -->
+                        <TextView
+                            android:id="@+id/txtNombreProyecto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nombre del Proyecto"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="12dp"/>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/colorOutline"
+                            android:alpha="0.2"
+                            android:layout_marginBottom="12dp"/>
+
+                        <!-- Info en filas -->
+                        <LinearLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="6dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Carrera: " android:textColor="?attr/colorPrimary"
+                                android:textSize="13sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/txtCarreraEnfocada"
+                                android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Ingeniería en Software"
+                                android:textColor="?attr/colorOnSurface" android:textSize="13sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="6dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Vacantes: " android:textColor="?attr/colorPrimary"
+                                android:textSize="13sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/vacantes"
+                                android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="3" android:textColor="?attr/colorOnSurface"
+                                android:textSize="13sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="6dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Ubicación: " android:textColor="?attr/colorPrimary"
+                                android:textSize="13sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/ubicacion"
+                                android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="CDMX" android:textColor="?attr/colorOnSurface"
+                                android:textSize="13sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="6dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Teléfono: " android:textColor="?attr/colorPrimary"
+                                android:textSize="13sp" android:textStyle="bold"/>
+                            <TextView android:id="@+id/telefono"
+                                android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="+52 55 1234 5678"
+                                android:textColor="?attr/colorOnSurface" android:textSize="13sp"/>
+                        </LinearLayout>
+
+                        <!-- Fechas -->
+                        <LinearLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="6dp">
+                            <TextView android:id="@+id/fechini"
+                                android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Inicio: 18/10/2025"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="12sp"/>
+                            <TextView android:id="@+id/fechfin"
+                                android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Fin: 18/10/2026"
+                                android:textColor="?android:attr/textColorSecondary"
+                                android:textSize="12sp"/>
+                        </LinearLayout>
+
+                        <!-- Objetivo -->
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Objetivo" android:textColor="?attr/colorPrimary"
+                            android:textSize="13sp" android:textStyle="bold"
+                            android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
+                        <TextView android:id="@+id/objetivo"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:text="Crear una aplicación..."
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="13sp"
+                            android:layout_marginBottom="16dp"/>
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/colorOutline"
+                            android:alpha="0.2"
+                            android:layout_marginBottom="12dp"/>
+
+                        <!-- Botón enviar solicitud -->
+                        <Button
+                            android:id="@+id/btnEnviar"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Enviar Solicitud"
+                            android:textSize="15sp"
+                            android:textColor="#FFFFFF"
+                            android:textStyle="bold"
+                            android:backgroundTint="?attr/colorPrimary"
+                            android:paddingVertical="14dp"
+                            android:layout_marginBottom="8dp"
+                            style="@style/Widget.Material3.Button"/>
+
+                        <!-- Botón correo -->
+                        <Button
+                            android:id="@+id/btnEnviarCorreo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="✉  Enviar Correo a Empresa"
+                            android:textSize="14sp"
+                            android:textColor="?attr/colorPrimary"
+                            android:backgroundTint="@android:color/transparent"
+                            style="@style/Widget.Material3.Button.OutlinedButton"/>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
