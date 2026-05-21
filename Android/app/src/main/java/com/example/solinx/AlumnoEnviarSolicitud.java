@@ -219,24 +219,29 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
         String nombreEmpresa = getIntent().getStringExtra("nombreEmpresa");
         String nombreProyecto = getIntent().getStringExtra("nombreProyecto");
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enviar correo a " + (nombreEmpresa != null ? nombreEmpresa : "Empresa"));
+        View dialogView = LayoutInflater.from(this)
+                .inflate(R.layout.dialog_correo_empresa, null);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(true)
+                .create();
 
-        final EditText input = new EditText(this);
-        input.setHint("Escribe tu mensaje aquí...");
-        input.setMinLines(3);
-        input.setPadding(40, 20, 40, 20);
-        builder.setView(input);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        builder.setPositiveButton("Enviar", (dialog, which) -> {
-            String mensaje = input.getText().toString().trim();
+        ((TextView) dialogView.findViewById(R.id.tvTituloEmpresa))
+                .setText("Correo a " + (nombreEmpresa != null ? nombreEmpresa : "Empresa"));
+
+        EditText etMensaje = dialogView.findViewById(R.id.etMensajeEmpresa);
+        dialogView.findViewById(R.id.btnCancelarEmpresa).setOnClickListener(v -> dialog.dismiss());
+        dialogView.findViewById(R.id.btnEnviarEmpresa).setOnClickListener(v -> {
+            String mensaje = etMensaje.getText().toString().trim();
             if (mensaje.isEmpty()) {
                 Toast.makeText(this, "Escribe un mensaje", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             String destinatario = (correoEmpresa != null && !correoEmpresa.isEmpty()) ? correoEmpresa : "";
-
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
             emailIntent.setData(Uri.parse("mailto:" + destinatario));
             emailIntent.putExtra(Intent.EXTRA_SUBJECT,
@@ -244,12 +249,16 @@ public class AlumnoEnviarSolicitud extends AppCompatActivity implements View.OnC
             emailIntent.putExtra(Intent.EXTRA_TEXT, mensaje);
             try {
                 startActivity(Intent.createChooser(emailIntent, "Enviar correo con..."));
+                dialog.dismiss();
             } catch (Exception e) {
                 Toast.makeText(this, "No hay app de correo disponible", Toast.LENGTH_SHORT).show();
             }
         });
-        builder.setNegativeButton("Cancelar", null);
-        builder.show();
+
+        dialog.show();
+        dialog.getWindow().setLayout(
+                (int)(getResources().getDisplayMetrics().widthPixels * 0.85),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     private void enviarSolicitud() {
