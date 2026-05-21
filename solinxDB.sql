@@ -352,7 +352,6 @@ SELECT * FROM Usuario;
 SELECT * FROM Solicitud;
 SELECT * FROM Documento;
 SELECT * FROM Notificacion;
-
 /* ===========================================================
 TABLA DE REFERENCIA RÁPIDA - USUARIOS DE PRUEBA (SoLinX)
 ===========================================================
