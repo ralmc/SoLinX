@@ -61,7 +61,7 @@ public class SupervisorDocumentos extends AppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new DocumentoSupervisorAdapter(items, new DocumentoSupervisorAdapter.OnClickListener() {
+        adapter = new DocumentoSupervisorAdapter(this ,items, new DocumentoSupervisorAdapter.OnClickListener() {
             @Override
             public void onAprobar(DocumentoSupervisorAdapter.DocumentoItem item) {
                 mostrarDialogo(item, true);

@@ -1,21 +1,36 @@
 package com.example.solinx.ADAPTER;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.solinx.API.ApiClient;
 import com.example.solinx.DTO.DocumentoDTO;
 import com.example.solinx.R;
 import com.example.solinx.Solicitudes;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class DocumentoSupervisorAdapter extends RecyclerView.Adapter<DocumentoSupervisorAdapter.ViewHolder> {
+
+    private static final String BASE_URL = "http://10.0.2.2:8080/SoLinX/api";
 
     public static class DocumentoItem {
         public final Solicitudes solicitud;
@@ -32,10 +47,12 @@ public class DocumentoSupervisorAdapter extends RecyclerView.Adapter<DocumentoSu
         void onRechazar(DocumentoItem item);
     }
 
+    private final Context context;
     private final List<DocumentoItem> items;
     private final OnClickListener listener;
 
-    public DocumentoSupervisorAdapter(List<DocumentoItem> items, OnClickListener listener) {
+    public DocumentoSupervisorAdapter(Context context, List<DocumentoItem> items, OnClickListener listener) {
+        this.context  = context;
         this.items    = items;
         this.listener = listener;
     }
@@ -86,6 +103,64 @@ public class DocumentoSupervisorAdapter extends RecyclerView.Adapter<DocumentoSu
 
         holder.btnAprobar.setOnClickListener(v -> listener.onAprobar(item));
         holder.btnRechazar.setOnClickListener(v -> listener.onRechazar(item));
+
+        // ─── Ver PDF ──────────────────────────────────────────────────────────
+        holder.btnVerPdf.setOnClickListener(v -> {
+            int boleta  = sol.getBoleta();
+            int periodo = doc.getPeriodo();
+            String url  = BASE_URL + "/documento/" + boleta + "/" + periodo + "/archivo";
+            descargarYAbrirPdf(url, "periodo_" + periodo + "_" + boleta + ".pdf");
+        });
+    }
+
+    private void descargarYAbrirPdf(String url, String nombreArchivo) {
+        Toast.makeText(context, "Descargando PDF...", Toast.LENGTH_SHORT).show();
+
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder().url(url).build();
+                Response response = client.newCall(request).execute();
+
+                if (!response.isSuccessful() || response.body() == null) {
+                    postError("Error al descargar el PDF (" + response.code() + ")");
+                    return;
+                }
+
+                File outputFile = new File(context.getCacheDir(), nombreArchivo);
+                try (InputStream input = response.body().byteStream();
+                     FileOutputStream output = new FileOutputStream(outputFile)) {
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = input.read(buffer)) != -1) output.write(buffer, 0, len);
+                }
+
+                Uri fileUri = FileProvider.getUriForFile(
+                        context,
+                        context.getPackageName() + ".provider",
+                        outputFile);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(fileUri, "application/pdf");
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                try {
+                    context.startActivity(intent);
+                } catch (Exception e) {
+                    postError("No hay visor de PDF instalado");
+                }
+
+            } catch (Exception e) {
+                postError("Error: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    private void postError(String msg) {
+        android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+        handler.post(() -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -94,19 +169,20 @@ public class DocumentoSupervisorAdapter extends RecyclerView.Adapter<DocumentoSu
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombreAlumno, tvCorreoAlumno, tvNombreProyecto;
         TextView tvPeriodo, tvNombreArchivo, tvFecha, tvEstadoBadge;
-        TextView btnAprobar, btnRechazar;
+        TextView btnAprobar, btnRechazar, btnVerPdf;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvNombreAlumno  = itemView.findViewById(R.id.tv_nombre_alumno);
-            tvCorreoAlumno  = itemView.findViewById(R.id.tv_correo_alumno);
-            tvNombreProyecto= itemView.findViewById(R.id.tv_nombre_proyecto);
-            tvPeriodo       = itemView.findViewById(R.id.tv_periodo);
-            tvNombreArchivo = itemView.findViewById(R.id.tv_nombre_archivo);
-            tvFecha         = itemView.findViewById(R.id.tv_fecha);
-            tvEstadoBadge   = itemView.findViewById(R.id.tv_estado_badge);
-            btnAprobar      = itemView.findViewById(R.id.btn_aprobar);
-            btnRechazar     = itemView.findViewById(R.id.btn_rechazar);
+            tvNombreAlumno   = itemView.findViewById(R.id.tv_nombre_alumno);
+            tvCorreoAlumno   = itemView.findViewById(R.id.tv_correo_alumno);
+            tvNombreProyecto = itemView.findViewById(R.id.tv_nombre_proyecto);
+            tvPeriodo        = itemView.findViewById(R.id.tv_periodo);
+            tvNombreArchivo  = itemView.findViewById(R.id.tv_nombre_archivo);
+            tvFecha          = itemView.findViewById(R.id.tv_fecha);
+            tvEstadoBadge    = itemView.findViewById(R.id.tv_estado_badge);
+            btnAprobar       = itemView.findViewById(R.id.btn_aprobar);
+            btnRechazar      = itemView.findViewById(R.id.btn_rechazar);
+            btnVerPdf        = itemView.findViewById(R.id.btn_ver_pdf);
         }
     }
 }
