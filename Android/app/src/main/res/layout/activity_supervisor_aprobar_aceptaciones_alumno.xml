@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:text="Documentos"
+            android:text="Solicitudes de Alumnos"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="?attr/colorOnSurface"
@@ -59,7 +59,7 @@
 
     <!-- RECYCLERVIEW -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_documentos"
+        android:id="@+id/recycler_solicitudes"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -68,7 +68,7 @@
         android:paddingBottom="16dp"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/card_notificacion"/>
+        tools:listitem="@layout/activity_card_solicitud_alumno"/>
 
     <!-- PROGRESS -->
     <ProgressBar
@@ -83,7 +83,7 @@
         android:id="@+id/tv_no_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sin documentos aún"
+        android:text="Sin datos por ahora"
         android:textSize="15sp"
         android:textColor="?android:attr/textColorSecondary"
         android:gravity="center"

@@ -2,9 +2,9 @@
  * SoLinX Web — api.js
  * Cambia BASE_URL por la IP de tu computadora
  */
- 
-const BASE_URL = 'http://192.168.1.67:8080/SoLinX/api';
- 
+
+const BASE_URL = 'http://192.168.1.70:8080/SoLinX/api';
+
 async function request(method, endpoint, body = null, isMultipart = false) {
   const headers = {};
   if (!isMultipart) headers['Content-Type'] = 'application/json';
@@ -16,13 +16,13 @@ async function request(method, endpoint, body = null, isMultipart = false) {
     throw new Error('Sin conexión: ' + e.message);
   }
 }
- 
-const get  = (ep)       => request('GET',    ep);
-const post = (ep, b)    => request('POST',   ep, b);
-const put  = (ep, b)    => request('PUT',    ep, b);
-const del  = (ep)       => request('DELETE', ep);
-const postForm = (ep,f) => request('POST',   ep, f, true);
- 
+
+const get      = (ep)    => request('GET',    ep);
+const post     = (ep, b) => request('POST',   ep, b);
+const put      = (ep, b) => request('PUT',    ep, b);
+const del      = (ep)    => request('DELETE', ep);
+const postForm = (ep, f) => request('POST',   ep, f, true);
+
 export const Api = {
     // ─── Auth ────────────────────────────────────────────────
     login: (correo, password) => post('login', { correo, userPassword: password }),
@@ -37,63 +37,70 @@ export const Api = {
     actualizarEmpresa:    (id, dto) => put(`empresa/${id}`, dto),
 
     // ─── Proyectos ───────────────────────────────────────────
-    getProyectos:              ()        => get('proyecto'),
-    getProyectosParaAlumno:    (boleta)  => get(`proyecto/alumno/${boleta}`),
-    getProyectosPorEmpresa:    (id)      => get(`proyecto/empresa/${id}`),
-    crearProyecto:             (dto)     => post('proyecto', dto),
-    actualizarProyecto:        (id, dto) => put(`proyecto/${id}`, dto),
-    eliminarProyecto:          (id)      => del(`proyecto/${id}`),
-    actualizarImagenProyecto:  (id, b64) => put(`proyecto/${id}/imagen`, { imagen: b64 }),
+    getProyectos:             ()        => get('proyecto?soloAprobados=true'),
+    getProyectosAdmin:        ()        => get('proyecto'),
+    getProyectosParaAlumno:   (boleta)  => get(`proyecto/alumno/${boleta}`),
+    getProyectosPorEmpresa:   (id)      => get(`proyecto/empresa/${id}`),
+    crearProyecto:            (dto)     => post('proyecto', dto),
+    actualizarProyecto:       (id, dto) => put(`proyecto/${id}`, dto),
+    eliminarProyecto:         (id)      => del(`proyecto/${id}`),
+    actualizarImagenProyecto: (id, b64) => put(`proyecto/${id}/imagen`, { imagen: b64 }),
+    actualizarEstadoProyecto: (id, estado) =>
+        put(`proyecto/${id}/estado?estado=${encodeURIComponent(estado)}`),
 
     // ─── Solicitudes Alumno ──────────────────────────────────
     getSolicitudesEstudiante: (boleta) => get(`solicitudes/estudiante/${boleta}`),
     enviarSolicitud:          (dto)    => post('solicitud', dto),
     aceptarSolicitud:         (dto)    => post('solicitud/accept', dto),
-    getIdUsuarioPorBoleta: (boleta) => get(`usuario/boleta/${boleta}`),
+    getIdUsuarioPorBoleta:    (boleta) => get(`usuario/boleta/${boleta}`),
 
     // ─── Solicitudes Empresa ─────────────────────────────────
-    getSolicitudesPorEmpresa:    (id)                => get(`solicitud/empresa/${id}`),
-    actualizarEstadoSolicitud:   (id, nuevoEstado)   => put(`solicitud/${id}/estado?nuevoEstado=${encodeURIComponent(nuevoEstado)}`),
+    getSolicitudesPorEmpresa:  (id)           => get(`solicitud/empresa/${id}`),
+    actualizarEstadoSolicitud: (id, nuevoEstado) =>
+        put(`solicitud/${id}/estado?nuevoEstado=${encodeURIComponent(nuevoEstado)}`),
 
     // ─── Supervisor ──────────────────────────────────────────
-    getSupervisorData:        (idUsuario)   => get(`supervisor/datos?idUsuario=${idUsuario}`),
-    getSolicitudesEnviadas:   (idSupervisor)=> get(`supervisor/solicitudes-enviadas?idSupervisor=${idSupervisor}`),
-    getSolicitudesAceptadas:  (idEmpresa)   => get(`supervisor/solicitudes-aceptadas?idEmpresa=${idEmpresa}`),
+    getSupervisorData:       (idUsuario)    => get(`supervisor/datos?idUsuario=${idUsuario}`),
+    getSolicitudesEnviadas:  (idSupervisor) => get(`supervisor/solicitudes-enviadas?idSupervisor=${idSupervisor}`),
+    getSolicitudesAceptadas: (idEmpresa)    => get(`supervisor/solicitudes-aceptadas?idEmpresa=${idEmpresa}`),
     actualizarSolicitudSupervisor: (idSolicitud, nuevoEstado) => {
-      const form = new URLSearchParams();
-      form.append('idSolicitud', idSolicitud);
-      form.append('nuevoEstado', nuevoEstado);
-      return postForm('supervisor/actualizar-solicitud', form);
+        const form = new URLSearchParams();
+        form.append('idSolicitud', idSolicitud);
+        form.append('nuevoEstado', nuevoEstado);
+        return postForm('supervisor/actualizar-solicitud', form);
     },
     actualizarEstadoDocumento: (boleta, periodo, estado) =>
-    put(`documento/${boleta}/${periodo}/estado?estado=${encodeURIComponent(estado)}`),
-    
-    getProyectos: () => get('proyecto?soloAprobados=true'),
-    getProyectosAdmin: () => get('proyecto'),
-    actualizarEstadoProyecto: (id, estado) => 
-        put(`proyecto/${id}/estado?estado=${encodeURIComponent(estado)}`),
+        put(`documento/${boleta}/${periodo}/estado?estado=${encodeURIComponent(estado)}`),
 
     // ─── Horario ─────────────────────────────────────────────
-    getHorario:    (boleta) => get(`horario/${boleta}`),
-    crearHorario:  (boleta, dto) => post(`horario/${boleta}`, dto),
+    getHorario:   (boleta)      => get(`horario/${boleta}`),
+    crearHorario: (boleta, dto) => post(`horario/${boleta}`, dto),
 
     // ─── Documentos ──────────────────────────────────────────
-    getDocumentos:    (boleta) => get(`documento/${boleta}`),
-    subirDocumento:   (boleta, periodo, file) => {
-      const form = new FormData();
-      form.append('archivo', file);
-      return postForm(`documento/${boleta}/${periodo}`, form);
+    getDocumentos:  (boleta) => get(`documento/${boleta}`),
+    subirDocumento: (boleta, periodo, file) => {
+        const form = new FormData();
+        form.append('archivo', file);
+        return postForm(`documento/${boleta}/${periodo}`, form);
     },
 
     // ─── Perfil ──────────────────────────────────────────────
-    getPerfil:       (idUsuario) => get(`perfil/usuario/${idUsuario}`),
-    actualizarFoto:  (idUsuario, base64) => put(`perfil/usuario/${idUsuario}/foto`, { foto: base64 }),
+    getPerfil:      (idUsuario)        => get(`perfil/usuario/${idUsuario}`),
+    actualizarFoto: (idUsuario, base64) => put(`perfil/usuario/${idUsuario}/foto`, { foto: base64 }),
 
     // ─── Notificaciones ──────────────────────────────────────
-    getNotificaciones:    (id)    => get(`notificacion/usuario/${id}`),
-    contarNoLeidas:       (id)    => get(`notificacion/usuario/${id}/no-leidas`),
-    marcarLeida:          (id)    => put(`notificacion/${id}/leida`),
-    marcarTodasLeidas:    (id)    => put(`notificacion/usuario/${id}/leidas`),
+    getNotificaciones: (id)  => get(`notificacion/usuario/${id}`),
+    contarNoLeidas:    (id)  => get(`notificacion/usuario/${id}/no-leidas`),
+    marcarLeida:       (id)  => put(`notificacion/${id}/leida`),
+    marcarTodasLeidas: (id)  => put(`notificacion/usuario/${id}/leidas`),
     crearNotificacion: (idUsuario, titulo, mensaje) =>
-        post('notificacion', { idUsuario: String(idUsuario), titulo, mensaje })
+        post('notificacion', { idUsuario: String(idUsuario), titulo, mensaje }),
+
+    // ─── Cambios de Perfil ───────────────────────────────────
+    solicitarCambioPerfil: (idUsuario, rol, campo, valorAnterior, valorNuevo) =>
+        post('cambio-perfil', { idUsuario: String(idUsuario), rol, campo, valorAnterior, valorNuevo }),
+    getCambiosPendientes:  ()          => get('cambio-perfil/pendientes'),
+    getCambiosPorUsuario:  (idUsuario) => get(`cambio-perfil/usuario/${idUsuario}`),
+    aprobarCambio:         (idCambio)  => put(`cambio-perfil/${idCambio}/aprobar`),
+    rechazarCambio:        (idCambio)  => put(`cambio-perfil/${idCambio}/rechazar`),
 };

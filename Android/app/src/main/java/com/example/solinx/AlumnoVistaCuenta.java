@@ -33,13 +33,14 @@ import androidx.core.content.ContextCompat;
 
 import com.example.solinx.API.ApiClient;
 import com.example.solinx.API.ApiService;
+import com.example.solinx.DTO.CambioPerfilDTO;
+import com.example.solinx.DTO.EstudianteDTO;
 import com.example.solinx.DTO.HorarioDTO;
 import com.example.solinx.DTO.NotificacionDTO;
 import com.example.solinx.DTO.PerfilDTO;
 import com.example.solinx.DTO.SolicitudDTO;
+import com.example.solinx.DTO.UsuarioDTO;
 import com.example.solinx.UTIL.ThemeUtils;
-
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -78,10 +79,8 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
     private Integer idUsuario;
 
     private SharedPreferences preferences;
-    private SharedPreferences prefsPendientes;
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
-    // Carreras y escuelas disponibles
     private static final String[] CARRERAS = {
             "Ingeniería en Sistemas Computacionales",
             "Ingeniería en Software",
@@ -107,8 +106,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alumno_vista_cuenta);
 
-        preferences    = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
-        prefsPendientes = getSharedPreferences("SoLinXCambiosPendientes", MODE_PRIVATE);
+        preferences = getSharedPreferences("SoLinXPrefs", MODE_PRIVATE);
 
         initViews();
         setupImagePicker();
@@ -118,26 +116,27 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         cargarFotoPerfil();
         cargarSolicitudes();
         cargarHorario();
+        cargarDatosFrescos();
         mostrarAlertaPendientes();
     }
 
     private void initViews() {
-        btnRegresar          = findViewById(R.id.regresar);
-        tvBoleta             = findViewById(R.id.tvBoleta);
-        tvNombre             = findViewById(R.id.tvNombre);
-        tvCorreo             = findViewById(R.id.tvCorreo);
-        tvEscuela            = findViewById(R.id.tvEscuela);
-        tvCarrera            = findViewById(R.id.tvCarrera);
-        tvPuntosStatus       = findViewById(R.id.tvPuntosStatus);
-        imgPerfil            = findViewById(R.id.imgPerfil);
-        viewModoClaro        = findViewById(R.id.viewModoClaro);
-        viewModoOscuro       = findViewById(R.id.viewModoOscuro);
-        btnCerrarSesion      = findViewById(R.id.btnCerrarSesion);
-        btnContactarSoporte  = findViewById(R.id.btnContactarSoporte);
-        btnEditarNombre      = findViewById(R.id.btnEditarNombre);
-        btnEditarCarrera     = findViewById(R.id.btnEditarCarrera);
-        btnEditarEscuela     = findViewById(R.id.btnEditarEscuela);
-        tvAlertaPendiente    = findViewById(R.id.tvAlertaPendiente);
+        btnRegresar         = findViewById(R.id.regresar);
+        tvBoleta            = findViewById(R.id.tvBoleta);
+        tvNombre            = findViewById(R.id.tvNombre);
+        tvCorreo            = findViewById(R.id.tvCorreo);
+        tvEscuela           = findViewById(R.id.tvEscuela);
+        tvCarrera           = findViewById(R.id.tvCarrera);
+        tvPuntosStatus      = findViewById(R.id.tvPuntosStatus);
+        imgPerfil           = findViewById(R.id.imgPerfil);
+        viewModoClaro       = findViewById(R.id.viewModoClaro);
+        viewModoOscuro      = findViewById(R.id.viewModoOscuro);
+        btnCerrarSesion     = findViewById(R.id.btnCerrarSesion);
+        btnContactarSoporte = findViewById(R.id.btnContactarSoporte);
+        btnEditarNombre     = findViewById(R.id.btnEditarNombre);
+        btnEditarCarrera    = findViewById(R.id.btnEditarCarrera);
+        btnEditarEscuela    = findViewById(R.id.btnEditarEscuela);
+        tvAlertaPendiente   = findViewById(R.id.tvAlertaPendiente);
 
         tvHorarioLunes     = findViewById(R.id.tvHorarioLunes);
         tvHorarioMartes    = findViewById(R.id.tvHorarioMartes);
@@ -157,8 +156,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                             && result.getData().getData() != null) {
                         procesarImagen(result.getData().getData());
                     }
-                }
-        );
+                });
     }
 
     private void cargarDatosUsuario() {
@@ -184,156 +182,238 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         return val != null ? val : preferences.getString(prefKey, defVal);
     }
 
-    // ─── ALERTA DE CAMBIOS PENDIENTES ─────────────────────────────────────────
+    // ─── DATOS FRESCOS DEL BACKEND ────────────────────────────────────────────
+    private void cargarDatosFrescos() {
+        if (idUsuario == null || idUsuario == -1) return;
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+
+        // Nombre y correo desde Usuario
+        api.obtenerUsuarioPorId(idUsuario).enqueue(new Callback<UsuarioDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<UsuarioDTO> call,
+                                   @NonNull Response<UsuarioDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UsuarioDTO u = response.body();
+                    if (u.getNombre() != null) {
+                        nombre = u.getNombre();
+                        preferences.edit().putString("nombre", nombre).apply();
+                    }
+                    if (u.getCorreo() != null) {
+                        correo = u.getCorreo();
+                        preferences.edit().putString("correo", correo).apply();
+                    }
+                    runOnUiThread(() -> {
+                        tvNombre.setText(nombre);
+                        tvCorreo.setText(correo);
+                    });
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<UsuarioDTO> call, @NonNull Throwable t) {
+                Log.e(TAG, "Error cargando usuario: " + t.getMessage());
+            }
+        });
+
+        // Carrera y escuela desde Estudiante
+        if (boleta == null || boleta.equals("N/A")) return;
+        try {
+            int boletaInt = Integer.parseInt(boleta);
+            api.obtenerEstudiantePorBoleta(boletaInt).enqueue(new Callback<EstudianteDTO>() {
+                @Override
+                public void onResponse(@NonNull Call<EstudianteDTO> call,
+                                       @NonNull Response<EstudianteDTO> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        EstudianteDTO e = response.body();
+                        if (e.getCarrera() != null) {
+                            carrera = e.getCarrera();
+                            preferences.edit().putString("carrera", carrera).apply();
+                        }
+                        if (e.getEscuela() != null) {
+                            escuela = e.getEscuela();
+                            preferences.edit().putString("escuela", escuela).apply();
+                        }
+                        runOnUiThread(() -> {
+                            tvCarrera.setText(carrera);
+                            tvEscuela.setText(escuela);
+                        });
+                    }
+                }
+                @Override
+                public void onFailure(@NonNull Call<EstudianteDTO> call, @NonNull Throwable t) {
+                    Log.e(TAG, "Error cargando estudiante: " + t.getMessage());
+                }
+            });
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "Boleta inválida: " + boleta);
+        }
+    }
+
+    // ─── ALERTA DE CAMBIOS PENDIENTES (BACKEND) ───────────────────────────────
     private void mostrarAlertaPendientes() {
-        String key = "pendientes_" + idUsuario;
-        String pendientesJson = prefsPendientes.getString(key, "");
-        if (pendientesJson.isEmpty()) {
-            tvAlertaPendiente.setVisibility(View.GONE);
-            return;
-        }
-        try {
-            org.json.JSONArray arr = new org.json.JSONArray(pendientesJson);
-            if (arr.length() == 0) {
-                tvAlertaPendiente.setVisibility(View.GONE);
-                return;
+        if (idUsuario == null || idUsuario == -1) return;
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+
+        api.getCambiosPorUsuario(idUsuario).enqueue(new Callback<List<CambioPerfilDTO>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<CambioPerfilDTO>> call,
+                                   @NonNull Response<List<CambioPerfilDTO>> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    runOnUiThread(() -> tvAlertaPendiente.setVisibility(View.GONE));
+                    return;
+                }
+                List<CambioPerfilDTO> pendientes = new java.util.ArrayList<>();
+                for (CambioPerfilDTO c : response.body()) {
+                    if ("pendiente".equalsIgnoreCase(c.getEstado())) pendientes.add(c);
+                }
+                runOnUiThread(() -> {
+                    if (pendientes.isEmpty()) {
+                        tvAlertaPendiente.setVisibility(View.GONE);
+                        return;
+                    }
+                    StringBuilder campos = new StringBuilder();
+                    for (int i = 0; i < pendientes.size(); i++) {
+                        if (i > 0) campos.append(", ");
+                        campos.append(pendientes.get(i).getCampo());
+                    }
+                    tvAlertaPendiente.setVisibility(View.VISIBLE);
+                    tvAlertaPendiente.setText("⏳ Cambios en revisión: " + campos);
+                });
             }
-            StringBuilder campos = new StringBuilder();
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject obj = arr.getJSONObject(i);
-                if (i > 0) campos.append(", ");
-                campos.append(obj.getString("campo"));
+            @Override
+            public void onFailure(@NonNull Call<List<CambioPerfilDTO>> call, @NonNull Throwable t) {
+                runOnUiThread(() -> tvAlertaPendiente.setVisibility(View.GONE));
             }
-            tvAlertaPendiente.setVisibility(View.VISIBLE);
-            tvAlertaPendiente.setText("⏳ Cambios en revisión: " + campos);
-        } catch (Exception e) {
-            tvAlertaPendiente.setVisibility(View.GONE);
-        }
+        });
     }
 
-    private boolean tienePendiente(String campo) {
-        String key = "pendientes_" + idUsuario;
-        String pendientesJson = prefsPendientes.getString(key, "");
-        if (pendientesJson.isEmpty()) return false;
-        try {
-            org.json.JSONArray arr = new org.json.JSONArray(pendientesJson);
-            for (int i = 0; i < arr.length(); i++) {
-                if (arr.getJSONObject(i).getString("campo").equals(campo)) return true;
-            }
-        } catch (Exception ignored) {}
-        return false;
-    }
+    private void verificarPendienteYAbrir(String campo, Runnable onNoPendiente) {
+        if (idUsuario == null || idUsuario == -1) { onNoPendiente.run(); return; }
+        ApiService api = ApiClient.getClient().create(ApiService.class);
 
-    private void agregarPendiente(String campo, String valorAnterior, String valorNuevo) {
-        String key = "pendientes_" + idUsuario;
-        String pendientesJson = prefsPendientes.getString(key, "[]");
-        try {
-            org.json.JSONArray arr = new org.json.JSONArray(pendientesJson);
-            JSONObject obj = new JSONObject();
-            obj.put("campo", campo);
-            obj.put("valorAnterior", valorAnterior);
-            obj.put("valorNuevo", valorNuevo);
-            arr.put(obj);
-            prefsPendientes.edit().putString(key, arr.toString()).apply();
-            mostrarAlertaPendientes();
-        } catch (Exception ignored) {}
+        api.getCambiosPorUsuario(idUsuario).enqueue(new Callback<List<CambioPerfilDTO>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<CambioPerfilDTO>> call,
+                                   @NonNull Response<List<CambioPerfilDTO>> response) {
+                boolean tienePendiente = false;
+                if (response.isSuccessful() && response.body() != null) {
+                    for (CambioPerfilDTO c : response.body()) {
+                        if (campo.equalsIgnoreCase(c.getCampo())
+                                && "pendiente".equalsIgnoreCase(c.getEstado())) {
+                            tienePendiente = true; break;
+                        }
+                    }
+                }
+                boolean finalTienePendiente = tienePendiente;
+                runOnUiThread(() -> {
+                    if (finalTienePendiente) {
+                        Toast.makeText(AlumnoVistaCuenta.this,
+                                "Ya tienes un cambio pendiente para " + campo,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        onNoPendiente.run();
+                    }
+                });
+            }
+            @Override
+            public void onFailure(@NonNull Call<List<CambioPerfilDTO>> call, @NonNull Throwable t) {
+                runOnUiThread(onNoPendiente);
+            }
+        });
     }
 
     // ─── EDICIÓN DE CAMPOS ────────────────────────────────────────────────────
     private void abrirEdicionNombre() {
-        if (tienePendiente("Nombre")) {
-            Toast.makeText(this, "Ya tienes un cambio pendiente para Nombre", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        verificarPendienteYAbrir("nombre", () -> {
+            View dialogView = LayoutInflater.from(this)
+                    .inflate(R.layout.dialog_contactar_soporte, null);
+            // Reutilizamos el dialog de soporte como base de input
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle("Cambiar Nombre")
+                    .setMessage("El cambio será enviado al supervisor para aprobación.")
+                    .setView(dialogView)
+                    .setCancelable(true)
+                    .create();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Cambiar Nombre");
+            // Dialog simple con EditText
+            EditText input = new EditText(this);
+            input.setText(nombre);
+            input.setPadding(40, 20, 40, 20);
 
-        EditText input = new EditText(this);
-        input.setText(nombre);
-        input.setPadding(40, 20, 40, 20);
-        builder.setView(input);
-        builder.setMessage("El cambio será enviado al supervisor para aprobación.");
-
-        builder.setPositiveButton("Solicitar cambio", (dialog, which) -> {
-            String nuevoValor = input.getText().toString().trim();
-            if (nuevoValor.isEmpty()) {
-                Toast.makeText(this, "Ingresa un valor", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (nuevoValor.equals(nombre)) {
-                Toast.makeText(this, "El valor es igual al actual", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            confirmarCambio("Nombre", nombre, nuevoValor);
+            new AlertDialog.Builder(this)
+                    .setTitle("Cambiar Nombre")
+                    .setMessage("El cambio será enviado al supervisor para aprobación.")
+                    .setView(input)
+                    .setPositiveButton("Solicitar cambio", (d, w) -> {
+                        String nuevoValor = input.getText().toString().trim();
+                        if (nuevoValor.isEmpty()) {
+                            Toast.makeText(this, "Ingresa un valor", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if (nuevoValor.equals(nombre)) {
+                            Toast.makeText(this, "El valor es igual al actual", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        confirmarCambio("nombre", nombre, nuevoValor);
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
         });
-        builder.setNegativeButton("Cancelar", null);
-        builder.show();
     }
 
     private void abrirEdicionCarrera() {
-        if (tienePendiente("Carrera")) {
-            Toast.makeText(this, "Ya tienes un cambio pendiente para Carrera", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Cambiar Carrera");
-        builder.setMessage("El cambio será enviado al supervisor para aprobación.");
-
-        Spinner spinner = new Spinner(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, CARRERAS);
-        spinner.setAdapter(adapter);
-        // Seleccionar la carrera actual
-        for (int i = 0; i < CARRERAS.length; i++) {
-            if (CARRERAS[i].equals(carrera)) { spinner.setSelection(i); break; }
-        }
-        spinner.setPadding(40, 20, 40, 20);
-        builder.setView(spinner);
-
-        builder.setPositiveButton("Solicitar cambio", (dialog, which) -> {
-            String nuevoValor = spinner.getSelectedItem().toString();
-            if (nuevoValor.equals(carrera)) {
-                Toast.makeText(this, "La carrera es igual a la actual", Toast.LENGTH_SHORT).show();
-                return;
+        verificarPendienteYAbrir("carrera", () -> {
+            Spinner spinner = new Spinner(this);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item, CARRERAS);
+            spinner.setAdapter(adapter);
+            for (int i = 0; i < CARRERAS.length; i++) {
+                if (CARRERAS[i].equals(carrera)) { spinner.setSelection(i); break; }
             }
-            confirmarCambio("Carrera", carrera, nuevoValor);
+            spinner.setPadding(40, 20, 40, 20);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Cambiar Carrera")
+                    .setMessage("El cambio será enviado al supervisor para aprobación.")
+                    .setView(spinner)
+                    .setPositiveButton("Solicitar cambio", (d, w) -> {
+                        String nuevoValor = spinner.getSelectedItem().toString();
+                        if (nuevoValor.equals(carrera)) {
+                            Toast.makeText(this, "La carrera es igual a la actual", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        confirmarCambio("carrera", carrera, nuevoValor);
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
         });
-        builder.setNegativeButton("Cancelar", null);
-        builder.show();
     }
 
     private void abrirEdicionEscuela() {
-        if (tienePendiente("Escuela")) {
-            Toast.makeText(this, "Ya tienes un cambio pendiente para Escuela", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Cambiar Escuela");
-        builder.setMessage("El cambio será enviado al supervisor para aprobación.");
-
-        Spinner spinner = new Spinner(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, ESCUELAS);
-        spinner.setAdapter(adapter);
-        for (int i = 0; i < ESCUELAS.length; i++) {
-            if (ESCUELAS[i].equals(escuela)) { spinner.setSelection(i); break; }
-        }
-        spinner.setPadding(40, 20, 40, 20);
-        builder.setView(spinner);
-
-        builder.setPositiveButton("Solicitar cambio", (dialog, which) -> {
-            String nuevoValor = spinner.getSelectedItem().toString();
-            if (nuevoValor.equals(escuela)) {
-                Toast.makeText(this, "La escuela es igual a la actual", Toast.LENGTH_SHORT).show();
-                return;
+        verificarPendienteYAbrir("escuela", () -> {
+            Spinner spinner = new Spinner(this);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_dropdown_item, ESCUELAS);
+            spinner.setAdapter(adapter);
+            for (int i = 0; i < ESCUELAS.length; i++) {
+                if (ESCUELAS[i].equals(escuela)) { spinner.setSelection(i); break; }
             }
-            confirmarCambio("Escuela", escuela, nuevoValor);
+            spinner.setPadding(40, 20, 40, 20);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Cambiar Escuela")
+                    .setMessage("El cambio será enviado al supervisor para aprobación.")
+                    .setView(spinner)
+                    .setPositiveButton("Solicitar cambio", (d, w) -> {
+                        String nuevoValor = spinner.getSelectedItem().toString();
+                        if (nuevoValor.equals(escuela)) {
+                            Toast.makeText(this, "La escuela es igual a la actual", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        confirmarCambio("escuela", escuela, nuevoValor);
+                    })
+                    .setNegativeButton("Cancelar", null)
+                    .show();
         });
-        builder.setNegativeButton("Cancelar", null);
-        builder.show();
     }
 
     private void confirmarCambio(String campo, String valorAnterior, String valorNuevo) {
@@ -343,12 +423,47 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                         + "\nActual: " + valorAnterior
                         + "\nNuevo: " + valorNuevo
                         + "\n\nEl supervisor deberá aprobar este cambio.")
-                .setPositiveButton("Confirmar", (d, w) -> {
-                    agregarPendiente(campo, valorAnterior, valorNuevo);
-                    enviarNotificacionSupervisor(campo, valorAnterior, valorNuevo);
-                })
+                .setPositiveButton("Confirmar", (d, w) ->
+                        enviarCambioAlBackend(campo, valorAnterior, valorNuevo))
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+
+    // ─── ENVIAR CAMBIO AL BACKEND ─────────────────────────────────────────────
+    private void enviarCambioAlBackend(String campo, String valorAnterior, String valorNuevo) {
+        if (idUsuario == null || idUsuario == -1) return;
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+
+        Map<String, String> body = new HashMap<>();
+        body.put("idUsuario",     String.valueOf(idUsuario));
+        body.put("rol",           "estudiante");
+        body.put("campo",         campo);
+        body.put("valorAnterior", valorAnterior);
+        body.put("valorNuevo",    valorNuevo);
+
+        api.solicitarCambioPerfil(body).enqueue(new Callback<CambioPerfilDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<CambioPerfilDTO> call,
+                                   @NonNull Response<CambioPerfilDTO> response) {
+                if (response.isSuccessful()) {
+                    // Notificar al supervisor
+                    enviarNotificacionSupervisor(campo, valorAnterior, valorNuevo);
+                    runOnUiThread(() -> {
+                        Toast.makeText(AlumnoVistaCuenta.this,
+                                "Solicitud enviada al supervisor ✓", Toast.LENGTH_SHORT).show();
+                        mostrarAlertaPendientes();
+                    });
+                } else {
+                    runOnUiThread(() -> Toast.makeText(AlumnoVistaCuenta.this,
+                            "Error al enviar solicitud", Toast.LENGTH_SHORT).show());
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<CambioPerfilDTO> call, @NonNull Throwable t) {
+                runOnUiThread(() -> Toast.makeText(AlumnoVistaCuenta.this,
+                        "Error de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 
     private void enviarNotificacionSupervisor(String campo, String valorAnterior, String valorNuevo) {
@@ -360,22 +475,15 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                 + "solicita cambiar su " + campo.toLowerCase() + "."
                 + "\n\nValor actual: \"" + valorAnterior + "\""
                 + "\nNuevo valor: \"" + valorNuevo + "\""
-                + "\n\nRevisa el panel de supervisor para aprobar o rechazar.");
+                + "\n\nRevisa el panel de cambios del supervisor.");
 
         api.crearNotificacion(body).enqueue(new Callback<NotificacionDTO>() {
             @Override
             public void onResponse(@NonNull Call<NotificacionDTO> call,
-                                   @NonNull Response<NotificacionDTO> response) {
-                runOnUiThread(() ->
-                        Toast.makeText(AlumnoVistaCuenta.this,
-                                "Solicitud enviada al supervisor ✓", Toast.LENGTH_SHORT).show());
-            }
-
+                                   @NonNull Response<NotificacionDTO> response) {}
             @Override
             public void onFailure(@NonNull Call<NotificacionDTO> call, @NonNull Throwable t) {
-                runOnUiThread(() ->
-                        Toast.makeText(AlumnoVistaCuenta.this,
-                                "Cambio guardado localmente (sin conexión)", Toast.LENGTH_SHORT).show());
+                Log.e(TAG, "Error enviando notificación: " + t.getMessage());
             }
         });
     }
@@ -399,7 +507,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                         runOnUiThread(() -> tvPuntosStatus.setText("Error al cargar solicitudes."));
                     }
                 }
-
                 @Override
                 public void onFailure(@NonNull Call<List<SolicitudDTO>> call, @NonNull Throwable t) {
                     runOnUiThread(() -> tvPuntosStatus.setText("Error de conexión."));
@@ -461,17 +568,16 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                     if (response.isSuccessful() && response.body() != null) {
                         HorarioDTO h = response.body();
                         runOnUiThread(() -> {
-                            tvHorarioLunes.setText(fmt(h.getLunInicio(), h.getLunFinal()));
+                            tvHorarioLunes.setText(fmt(h.getLunInicio(),  h.getLunFinal()));
                             tvHorarioMartes.setText(fmt(h.getMarInicio(), h.getMarFinal()));
                             tvHorarioMiercoles.setText(fmt(h.getMierInicio(), h.getMierFinal()));
                             tvHorarioJueves.setText(fmt(h.getJueInicio(), h.getJueFinal()));
                             tvHorarioViernes.setText(fmt(h.getVieInicio(), h.getVieFinal()));
-                            tvHorarioSabado.setText(fmt(h.getSabInicio(), h.getSabFinal()));
+                            tvHorarioSabado.setText(fmt(h.getSabInicio(),  h.getSabFinal()));
                             tvHorarioDomingo.setText(fmt(h.getDomInicio(), h.getDomFinal()));
                         });
                     }
                 }
-
                 @Override
                 public void onFailure(@NonNull Call<HorarioDTO> call, @NonNull Throwable t) {
                     Log.e(TAG, "Fallo red horario: " + t.getMessage());
@@ -495,6 +601,7 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         cargarFotoPerfil();
         cargarSolicitudes();
         cargarHorario();
+        cargarDatosFrescos();
         mostrarAlertaPendientes();
     }
 
@@ -522,9 +629,9 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         btnEditarCarrera.setOnClickListener(v -> abrirEdicionCarrera());
         btnEditarEscuela.setOnClickListener(v -> abrirEdicionEscuela());
 
-        if (btnContactarSoporte != null) {
+        if (btnContactarSoporte != null)
             btnContactarSoporte.setOnClickListener(v -> contactarSoporte());
-        }
+
         btnCerrarSesion.setOnClickListener(v -> cerrarSesion());
     }
 
@@ -615,11 +722,9 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
         api.actualizarFoto(idUsuario, body).enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                if (!response.isSuccessful()) {
+                if (!response.isSuccessful())
                     Toast.makeText(AlumnoVistaCuenta.this, "Error al guardar foto", Toast.LENGTH_SHORT).show();
-                }
             }
-
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 Log.e(TAG, "Fallo red al guardar foto: " + t.getMessage());
@@ -641,7 +746,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                     runOnUiThread(() -> imgPerfil.setImageBitmap(bmp));
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<PerfilDTO> call, @NonNull Throwable t) {
                 Log.e(TAG, "Error al cargar foto: " + t.getMessage());
@@ -666,7 +770,6 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                                 Toast.makeText(AlumnoVistaCuenta.this, "Foto eliminada", Toast.LENGTH_SHORT).show();
                             });
                         }
-
                         @Override
                         public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                             Toast.makeText(AlumnoVistaCuenta.this, "Error de conexión", Toast.LENGTH_SHORT).show();
@@ -685,7 +788,8 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
                 .setCancelable(true)
                 .create();
         if (dialog.getWindow() != null)
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         EditText etMensaje = dialogView.findViewById(R.id.etMensaje);
         dialogView.findViewById(R.id.btnCancelar).setOnClickListener(v -> dialog.dismiss());
@@ -695,48 +799,48 @@ public class AlumnoVistaCuenta extends AppCompatActivity {
             String cuerpo = "Alumno: " + nombre + "\nBoleta: " + boleta
                     + "\nCarrera: " + carrera + "\nEscuela: " + escuela
                     + "\n\nMensaje:\n" + mensaje;
-            String mailtoUri = "mailto:" + CORREO_SOPORTE
-                    + "?subject=" + Uri.encode("SoLinX - Soporte Alumno: " + nombre)
-                    + "&body=" + Uri.encode(cuerpo);
             Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-            emailIntent.setData(Uri.parse(mailtoUri));
+            emailIntent.setData(Uri.parse("mailto:" + CORREO_SOPORTE
+                    + "?subject=" + Uri.encode("SoLinX - Soporte Alumno: " + nombre)
+                    + "&body=" + Uri.encode(cuerpo)));
             try { startActivity(Intent.createChooser(emailIntent, "Enviar correo con...")); dialog.dismiss(); }
             catch (Exception e) { Toast.makeText(this, "No hay app de correo disponible", Toast.LENGTH_SHORT).show(); }
         });
+
         dialog.show();
+        dialog.getWindow().setLayout(
+                (int)(getResources().getDisplayMetrics().widthPixels * 0.85),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     // ─── CERRAR SESIÓN ────────────────────────────────────────────────────────
     private void cerrarSesion() {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_cerrar_sesion, null);
-
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setView(dialogView)
                 .setCancelable(true)
                 .create();
-
         if (dialog.getWindow() != null)
-            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            dialog.getWindow().setBackgroundDrawable(
+                    new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         dialogView.findViewById(R.id.btnNo).setOnClickListener(v -> dialog.dismiss());
         dialogView.findViewById(R.id.btnSi).setOnClickListener(v -> {
             dialog.dismiss();
             try { ThemeUtils.forceLightModeLocal(this); } catch (Exception ignored) {}
-            try {
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            } catch (Exception ignored) {}
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                try {
-                    getSharedPreferences("SoLinXPrefs", MODE_PRIVATE).edit().clear().apply();
-                    getSharedPreferences("sesion_usuario", MODE_PRIVATE).edit().clear().apply();
-                    getSharedPreferences("SoLinXCambiosPendientes", MODE_PRIVATE).edit().clear().apply();
-                } catch (Exception ignored) {}
+                getSharedPreferences("SoLinXPrefs",     MODE_PRIVATE).edit().clear().apply();
+                getSharedPreferences("sesion_usuario",  MODE_PRIVATE).edit().clear().apply();
             }, 300);
             finish();
         });
 
         dialog.show();
+        dialog.getWindow().setLayout(
+                (int)(getResources().getDisplayMetrics().widthPixels * 0.85),
+                android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 }
