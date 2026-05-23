@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -29,7 +28,6 @@
             app:tint="@color/flecha_color"/>
 
         <ImageView
-            android:id="@+id/logo_top_left"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@drawable/solinx_logo"
@@ -38,12 +36,11 @@
             android:layout_marginStart="8dp"/>
 
         <TextView
-            android:id="@+id/tv_page_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:text="Documentos"
+            android:text="Aprobar Cambios de Perfil"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="?attr/colorOnSurface"
@@ -57,9 +54,8 @@
         android:background="?attr/colorOutline"
         android:alpha="0.3"/>
 
-    <!-- RECYCLERVIEW -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_documentos"
+        android:id="@+id/recyclerCambios"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -67,23 +63,20 @@
         android:paddingTop="12dp"
         android:paddingBottom="16dp"
         android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/card_notificacion"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-    <!-- PROGRESS -->
     <ProgressBar
-        android:id="@+id/progress_bar"
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"/>
 
-    <!-- EMPTY STATE -->
     <TextView
-        android:id="@+id/tv_no_data"
+        android:id="@+id/tvNoData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sin documentos aún"
+        android:text="Sin cambios pendientes ✓"
         android:textSize="15sp"
         android:textColor="?android:attr/textColorSecondary"
         android:gravity="center"

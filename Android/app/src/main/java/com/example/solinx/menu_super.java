@@ -15,7 +15,6 @@ public class menu_super extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
-
         super.onCreate(savedInstanceState);
     }
 }

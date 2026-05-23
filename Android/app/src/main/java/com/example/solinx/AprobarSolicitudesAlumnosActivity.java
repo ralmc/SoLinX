@@ -51,7 +51,7 @@ public class AprobarSolicitudesAlumnosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         ThemeUtils.applyTheme(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alumnos_lista_solicitudes);
+        setContentView(R.layout.activity_supervisor_aprobar_aceptaciones_alumno);
 
         idSupervisor = getIntent().getIntExtra("idSupervisor", -1);
 

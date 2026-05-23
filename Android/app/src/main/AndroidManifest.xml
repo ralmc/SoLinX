@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/Theme.SoLinX">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
@@ -22,11 +22,14 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".SupervisorCambiosPerfil"
+            android:exported="false" />
+        <activity
             android:name=".SupervisorDocumentos"
             android:exported="false" />
         <activity
             android:name=".SupervisorProyectosActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".CONEXION.InicioHelper"
             android:exported="false" />
@@ -91,7 +94,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
+
 </manifest>
