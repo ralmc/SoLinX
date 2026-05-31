@@ -1,7 +1,9 @@
 package com.example.solinx.API;
 
+import com.example.solinx.DTO.CambioPerfilDTO;
 import com.example.solinx.DTO.DocumentoDTO;
 import com.example.solinx.DTO.EmpresaDTO;
+import com.example.solinx.DTO.EstudianteDTO;
 import com.example.solinx.DTO.LoginDTO;
 import com.example.solinx.DTO.LoginResponseDTO;
 import com.example.solinx.DTO.NotificacionDTO;
@@ -12,12 +14,17 @@ import com.example.solinx.DTO.RegistroEmpresaResponseDTO;
 import com.example.solinx.DTO.HorarioDTO;
 import com.example.solinx.DTO.SolicitudAcceptDTO;
 import com.example.solinx.DTO.SolicitudDTO;
+import com.example.solinx.DTO.UsuarioDTO;
 import com.example.solinx.RESPONSE.ProyectoResponse;
 import com.example.solinx.RESPONSE.SolicitudResponse;
 import com.example.solinx.RESPONSE.AprobacionResponse;
 import com.example.solinx.RESPONSE.SolicitudesResponse;
 import com.example.solinx.RESPONSE.SupervisorResponse;
 import com.example.solinx.RESPONSE.ProyectoAlumnoResponse;
+import com.example.solinx.DTO.ChatbotRequest;
+import com.example.solinx.DTO.ChatbotResponse;
+import com.example.solinx.DTO.MensajeChatbot;
+
 
 import java.util.List;
 import java.util.Map;
@@ -56,6 +63,14 @@ public interface ApiService {
     @POST("horario/{boleta}")
     Call<HorarioDTO> crearHorario(@Path("boleta") int boleta, @Body HorarioDTO dto);
 
+    // ── Usuario ───────────────────────────────────────────────────────────────
+    @GET("usuario/{id}")
+    Call<UsuarioDTO> obtenerUsuarioPorId(@Path("id") int idUsuario);
+
+    // ── Estudiante ────────────────────────────────────────────────────────────
+    @GET("estudiante/{boleta}")
+    Call<EstudianteDTO> obtenerEstudiantePorBoleta(@Path("boleta") int boleta);
+
     // ── Empresa ───────────────────────────────────────────────────────────────
     @GET("empresa/{id}")
     Call<EmpresaDTO> obtenerEmpresaPorId(@Path("id") int idEmpresa);
@@ -93,8 +108,7 @@ public interface ApiService {
     @PUT("solicitud/{idSolicitud}/estado")
     Call<Void> actualizarEstadoSolicitud(
             @Path("idSolicitud") int idSolicitud,
-            @Query("nuevoEstado") String nuevoEstado
-    );
+            @Query("nuevoEstado") String nuevoEstado);
 
     @GET("solicitudes/estudiante/{boleta}")
     Call<List<SolicitudDTO>> obtenerSolicitudesEstudiante(@Path("boleta") Integer boleta);
@@ -119,8 +133,7 @@ public interface ApiService {
     @POST("supervisor/actualizar-solicitud")
     Call<AprobacionResponse> actualizarSolicitud(
             @Field("idSolicitud") int idSolicitud,
-            @Field("nuevoEstado") String nuevoEstado
-    );
+            @Field("nuevoEstado") String nuevoEstado);
 
     @GET("usuario/boleta/{boleta}")
     Call<Map<String, Integer>> getIdUsuarioPorBoleta(@Path("boleta") int boleta);
@@ -141,15 +154,13 @@ public interface ApiService {
     Call<DocumentoDTO> subirDocumento(
             @Path("boleta") Integer boleta,
             @Path("periodo") Integer periodo,
-            @Part MultipartBody.Part archivo
-    );
+            @Part MultipartBody.Part archivo);
 
     @PUT("documento/{boleta}/{periodo}/estado")
     Call<Void> actualizarEstadoDocumento(
             @Path("boleta") Integer boleta,
             @Path("periodo") Integer periodo,
-            @Query("estado") String estado
-    );
+            @Query("estado") String estado);
 
     // ── Perfil ────────────────────────────────────────────────────────────────
     @GET("perfil/usuario/{idUsuario}")
@@ -179,4 +190,24 @@ public interface ApiService {
     @POST("notificacion")
     @Headers("Content-Type: application/json")
     Call<NotificacionDTO> crearNotificacion(@Body Map<String, String> body);
+
+    // ── Cambio de Perfil ──────────────────────────────────────────────────────
+    @POST("cambio-perfil")
+    @Headers("Content-Type: application/json")
+    Call<CambioPerfilDTO> solicitarCambioPerfil(@Body Map<String, String> body);
+
+    @GET("cambio-perfil/pendientes")
+    Call<List<CambioPerfilDTO>> getCambiosPendientes();
+
+    @GET("cambio-perfil/usuario/{idUsuario}")
+    Call<List<CambioPerfilDTO>> getCambiosPorUsuario(@Path("idUsuario") int idUsuario);
+
+    @PUT("cambio-perfil/{idCambio}/aprobar")
+    Call<CambioPerfilDTO> aprobarCambio(@Path("idCambio") int idCambio);
+
+    @PUT("cambio-perfil/{idCambio}/rechazar")
+    Call<CambioPerfilDTO> rechazarCambio(@Path("idCambio") int idCambio);
+
+    @POST("chatbot/mensaje")
+    Call<ChatbotResponse> enviarMensajeChatbot(@Body ChatbotRequest request);
 }

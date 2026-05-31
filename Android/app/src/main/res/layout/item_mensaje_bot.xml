@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="start|top"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:paddingStart="4dp"
+    android:paddingEnd="40dp">
+
+    <FrameLayout
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_chatbot_avatar_msg"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="2dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="🤖"
+            android:textSize="14sp"
+            android:gravity="center" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/txtMensaje"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_mensaje_bot"
+        android:padding="12dp"
+        android:textColor="@color/chatbot_text_primary"
+        android:textSize="14sp"
+        android:lineSpacingExtra="2dp"
+        android:textIsSelectable="true" />
+</LinearLayout>

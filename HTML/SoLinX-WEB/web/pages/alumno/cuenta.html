@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
+  
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SoLinX — Mi Perfil</title>
   <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/chatbot.css">
   <style>
     /* ─── Fix layout: sidebar fijo, main ocupa el resto ─────── */
 
@@ -408,6 +410,7 @@
   import { Api } from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
   import { toast, initTheme, toggleTheme, confirmDialog } from '../../js/utils.js';
+  import { mountChatbot } from '../../js/chatbot.js';
 
   requireAuth('estudiante');
   initTheme();
@@ -452,6 +455,27 @@
   }
   renderInfoBasica();
 
+    // ─── Cargar datos frescos del backend ─────────────────
+    async function cargarDatosFrescos() {
+        try {
+            const resUsuario = await Api.getById ? 
+                await fetch(`http://192.168.1.70:8080/SoLinX/api/usuario/${idUsuario}`) :
+                await fetch(`http://192.168.1.70:8080/SoLinX/api/usuario/${idUsuario}`);
+            if (resUsuario.ok) {
+                const u = await resUsuario.json();
+                if (u.nombre) { sessionStorage.setItem('sl_nombre', u.nombre);  nombre = u.nombre; }
+                if (u.correo) { sessionStorage.setItem('sl_correo', u.correo);  correo = u.correo; }
+            }
+            const resEst = await fetch(`http://192.168.1.70:8080/SoLinX/api/estudiante/${boleta}`);
+            if (resEst.ok) {
+                const e = await resEst.json();
+                if (e.carrera) { sessionStorage.setItem('sl_carrera', e.carrera); carrera = e.carrera; }
+                if (e.escuela) { sessionStorage.setItem('sl_escuela', e.escuela); escuela = e.escuela; }
+            }
+            renderInfoBasica();
+        } catch {}
+    }
+    
   // ─── Foto ─────────────────────────────────────────────
   async function cargarFoto() {
     if (!idUsuario) return;
@@ -491,23 +515,19 @@
   };
 
   // ─── Cambios pendientes ───────────────────────────────
-  const KEY_PENDIENTES = `solinx_cambios_pendientes_${idUsuario}`;
-
-  function getPendientes() {
-    try { return JSON.parse(localStorage.getItem(KEY_PENDIENTES)) ?? []; }
-    catch { return []; }
-  }
-  function setPendientes(lista) {
-    localStorage.setItem(KEY_PENDIENTES, JSON.stringify(lista));
-  }
-  function mostrarAlertaPendientes() {
-    const pendientes = getPendientes();
-    const alerta  = document.getElementById('alertaPendiente');
-    const detalle = document.getElementById('alertaPendienteDetalle');
-    if (!pendientes.length) { alerta.style.display = 'none'; return; }
-    alerta.style.display = 'flex';
-    const nombres = { nombre:'Nombre', correo:'Correo', carrera:'Carrera', escuela:'Escuela' };
-    detalle.textContent = `Cambios en espera de aprobación: ${pendientes.map(p => nombres[p.campo]).join(', ')}`;
+  // ─── Cambios pendientes (backend) ────────────────────
+  async function mostrarAlertaPendientes() {
+    try {
+      const res = await Api.getCambiosPorUsuario(idUsuario);
+      const lista = res.ok ? await res.json() : [];
+      const pendientes = lista.filter(c => c.estado === 'pendiente');
+      const alerta  = document.getElementById('alertaPendiente');
+      const detalle = document.getElementById('alertaPendienteDetalle');
+      if (!pendientes.length) { alerta.style.display = 'none'; return; }
+      alerta.style.display = 'flex';
+      const nombres = { nombre:'Nombre', correo:'Correo', carrera:'Carrera', escuela:'Escuela' };
+      detalle.textContent = `Cambios en espera de aprobación: ${pendientes.map(p => nombres[p.campo] ?? p.campo).join(', ')}`;
+    } catch { document.getElementById('alertaPendiente').style.display = 'none'; }
   }
   mostrarAlertaPendientes();
 
@@ -517,11 +537,16 @@
   const actuales = { nombre:()=>nombre, correo:()=>correo, carrera:()=>carrera, escuela:()=>escuela };
   let campoActual = null;
 
-  window.abrirEdicion = function(campo) {
-    const pendientes = getPendientes();
-    if (pendientes.some(p => p.campo === campo)) {
-      toast('Ya tienes un cambio pendiente para este campo', 'error'); return;
-    }
+  window.abrirEdicion = async function(campo) {
+    // Verificar si ya hay un cambio pendiente para este campo
+    try {
+      const res = await Api.getCambiosPorUsuario(idUsuario);
+      const lista = res.ok ? await res.json() : [];
+      if (lista.some(c => c.campo === campo && c.estado === 'pendiente')) {
+        toast('Ya tienes un cambio pendiente para este campo', 'error'); return;
+      }
+    } catch {}
+
     campoActual = campo;
     document.getElementById('modal-edicion-titulo').textContent = titulos[campo];
     document.getElementById('modal-edicion-label').textContent  = labels[campo];
@@ -570,7 +595,7 @@
   document.getElementById('modal-edicion-btn').onclick = async () => {
     if (!campoActual) return;
     const nuevoValor = document.getElementById('modal-edicion-input').value.trim();
-    if (!nuevoValor)                          { toast('Ingresa un valor', 'error'); return; }
+    if (!nuevoValor)                           { toast('Ingresa un valor', 'error'); return; }
     if (nuevoValor === actuales[campoActual]()) { toast('El valor es igual al actual', 'error'); return; }
 
     const ok = await confirmDialog(
@@ -579,17 +604,20 @@
     );
     if (!ok) return;
 
-    const pendientes = getPendientes();
-    pendientes.push({ campo: campoActual, valorAnterior: actuales[campoActual](), valorNuevo: nuevoValor, fecha: new Date().toISOString() });
-    setPendientes(pendientes);
-
     try {
+      // ─── Guardar en BD ────────────────────────────────
+      const res = await Api.solicitarCambioPerfil(
+        idUsuario, 'estudiante', campoActual, actuales[campoActual](), nuevoValor
+      );
+      if (!res.ok) { toast('Error al enviar solicitud', 'error'); return; }
+
+      // ─── Notificar al supervisor ──────────────────────
       const nombresCampo = { nombre:'Nombre', correo:'Correo', carrera:'Carrera', escuela:'Escuela' };
       await Api.crearNotificacion(12,
         `Solicitud de cambio de perfil — ${nombresCampo[campoActual]}`,
-        `El alumno ${nombre} (boleta: ${boleta}) solicita cambiar su ${nombresCampo[campoActual].toLowerCase()}.\n\nValor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nRevisa el panel de supervisor para aprobar o rechazar.`
+        `El alumno ${nombre} (boleta: ${boleta}) solicita cambiar su ${nombresCampo[campoActual].toLowerCase()}.\n\nValor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nRevisa el panel de cambios del supervisor.`
       );
-    } catch {}
+    } catch (e) { toast('Error: ' + e.message, 'error'); return; }
 
     toast('Solicitud enviada al supervisor ✓', 'success');
     cerrarEdicion();
@@ -666,8 +694,11 @@
     window.open(`mailto:${CORREO_SOPORTE}?subject=${encodeURIComponent(`SoLinX - Soporte Alumno: ${nombre}`)}&body=${encodeURIComponent(cuerpo)}`, '_blank');
     document.getElementById('modalSoporte').classList.remove('active');
   };
+  
+  mountChatbot({ nombre: Session.nombre });
 
   // ─── Init ─────────────────────────────────────────────
+  cargarDatosFrescos();
   cargarFoto();
   cargarSolicitudes();
   cargarHorario();

@@ -392,6 +392,26 @@
     input.click();
   };
 
+    // ─── Cargar datos frescos del backend ─────────────────
+    async function cargarDatosFrescos() {
+        try {
+            const resUsuario = await fetch(`http://192.168.1.70:8080/SoLinX/api/usuario/${idUsuario}`);
+            if (resUsuario.ok) {
+                const u = await resUsuario.json();
+                if (u.nombre) { sessionStorage.setItem('sl_nombre', u.nombre); nombre = u.nombre; }
+            }
+            const resEmp = await Api.obtenerEmpresaPorId(idEmpresa);
+            if (resEmp.ok) {
+                const e = await resEmp.json();
+                if (e.nombreEmpresa) { nombre   = e.nombreEmpresa; }
+                if (e.telefono)      { sessionStorage.setItem('sl_telefono', e.telefono); telefono = e.telefono; }
+                if (e.correo)        { correo = e.correo; }
+            }
+            renderInfoBasica();
+            cargarDatos();
+        } catch {}
+    }
+
   // ─── Datos empresa ────────────────────────────────────
   async function cargarDatos() {
     try {
@@ -412,24 +432,19 @@
     }
   }
 
-  // ─── Cambios pendientes en localStorage ───────────────
-  const KEY_PENDIENTES = `solinx_cambios_empresa_${idUsuario}`;
-
-  function getPendientes() {
-    try { return JSON.parse(localStorage.getItem(KEY_PENDIENTES)) ?? []; }
-    catch { return []; }
-  }
-  function setPendientes(lista) {
-    localStorage.setItem(KEY_PENDIENTES, JSON.stringify(lista));
-  }
-  function mostrarAlertaPendientes() {
-    const pendientes = getPendientes();
-    const alerta  = document.getElementById('alertaPendiente');
-    const detalle = document.getElementById('alertaPendienteDetalle');
-    if (!pendientes.length) { alerta.style.display = 'none'; return; }
-    alerta.style.display = 'flex';
-    const nombres = { nombreEmpresa: 'Nombre', telefono: 'Teléfono' };
-    detalle.textContent = `Cambios en espera de aprobación: ${pendientes.map(p => nombres[p.campo]).join(', ')}`;
+  // ─── Cambios pendientes (backend) ────────────────────
+  async function mostrarAlertaPendientes() {
+    try {
+      const res = await Api.getCambiosPorUsuario(idUsuario);
+      const lista = res.ok ? await res.json() : [];
+      const pendientes = lista.filter(c => c.estado === 'pendiente');
+      const alerta  = document.getElementById('alertaPendiente');
+      const detalle = document.getElementById('alertaPendienteDetalle');
+      if (!pendientes.length) { alerta.style.display = 'none'; return; }
+      alerta.style.display = 'flex';
+      const nombres = { nombreEmpresa: 'Nombre', telefono: 'Teléfono' };
+      detalle.textContent = `Cambios en espera de aprobación: ${pendientes.map(p => nombres[p.campo] ?? p.campo).join(', ')}`;
+    } catch { document.getElementById('alertaPendiente').style.display = 'none'; }
   }
   mostrarAlertaPendientes();
 
@@ -439,11 +454,15 @@
   const actuales = { nombreEmpresa: () => nombre, telefono: () => telefono };
   let campoActual = null;
 
-  window.abrirEdicion = function(campo) {
-    const pendientes = getPendientes();
-    if (pendientes.some(p => p.campo === campo)) {
-      toast('Ya tienes un cambio pendiente para este campo', 'error'); return;
-    }
+  window.abrirEdicion = async function(campo) {
+    try {
+      const res = await Api.getCambiosPorUsuario(idUsuario);
+      const lista = res.ok ? await res.json() : [];
+      if (lista.some(c => c.campo === campo && c.estado === 'pendiente')) {
+        toast('Ya tienes un cambio pendiente para este campo', 'error'); return;
+      }
+    } catch {}
+
     campoActual = campo;
     document.getElementById('modal-edicion-titulo').textContent = titulos[campo];
     document.getElementById('modal-edicion-label').textContent  = labels[campo];
@@ -482,17 +501,20 @@
     );
     if (!ok) return;
 
-    const pendientes = getPendientes();
-    pendientes.push({ campo: campoActual, valorAnterior: actuales[campoActual](), valorNuevo: nuevoValor, fecha: new Date().toISOString() });
-    setPendientes(pendientes);
-
     try {
+      // ─── Guardar en BD ────────────────────────────────
+      const res = await Api.solicitarCambioPerfil(
+        idUsuario, 'empresa', campoActual, actuales[campoActual](), nuevoValor
+      );
+      if (!res.ok) { toast('Error al enviar solicitud', 'error'); return; }
+
+      // ─── Notificar al supervisor ──────────────────────
       const nombresCampo = { nombreEmpresa: 'Nombre de empresa', telefono: 'Teléfono' };
       await Api.crearNotificacion(12,
         `Solicitud de cambio de perfil empresa — ${nombresCampo[campoActual]}`,
-        `La empresa ${nombre} solicita cambiar su ${nombresCampo[campoActual].toLowerCase()}.\n\nValor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nRevisa el panel de supervisor para aprobar o rechazar.`
+        `La empresa ${nombre} solicita cambiar su ${nombresCampo[campoActual].toLowerCase()}.\n\nValor actual: "${actuales[campoActual]()}"\nNuevo valor: "${nuevoValor}"\n\nRevisa el panel de cambios del supervisor.`
       );
-    } catch {}
+    } catch (e) { toast('Error: ' + e.message, 'error'); return; }
 
     toast('Solicitud enviada al supervisor ✓', 'success');
     cerrarEdicion();
@@ -524,6 +546,7 @@
   };
 
   // ─── Init ─────────────────────────────────────────────
+  cargarDatosFrescos();
   cargarFoto();
   cargarDatos();
 </script>

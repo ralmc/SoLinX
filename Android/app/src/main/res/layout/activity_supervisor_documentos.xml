@@ -1,98 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SupervisorDocumentos">
+    android:orientation="vertical"
+    android:background="?android:attr/windowBackground"
+    android:fitsSystemWindows="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- TOPBAR -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:attr/windowBackground"
-        android:fitsSystemWindows="true"
-        android:padding="16dp">
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp">
 
         <ImageButton
             android:id="@+id/btnRegresarFlecha"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="Regresar"
-            android:scaleType="fitCenter"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:src="@drawable/flechaizq"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/flecha_color" />
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:contentDescription="Regresar"
+            app:tint="@color/flecha_color"/>
 
         <ImageView
             android:id="@+id/logo_top_left"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="12dp"
-            android:contentDescription="Logo"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:src="@drawable/solinx_logo"
-            app:layout_constraintBottom_toBottomOf="@id/btnRegresarFlecha"
-            app:layout_constraintStart_toEndOf="@id/btnRegresarFlecha"
-            app:layout_constraintTop_toTopOf="@id/btnRegresarFlecha" />
+            android:contentDescription="Logo"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="8dp"/>
 
         <TextView
             android:id="@+id/tv_page_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/fonts"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
             android:text="Documentos"
-            android:textColor="?attr/colorOnBackground"
-            android:textSize="22sp"
-            app:layout_constraintBottom_toBottomOf="@id/btnRegresarFlecha"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btnRegresarFlecha" />
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:fontFamily="sans-serif-medium"/>
+    </LinearLayout>
 
-        <View
-            android:id="@+id/divider_top"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="12dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnRegresarFlecha" />
+    <!-- DIVIDER -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/colorOutline"
+        android:alpha="0.3"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_documentos"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider_top" />
+    <!-- RECYCLERVIEW -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_documentos"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/card_notificacion"/>
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <!-- PROGRESS -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/tv_no_data"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sin documentos aún"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <!-- EMPTY STATE -->
+    <TextView
+        android:id="@+id/tv_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sin documentos aún"
+        android:textSize="15sp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:gravity="center"
+        android:padding="48dp"
+        android:visibility="gone"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

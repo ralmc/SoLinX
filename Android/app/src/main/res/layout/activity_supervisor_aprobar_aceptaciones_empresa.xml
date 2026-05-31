@@ -1,85 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="?android:attr/windowBackground"
-    android:padding="16dp"
-    android:fitsSystemWindows="true"
-    tools:context=".AprobarAceptacionesEmpresaActivity">
+    android:fitsSystemWindows="true">
 
-    <ImageButton
-        android:id="@+id/btnRegresarFlecha"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="12dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="Regresar"
-        android:scaleType="fitCenter"
-        android:src="@drawable/flechaizq"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/flecha_color" />
+    <!-- TOPBAR -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Aprobar Aceptaciones de Empresas"
-        android:textColor="?attr/colorOnBackground"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_marginStart="8dp"
-        app:layout_constraintTop_toTopOf="@id/btnRegresarFlecha"
-        app:layout_constraintBottom_toBottomOf="@id/btnRegresarFlecha"
-        app:layout_constraintStart_toEndOf="@id/btnRegresarFlecha"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <ImageButton
+            android:id="@+id/btnRegresarFlecha"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/flechaizq"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:contentDescription="Regresar"
+            app:tint="@color/flecha_color"/>
 
+        <ImageView
+            android:id="@+id/logo_top_left"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/solinx_logo"
+            android:contentDescription="Logo"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_page_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Aceptaciones Empresa"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface"
+            android:fontFamily="sans-serif-medium"/>
+    </LinearLayout>
+
+    <!-- DIVIDER -->
     <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/btnRegresarFlecha"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:background="?attr/colorOutline"
+        android:alpha="0.3"/>
 
+    <!-- RECYCLERVIEW -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_aceptaciones"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_weight="1"
+        android:paddingHorizontal="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/activity_card_aceptacion_empresa" />
+        tools:listitem="@layout/activity_card_aceptacion_empresa"/>
 
+    <!-- PROGRESS -->
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
+    <!-- EMPTY STATE -->
     <TextView
         android:id="@+id/tv_no_data"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No hay aceptaciones pendientes"
-        android:textSize="16sp"
+        android:text="Sin aceptaciones pendientes"
+        android:textSize="15sp"
         android:textColor="?android:attr/textColorSecondary"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:gravity="center"
+        android:padding="48dp"
+        android:visibility="gone"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

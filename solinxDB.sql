@@ -63,7 +63,6 @@ CREATE TABLE Horario (
     domInicio TIME NULL,
     domFinal TIME NULL
 );
-
 -- ============================================
 -- 2. TABLAS DE RELACIÓN (Usuario - Rol)
 -- ============================================
@@ -109,6 +108,18 @@ CREATE TABLE Notificacion (
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE CambioPerfil (
+    idCambio      INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    idUsuario     INT NOT NULL,
+    rol           ENUM('estudiante', 'empresa') NOT NULL,
+    campo         VARCHAR(50) NOT NULL,
+    valorAnterior VARCHAR(255) NOT NULL,
+    valorNuevo    VARCHAR(255) NOT NULL,
+    estado        ENUM('pendiente', 'aprobado', 'rechazado') NOT NULL DEFAULT 'pendiente',
+    fechaSolicitud TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fechaResolucion TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario) ON UPDATE CASCADE ON DELETE CASCADE
+);
 -- ============================================
 -- 3. TABLAS DE NEGOCIO
 -- ============================================

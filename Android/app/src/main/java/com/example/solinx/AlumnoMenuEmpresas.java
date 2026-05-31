@@ -29,6 +29,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClickListener {
 
@@ -78,6 +79,11 @@ public class AlumnoMenuEmpresas extends AppCompatActivity implements View.OnClic
         cargarFotoPerfil();
         mostrarTabEmpresas();
         verificarSiAlumnoAceptado();
+
+        // ─── FAB del Chatbot SoliBot ──────────────────────────
+        FloatingActionButton fabChatbot = findViewById(R.id.fabChatbot);
+        fabChatbot.setOnClickListener(v ->
+                startActivity(new Intent(this, ChatbotActivity.class)));
     }
 
     // ─── Mostrar el nombre del alumno en el header ────────────────────────────
