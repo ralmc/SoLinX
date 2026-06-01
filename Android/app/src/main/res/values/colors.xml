@@ -47,4 +47,14 @@
 
     <!-- Color flecha de regreso -->
     <color name="flecha_color">#0f1923</color>
+
+    <!-- Chatbot SoliBot — light mode -->
+    <color name="chatbot_background">#f4f7f9</color>
+    <color name="chatbot_surface">#FFFFFF</color>
+    <color name="chatbot_surface_2">#f0f4f6</color>
+    <color name="chatbot_border">#dde3e8</color>
+    <color name="chatbot_text_primary">#0f1923</color>
+    <color name="chatbot_text_secondary">#4a5568</color>
+    <color name="chatbot_text_muted">#8fa0ae</color>
+
 </resources>

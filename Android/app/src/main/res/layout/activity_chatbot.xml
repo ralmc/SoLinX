@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/chatbot_background">
+
+    <!-- ─── Toolbar con gradient ───────────────────────────────── -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarChatbot"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/bg_chatbot_header"
+        app:navigationIconTint="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="4dp"
+            android:paddingEnd="0dp">
+
+            <FrameLayout
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_chatbot_avatar">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="🤖"
+                    android:textSize="18sp"
+                    android:gravity="center" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SoliBot"
+                    android:textColor="@android:color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/bg_chatbot_status_dot"
+                        android:layout_marginEnd="6dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="En línea"
+                        android:textColor="#E6FFFFFF"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- ─── Área central ───────────────────────────────────────── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/chatbot_background">
+
+        <ScrollView
+            android:id="@+id/layoutWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:gravity="center_horizontal">
+
+                <FrameLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/bg_chatbot_welcome_icon">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="👋"
+                        android:textSize="36sp"
+                        android:gravity="center" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¡Hola! Soy SoliBot"
+                    android:textColor="@color/chatbot_text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tu asistente para resolver dudas sobre el servicio social en SoLinX.\nPregúntame lo que necesites."
+                    android:textColor="@color/chatbot_text_secondary"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    android:layout_marginBottom="28dp"
+                    android:lineSpacingExtra="2dp" />
+
+                <TextView
+                    android:id="@+id/chip1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_chatbot_chip"
+                    android:padding="14dp"
+                    android:textColor="@color/chatbot_text_primary"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="⏱️    ¿Cuántas horas necesito de servicio social?" />
+
+                <TextView
+                    android:id="@+id/chip2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_chatbot_chip"
+                    android:padding="14dp"
+                    android:textColor="@color/chatbot_text_primary"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="📄    ¿Qué documentos debo entregar?" />
+
+                <TextView
+                    android:id="@+id/chip3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_chatbot_chip"
+                    android:padding="14dp"
+                    android:textColor="@color/chatbot_text_primary"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="🆚    Servicio social vs prácticas profesionales" />
+
+                <TextView
+                    android:id="@+id/chip4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_chatbot_chip"
+                    android:padding="14dp"
+                    android:textColor="@color/chatbot_text_primary"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="🚀    ¿Cómo me postulo a un proyecto?" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerMensajes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="12dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:listitem="@layout/item_mensaje_bot" />
+    </FrameLayout>
+
+    <!-- ─── Typing indicator ─────────────────────────────────────── -->
+    <LinearLayout
+        android:id="@+id/layoutTyping"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <FrameLayout
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_chatbot_avatar_msg"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="🤖"
+                android:textSize="14sp"
+                android:gravity="center" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="14dp"
+            android:background="@drawable/bg_mensaje_bot">
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_chatbot_dot" />
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_chatbot_dot" />
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:background="@drawable/bg_chatbot_dot" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ─── Input area (EditText simple, sin Material 3) ────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:padding="10dp"
+        android:background="@color/chatbot_surface"
+        android:elevation="6dp">
+
+        <EditText
+            android:id="@+id/editMensaje"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="bottom"
+            android:hint="Escribe tu duda..."
+            android:maxLines="4"
+            android:inputType="textCapSentences|textMultiLine"
+            android:imeOptions="actionSend"
+            android:textSize="14sp"
+            android:textColor="@color/chatbot_text_primary"
+            android:textColorHint="@color/chatbot_text_muted"
+            android:padding="12dp"
+            android:background="@drawable/bg_chatbot_input" />
+
+        <ImageButton
+            android:id="@+id/btnEnviar"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_chatbot_send"
+            android:src="@drawable/ic_chatbot_send"
+            android:contentDescription="Enviar"
+            android:scaleType="center" />
+    </LinearLayout>
+
+</LinearLayout>

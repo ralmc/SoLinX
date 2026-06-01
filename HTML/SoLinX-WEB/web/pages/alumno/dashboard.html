@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SoLinX — Alumno</title>
   <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/chatbot.css">
 </head>
 <body>
 <div class="app-layout">
@@ -197,6 +198,7 @@
   import { Api } from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
   import { toast, initTheme, toggleTheme, showLoader, fmtFecha } from '../../js/utils.js';
+  import { mountChatbot } from '../../js/chatbot.js';
 
   requireAuth('estudiante');
   initTheme();
@@ -588,6 +590,7 @@
   cargarProyectos();
   cargarBadgeNotif();
   cargarFotoSidebar();
+  mountChatbot({ nombre });
 
   const tabPendiente = sessionStorage.getItem('sl_tab');
   if (tabPendiente) {

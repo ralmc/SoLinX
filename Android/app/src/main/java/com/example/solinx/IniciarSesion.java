@@ -62,9 +62,10 @@ public class IniciarSesion extends Fragment {
         TextView tvRegistroLink = view.findViewById(R.id.tvRegistroLink);
         btnEnviar.setOnClickListener(v -> hacerLogin());
 
-        tvRegistroLink.setOnClickListener(v ->
-                ((InicioHelper) requireActivity()).mostrarCrearCuenta());
-
+        tvRegistroLink.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), MainActivity.class);
+            startActivity(intent);
+        });
         try {
             android.widget.ImageButton btnRegresarFlecha = view.findViewById(R.id.btnRegresarFlecha);
             if (btnRegresarFlecha != null) {

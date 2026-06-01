@@ -21,6 +21,10 @@ import com.example.solinx.RESPONSE.AprobacionResponse;
 import com.example.solinx.RESPONSE.SolicitudesResponse;
 import com.example.solinx.RESPONSE.SupervisorResponse;
 import com.example.solinx.RESPONSE.ProyectoAlumnoResponse;
+import com.example.solinx.DTO.ChatbotRequest;
+import com.example.solinx.DTO.ChatbotResponse;
+import com.example.solinx.DTO.MensajeChatbot;
+
 
 import java.util.List;
 import java.util.Map;
@@ -203,4 +207,7 @@ public interface ApiService {
 
     @PUT("cambio-perfil/{idCambio}/rechazar")
     Call<CambioPerfilDTO> rechazarCambio(@Path("idCambio") int idCambio);
+
+    @POST("chatbot/mensaje")
+    Call<ChatbotResponse> enviarMensajeChatbot(@Body ChatbotRequest request);
 }

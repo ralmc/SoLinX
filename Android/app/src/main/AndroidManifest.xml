@@ -82,6 +82,11 @@
         <activity
             android:name=".AprobarAceptacionesEmpresaActivity"
             android:exported="false" />
+        <activity
+            android:name=".ChatbotActivity"
+            android:label="SoliBot"
+            android:parentActivityName=".AlumnoMenuEmpresas"
+            android:exported="false" />
 
         <uses-library
             android:name="org.apache.http.legacy"

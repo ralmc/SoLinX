@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="light">
+  
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SoLinX — Mi Perfil</title>
   <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/chatbot.css">
   <style>
     /* ─── Fix layout: sidebar fijo, main ocupa el resto ─────── */
 
@@ -408,6 +410,7 @@
   import { Api } from '../../js/api.js';
   import { Session, requireAuth, logout } from '../../js/auth.js';
   import { toast, initTheme, toggleTheme, confirmDialog } from '../../js/utils.js';
+  import { mountChatbot } from '../../js/chatbot.js';
 
   requireAuth('estudiante');
   initTheme();
@@ -691,6 +694,8 @@
     window.open(`mailto:${CORREO_SOPORTE}?subject=${encodeURIComponent(`SoLinX - Soporte Alumno: ${nombre}`)}&body=${encodeURIComponent(cuerpo)}`, '_blank');
     document.getElementById('modalSoporte').classList.remove('active');
   };
+  
+  mountChatbot({ nombre: Session.nombre });
 
   // ─── Init ─────────────────────────────────────────────
   cargarDatosFrescos();

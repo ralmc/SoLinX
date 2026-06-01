@@ -108,7 +108,7 @@
         <View
             android:layout_width="1dp"
             android:layout_height="14dp"
-            android:background="?android:attr/textColorSecondary"
+            android:background="#8FA0AE"
             android:alpha="0.4"/>
 
         <TextView
@@ -127,7 +127,7 @@
         <View
             android:layout_width="1dp"
             android:layout_height="14dp"
-            android:background="?android:attr/textColorSecondary"
+            android:background="#8FA0AE"
             android:alpha="0.4"/>
 
         <TextView
